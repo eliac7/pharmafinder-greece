@@ -8,8 +8,8 @@ const PharmacyMap = dynamic(() => import("@/components/map"), {
 });
 
 async function getPharmacies(): Promise<IPharmacyResponse> {
-  const url =
-    "https://pharmacy-api.papadopoulosle.repl.co/nearby_pharmacies_with_hours_now?latitude=37.957569&longitude=23.657761&radius=2";
+  const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/nearby_pharmacies_with_hours_now?latitude=37.957569&longitude=23.657761&radius=2`;
+
   const pharmacies = await fetch(url, { next: { revalidate: 3600 } });
 
   const res = (await pharmacies.json()) as IPharmacyResponse;
