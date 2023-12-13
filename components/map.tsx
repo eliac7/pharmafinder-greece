@@ -29,6 +29,19 @@ interface PharmacyMapProps {
   pharmacies: IPharmacy[] | null;
 }
 
+const UserLocationView = () => {
+  const map = useMap();
+  const { location } = useLocationContext();
+
+  useEffect(() => {
+    if (location.latitude && location.longitude) {
+      map.setView([location.latitude, location.longitude], 16);
+    }
+  }, [location, map]);
+
+  return null;
+};
+
 const MapView = ({ points }: MapProps) => {
   const map = useMap();
   const minZoomLevel = 16;
@@ -114,7 +127,8 @@ export default function PharmacyMap({ pharmacies }: PharmacyMapProps) {
       style={{ height: "800px", width: "100%" }}
     >
       <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+        subdomains={["mt0", "mt1", "mt2", "mt3"]}
         attribution=""
       />
       {points.map((point, index) => (
@@ -138,5 +152,42 @@ export default function PharmacyMap({ pharmacies }: PharmacyMapProps) {
         />
       )}
     </MapContainer>
+  );
+}
+
+export function ThumbnailMap() {
+  const { location } = useLocationContext();
+
+  if (!location.latitude || !location.longitude) {
+    return null;
+  }
+
+  return (
+    <div className="rounded-full overflow-hidden w-40 h-40">
+      <MapContainer
+        center={[location.latitude, location.longitude]}
+        zoom={15}
+        scrollWheelZoom={false}
+        dragging={false}
+        touchZoom={false}
+        doubleClickZoom={false}
+        zoomControl={false}
+        style={{ height: "150px", width: "150px" }}
+        className="rounded-full"
+        attributionControl={false}
+      >
+        <TileLayer
+          url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+          subdomains={["mt0", "mt1", "mt2", "mt3"]}
+          attribution=""
+        />
+
+        {location.latitude && location.longitude && (
+          <Marker position={[location.latitude, location.longitude]} />
+        )}
+
+        <UserLocationView />
+      </MapContainer>
+    </div>
   );
 }
