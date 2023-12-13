@@ -29,20 +29,7 @@ interface PharmacyMapProps {
   pharmacies: IPharmacy[] | null;
 }
 
-const UserLocationView = () => {
-  const map = useMap();
-  const { location } = useLocationContext();
-
-  useEffect(() => {
-    if (location.latitude && location.longitude) {
-      map.setView([location.latitude, location.longitude], 16);
-    }
-  }, [location, map]);
-
-  return null;
-};
-
-const MapView = ({ points }: MapProps) => {
+const POI = ({ points }: MapProps) => {
   const map = useMap();
   const minZoomLevel = 16;
 
@@ -103,14 +90,6 @@ export default function PharmacyMap({ pharmacies }: PharmacyMapProps) {
     iconAnchor: [16, 32],
   });
 
-  let circleCenter = { lat: 37.957569, lng: 23.657761 };
-  if (location.latitude && location.longitude) {
-    circleCenter = {
-      lat: location.latitude,
-      lng: location.longitude,
-    };
-  }
-  // Custom red marker for user's location
   const userLocationMarker = L.icon({
     iconUrl: "/me_myself_and_i.png",
     iconSize: [25, 41],
@@ -119,6 +98,13 @@ export default function PharmacyMap({ pharmacies }: PharmacyMapProps) {
     shadowSize: [41, 41],
   });
 
+  let circleCenter = { lat: 37.957569, lng: 23.657761 };
+  if (location.latitude && location.longitude) {
+    circleCenter = {
+      lat: location.latitude,
+      lng: location.longitude,
+    };
+  }
   return (
     <MapContainer
       center={circleCenter}
@@ -143,7 +129,7 @@ export default function PharmacyMap({ pharmacies }: PharmacyMapProps) {
         </Marker>
       ))}
       <Circle center={[circleCenter.lat, circleCenter.lng]} radius={1000} />
-      <MapView points={points} />
+      <POI points={points} />
 
       {location.latitude && location.longitude && (
         <Marker
@@ -152,42 +138,5 @@ export default function PharmacyMap({ pharmacies }: PharmacyMapProps) {
         />
       )}
     </MapContainer>
-  );
-}
-
-export function ThumbnailMap() {
-  const { location } = useLocationContext();
-
-  if (!location.latitude || !location.longitude) {
-    return null;
-  }
-
-  return (
-    <div className="rounded-full overflow-hidden w-40 h-40">
-      <MapContainer
-        center={[location.latitude, location.longitude]}
-        zoom={15}
-        scrollWheelZoom={false}
-        dragging={false}
-        touchZoom={false}
-        doubleClickZoom={false}
-        zoomControl={false}
-        style={{ height: "150px", width: "150px" }}
-        className="rounded-full"
-        attributionControl={false}
-      >
-        <TileLayer
-          url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
-          subdomains={["mt0", "mt1", "mt2", "mt3"]}
-          attribution=""
-        />
-
-        {location.latitude && location.longitude && (
-          <Marker position={[location.latitude, location.longitude]} />
-        )}
-
-        <UserLocationView />
-      </MapContainer>
-    </div>
   );
 }
