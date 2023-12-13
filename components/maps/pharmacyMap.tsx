@@ -110,12 +110,11 @@ export default function PharmacyMap({ pharmacies }: PharmacyMapProps) {
       center={circleCenter}
       zoom={13}
       scrollWheelZoom={true}
-      style={{ height: "800px", width: "100%" }}
+      style={{ height: "600px", width: "600px" }}
     >
       <TileLayer
         url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
         subdomains={["mt0", "mt1", "mt2", "mt3"]}
-        attribution=""
       />
       {points.map((point, index) => (
         <Marker

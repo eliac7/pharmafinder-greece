@@ -16,7 +16,7 @@ export default function ThumbnailMap() {
 
     useEffect(() => {
       if (location.latitude && location.longitude) {
-        map.setView([location.latitude, location.longitude], 16);
+        map.setView([location.latitude, location.longitude], 13);
       }
     }, [location, map]);
 
@@ -44,7 +44,10 @@ export default function ThumbnailMap() {
         />
 
         {location.latitude && location.longitude && (
-          <Marker position={[location.latitude, location.longitude]} />
+          <Marker
+            position={[location.latitude, location.longitude]}
+            interactive={false}
+          />
         )}
 
         <UserLocationView />

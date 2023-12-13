@@ -29,11 +29,14 @@ export const useLocationContext = (): LocationContextType => {
 export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [location, setLocation] = useLocalStorage<ILocation>("location", {
-    latitude: null,
-    longitude: null,
-    error: null,
-  });
+  const [location, setLocation] = useLocalStorage<ILocation>(
+    "PHARMAFINDER_LOCATION",
+    {
+      latitude: null,
+      longitude: null,
+      error: null,
+    }
+  );
 
   const getLocation = useCallback(() => {
     if (navigator.geolocation) {
@@ -44,7 +47,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
             longitude: position.coords.longitude,
             error: null,
           };
-          setLocation(newLocation); // Update location in local storage
+          setLocation(newLocation);
         },
         (error) => {
           setLocation({
@@ -64,8 +67,14 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [setLocation]);
 
   useEffect(() => {
-    getLocation();
-  }, [getLocation]);
+    if (
+      !location ||
+      location.latitude === null ||
+      location.longitude === null
+    ) {
+      getLocation();
+    }
+  }, [getLocation, location]);
 
   return (
     <LocationContext.Provider value={{ location, getLocation }}>
