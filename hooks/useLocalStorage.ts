@@ -10,6 +10,11 @@ function useLocalStorage<T>(
   initialValue: T
 ): UseLocalStorageResult<T> {
   const getItem = (): T => {
+    // Check if running in a browser environment
+    if (typeof window === "undefined") {
+      return initialValue;
+    }
+
     try {
       const storedValue = localStorage.getItem(key);
       return storedValue ? JSON.parse(storedValue) : initialValue;

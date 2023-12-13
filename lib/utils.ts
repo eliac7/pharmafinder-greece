@@ -1,3 +1,10 @@
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
 export function formatGreekPhoneNumber(phoneNumber: string): string {
   // Remove any non-digit characters
   const cleanedNumber = phoneNumber.replace(/\D/g, "");
@@ -15,8 +22,3 @@ export function formatGreekPhoneNumber(phoneNumber: string): string {
 
   return formattedNumber;
 }
-
-// Example usage:
-const phoneNumber = "2101234567";
-const formattedPhoneNumber = formatGreekPhoneNumber(phoneNumber);
-console.log(formattedPhoneNumber);

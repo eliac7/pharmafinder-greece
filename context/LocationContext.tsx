@@ -1,4 +1,5 @@
 "use client";
+import useLocalStorage from "@/hooks/useLocalStorage";
 import { ILocation } from "@/lib/interfaces";
 import {
   createContext,
@@ -28,7 +29,7 @@ export const useLocationContext = (): LocationContextType => {
 export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [location, setLocation] = useState<ILocation>({
+  const [location, setLocation] = useLocalStorage<ILocation>("location", {
     latitude: null,
     longitude: null,
     error: null,
@@ -38,11 +39,12 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setLocation({
+          const newLocation = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             error: null,
-          });
+          };
+          setLocation(newLocation); // Update location in local storage
         },
         (error) => {
           setLocation({
@@ -59,7 +61,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
         error: "Geolocation is not supported by your browser.",
       });
     }
-  }, []);
+  }, [setLocation]);
 
   useEffect(() => {
     getLocation();
