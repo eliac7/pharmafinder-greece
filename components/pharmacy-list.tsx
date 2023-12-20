@@ -5,11 +5,13 @@ import { cn, formatGreekPhoneNumber, formatKM } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
+import { GiPathDistance } from "react-icons/gi";
+
 interface IPharmacyListProps {
   pharmacies: IPharmacy[];
   count?: number;
   selectedPharmacy?: IPharmacy | null;
-  setSelectedPharmacy: (pharmacy: IPharmacy) => void;
+  setSelectedPharmacy: (pharmacy: IPharmacy | null) => void;
   cityLabel?: string;
 }
 
@@ -59,6 +61,18 @@ function PharmacyList({
 
   const countLabel = count === 1 ? `${count} φαρμακείο` : `${count} φαρμακεία`;
 
+  const toggleExpand = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    pharmacy: IPharmacy
+  ) => {
+    event.stopPropagation(); // Prevent triggering the list item's onClick
+    if (selectedPharmacy && selectedPharmacy.address === pharmacy.address) {
+      setSelectedPharmacy(null); // Deselect and collapse if the same pharmacy is clicked again
+    } else {
+      setSelectedPharmacy(pharmacy); // Select and expand the clicked pharmacy
+    }
+  };
+
   return (
     <div className="flex h-full w-full flex-col items-center justify-center">
       <span className="mb-2 rounded-full bg-primary-800 px-4 py-2 font-sans text-sm font-semibold text-white no-underline shadow-md focus:outline-none active:shadow-none">
@@ -79,38 +93,53 @@ function PharmacyList({
             ref={(el) => (itemRefs.current[pharmacy.address] = el)}
             key={pharmacy.address}
             className={cn(
-              "p-2 border-b border-gray-400 hover:bg-gray-100 cursor-pointer rounded-lg",
-              selectedPharmacy && selectedPharmacy.address === pharmacy.address
-                ? "bg-complementary-600 text-white hover:bg-gray-600"
-                : ""
+              "p-2 border-b border-gray-400 border-opacity-40 bg-gray- hover:bg-gray-100 cursor-pointer rounded-lg",
+              selectedPharmacy &&
+                selectedPharmacy.address === pharmacy.address &&
+                "bg-slate-400"
             )}
             onClick={() => {
-              pharmacy.address == selectedPharmacy?.address && selectedPharmacy
-                ? setSelectedPharmacy(null!)
-                : setSelectedPharmacy(pharmacy);
+              {
+                selectedPharmacy &&
+                selectedPharmacy.address === pharmacy.address
+                  ? setSelectedPharmacy(null)
+                  : setSelectedPharmacy(pharmacy);
+              }
             }}
           >
-            {pharmacy.name}
-            <br />
-            {pharmacy.address}
-            <br />
-            {pharmacy.phone && formatGreekPhoneNumber(pharmacy.phone)}
-            <br />
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col items-start justify-center">
+                <h1 className="text-xl font-semibold">{pharmacy.name}</h1>
+                <p className={"my-1 text-sm text-gray-400"}>
+                  {pharmacy.address.trim().split(",").slice(0, -1).join(",")}
+                </p>
+                {selectedPharmacy &&
+                  selectedPharmacy.address === pharmacy.address && (
+                    <div className="mt-2">
+                      {pharmacy.phone && (
+                        <p>{formatGreekPhoneNumber(pharmacy.phone)}</p>
+                      )}
+                      {pharmacy.distance_km && (
+                        <p>
+                          <GiPathDistance className="mr-1 inline-block h-8 w-8" />
+                          {formatKM(pharmacy.distance_km)}
+                        </p>
+                      )}
 
-            {pharmacy.distance_km && (
-              <span>
-                {formatKM(pharmacy.distance_km)}
-                <br />
-              </span>
-            )}
-
-            {pharmacy.data_hours &&
-              pharmacy.data_hours.map((hours, index) => (
-                <span key={index}>
-                  {hours.open_time} - {hours.close_time}
-                  <br />
-                </span>
-              ))}
+                      {/* ... display other details ... */}
+                    </div>
+                  )}
+                <button
+                  onClick={(event) => toggleExpand(event, pharmacy)}
+                  className="rounded-lg bg-primary-800 px-4 py-2 font-semibold text-white hover:bg-primary-700"
+                >
+                  {selectedPharmacy &&
+                  selectedPharmacy.address === pharmacy.address
+                    ? "Less"
+                    : "Περισσότερα"}
+                </button>
+              </div>
+            </div>
           </li>
         ))}
       </ul>
