@@ -22,3 +22,14 @@ export function formatGreekPhoneNumber(phoneNumber: string): string {
 
   return formattedNumber;
 }
+
+export function formatKM(distance: number): string {
+  return `${distance.toFixed(2)} km`;
+}
+
+export function calculateTimeUntilMidnight() {
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  return midnight.getTime() - now.getTime();
+}

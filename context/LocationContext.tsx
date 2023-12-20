@@ -1,13 +1,7 @@
 "use client";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { ILocation } from "@/lib/interfaces";
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-} from "react";
+import { createContext, useContext, useCallback, useEffect } from "react";
 
 interface LocationContextType {
   location: ILocation;
@@ -15,6 +9,27 @@ interface LocationContextType {
 }
 
 const LocationContext = createContext<LocationContextType | null>(null);
+
+const getLocationFromIP = async (): Promise<ILocation> => {
+  try {
+    const response = await fetch("https://ipapi.co/json/");
+    const { latitude, longitude } = await response.json();
+    return {
+      latitude,
+      longitude,
+      error: null,
+      timestamp: new Date().getTime(),
+    };
+  } catch (error) {
+    return {
+      latitude: null,
+      longitude: null,
+      error:
+        "Error getting location from IP: " +
+        ((error as Error).message || "Unknown error"),
+    };
+  }
+};
 
 export const useLocationContext = (): LocationContextType => {
   const context = useContext(LocationContext);
@@ -35,10 +50,11 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
       latitude: null,
       longitude: null,
       error: null,
+      timestamp: null,
     }
   );
 
-  const getLocation = useCallback(() => {
+  const getLocation = useCallback(async () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -46,31 +62,33 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             error: null,
+            timestamp: new Date().getTime(),
           };
           setLocation(newLocation);
         },
-        (error) => {
-          setLocation({
-            latitude: null,
-            longitude: null,
-            error: `Error getting location: ${error.message}`,
-          });
+        async (error) => {
+          // GPS failed, try getting location from IP
+          const ipLocation = await getLocationFromIP();
+          setLocation(ipLocation);
         }
       );
     } else {
-      setLocation({
-        latitude: null,
-        longitude: null,
-        error: "Geolocation is not supported by your browser.",
-      });
+      // Geolocation not supported, try getting location from IP
+      const ipLocation = await getLocationFromIP();
+      setLocation(ipLocation);
     }
   }, [setLocation]);
 
   useEffect(() => {
+    const currentTime = new Date().getTime();
+    const oneHour = 60 * 60 * 1000;
+
+    // Check if location is null or if an hour has passed since last update
     if (
       !location ||
       location.latitude === null ||
-      location.longitude === null
+      location.longitude === null ||
+      (location.timestamp && currentTime - location.timestamp > oneHour)
     ) {
       getLocation();
     }

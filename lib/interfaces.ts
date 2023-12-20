@@ -1,5 +1,4 @@
 export interface IPharmacy {
-  id: number;
   name: string;
   address: string;
   city: string;
@@ -8,7 +7,13 @@ export interface IPharmacy {
   phone: string;
   latitude: number;
   longitude: number;
-  distance_km: number;
+  distance_km: number | null;
+  data_hours?: [
+    {
+      open_time: string;
+      close_time: string;
+    }
+  ];
 }
 
 export interface IPharmacyResponse {
@@ -22,4 +27,10 @@ export interface ILocation {
   latitude: number | null;
   longitude: number | null;
   error: string | null;
+  timestamp?: number | null;
+}
+
+export interface IOption {
+  label: string;
+  value: string;
 }

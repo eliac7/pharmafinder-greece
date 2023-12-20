@@ -24,7 +24,7 @@ export default function ThumbnailMap() {
   };
 
   return (
-    <div className="rounded-full overflow-hidden w-40 h-40">
+    <div className="h-40 w-40 overflow-hidden rounded-full">
       <MapContainer
         center={[location.latitude, location.longitude]}
         zoom={15}

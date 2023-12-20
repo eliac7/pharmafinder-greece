@@ -6,3 +6,40 @@ html,
 body {
   height: 100%;
 }
+
+/* Leaflet */
+.leaflet-popup-content {
+  margin: 0 !important;
+}
+
+.marker-glow {
+  width: 50px;
+  height: 50px;
+  background-color: rgb(108, 142, 140);
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease-in-out;
+  animation: extend-wave ease-in-out 1.5s infinite;
+  box-shadow: 0 0 10px 0 rgba(108, 142, 140, 0.7);
+}
+
+@keyframes extend-wave {
+  0% {
+    box-shadow: 0 0 10px 0 rgba(108, 142, 140, 0.7);
+  }
+  25% {
+    box-shadow: 0 0 30px 20px rgba(108, 142, 140, 0);
+  }
+  50% {
+    box-shadow: 0 0 50px 40px rgba(108, 142, 140, 0);
+  }
+  75% {
+    box-shadow: 0 0 30px 20px rgba(108, 142, 140, 0);
+  }
+  100% {
+    box-shadow: 0 0 10px 0 rgba(108, 142, 140, 0.7);
+  }
+}
+
+/* End of Leaflet */

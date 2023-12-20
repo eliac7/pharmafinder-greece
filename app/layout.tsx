@@ -1,8 +1,8 @@
+import Header from "@/components/header";
+import Providers from "@/lib/providers";
 import type { Metadata } from "next";
 import { Ubuntu } from "next/font/google";
 import "./globals.css";
-import { LocationProvider } from "@/context/LocationContext";
-import Header from "@/components/header";
 
 const ubuntuFont = Ubuntu({
   display: "swap",
@@ -12,7 +12,13 @@ const ubuntuFont = Ubuntu({
 
 export const metadata: Metadata = {
   title: "PharmaFinder Greece",
-  description: "Find on duty pharmacies in Greece",
+  description: "Find on duty pharma cies in Greece",
+  icons: {
+    icon: {
+      url: "/favicon.ico",
+      type: "image/x-icon",
+    },
+  },
 };
 
 export default function RootLayout({
@@ -23,10 +29,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${ubuntuFont.className} bg-gradient-to-b from-primary-500 to-accent-light`}
+        className={`${ubuntuFont.className} bg-gradient-to-b from-primary-500 to-accent-light bg-fixed m-0"}`}
       >
         <Header />
-        <LocationProvider>{children}</LocationProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

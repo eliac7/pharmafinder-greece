@@ -1,141 +1,119 @@
 "use client";
-import {
-  MapContainer,
-  TileLayer,
-  useMap,
-  Marker,
-  Popup,
-  Circle,
-} from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
+import { useLocationContext } from "@/context/LocationContext";
+import { useMapMovement } from "@/hooks/mapMovementHook";
 import * as L from "leaflet";
 import "leaflet-defaulticon-compatibility";
-import { useEffect } from "react";
-import { IPharmacy, IPharmacyResponse } from "@/lib/interfaces";
-import { formatGreekPhoneNumber } from "@/lib/utils";
-import { useLocationContext } from "@/context/LocationContext";
+import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
+import "leaflet/dist/leaflet.css";
+import { usePathname } from "next/navigation";
+import { useEffect, useMemo, useRef } from "react";
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
+import { FullscreenControl } from "react-leaflet-fullscreen";
+import "react-leaflet-fullscreen/styles.css";
+import { IMapProps, IPharmacyMapProps, IPoint } from "./interfaces";
+import PharmacyMarker, { userLocationMarker } from "./pharmacy-marker";
 
-interface Point {
-  lat: number;
-  lng: number;
-}
-
-interface MapProps {
-  points: Point[];
-}
-
-interface PharmacyMapProps {
-  pharmacies: IPharmacy[] | null;
-}
-
-const POI = ({ points }: MapProps) => {
+const POI: React.FC<IMapProps> = ({ points, selectedPharmacy }) => {
   const map = useMap();
-  const minZoomLevel = 16;
+  useMapMovement(map, points, selectedPharmacy);
+  return null;
+};
+
+const MapBoundsAdjuster = ({
+  points,
+  is_by_city,
+}: {
+  points: IPoint[];
+  is_by_city: boolean;
+}) => {
+  const map = useMap();
 
   useEffect(() => {
-    if (points.length > 0) {
+    if (is_by_city && points.length > 0) {
       const bounds = L.latLngBounds(points.map((p) => L.latLng(p.lat, p.lng)));
-
-      if (points.length === 1) {
-        map.setView(bounds.getCenter(), minZoomLevel);
-      } else {
-        map.fitBounds(bounds);
-      }
+      map.fitBounds(bounds);
     }
-  }, [points, map]);
+  }, [points, is_by_city, map]);
 
   return null;
 };
 
-const PopUp = ({ name, address, phone }: Partial<IPharmacy>) => (
-  <div className="flex flex-col bg-slate-500 p-4 rounded-lg shadow-lg">
-    <h5 className="mb-2 text-xl font-medium leading-tight text-neutral-950 dark:text-neutral-50">
-      {name}
-    </h5>
-    <p className="mb-4 text-base text-neutral-600 dark:text-neutral-200">
-      {address}
-    </p>
-    {phone && <span>{formatGreekPhoneNumber(phone)}</span>}
-
-    <a
-      href={`https://www.google.com/maps/dir/?api=1&destination=${name},${address}`}
-      target="_blank"
-      rel="noreferrer"
-      // className=" make it like a button
-      className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white! bg-slate-600 hover:bg-slate-700"
-    >
-      Directions
-    </a>
-  </div>
-);
-
-export default function PharmacyMap({ pharmacies }: PharmacyMapProps) {
+export default function PharmacyMap({
+  pharmacies,
+  selectedPharmacy,
+  setSelectedPharmacy,
+  radius,
+}: IPharmacyMapProps) {
   const { location } = useLocationContext();
+  const pathname = usePathname().split("/")[1];
+  const is_by_city = pathname === "by_city";
 
-  // check if pharmacies is an array
-  if (!Array.isArray(pharmacies)) {
-    console.error("Pharmacies is not an array", pharmacies);
-    return null;
-  }
+  const markerRefs = useRef(new Map());
 
-  const points = pharmacies.map((pharmacy) => ({
-    lat: pharmacy.latitude,
-    lng: pharmacy.longitude,
-  }));
+  useEffect(() => {
+    if (selectedPharmacy) {
+      const markerRef = markerRefs.current.get(selectedPharmacy.address);
+      markerRef?.openPopup();
+    } else {
+      markerRefs.current.forEach((ref) => ref?.closePopup());
+    }
+  }, [selectedPharmacy, pharmacies]);
 
-  const customMarker = L.icon({
-    iconUrl: "/pharmacy.png",
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-  });
+  const points: IPoint[] = useMemo(() => {
+    if (!Array.isArray(pharmacies)) {
+      return [];
+    }
+    return pharmacies.map((p) => ({ lat: p.latitude, lng: p.longitude }));
+  }, [pharmacies]);
 
-  const userLocationMarker = L.icon({
-    iconUrl: "/me_myself_and_i.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  });
+  let circleCenter = { lat: 37.957569, lng: 23.657761 }; // Default coordinates
 
-  let circleCenter = { lat: 37.957569, lng: 23.657761 };
-  if (location.latitude && location.longitude) {
-    circleCenter = {
-      lat: location.latitude,
-      lng: location.longitude,
-    };
-  }
   return (
     <MapContainer
       center={circleCenter}
-      zoom={13}
+      zoom={is_by_city ? 14 : 16}
       scrollWheelZoom={true}
-      style={{ height: "600px", width: "600px" }}
+      attributionControl={false}
+      className="h-[800px] w-full"
     >
       <TileLayer
-        url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
-        subdomains={["mt0", "mt1", "mt2", "mt3"]}
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        subdomains={["a", "b", "c"]}
       />
-      {points.map((point, index) => (
-        <Marker
-          position={[point.lat, point.lng]}
-          key={index}
-          icon={customMarker}
-        >
-          <Popup>
-            <PopUp {...pharmacies[index]} />
-          </Popup>
-        </Marker>
-      ))}
-      <Circle center={[circleCenter.lat, circleCenter.lng]} radius={1000} />
-      <POI points={points} />
+
+      {pharmacies && (
+        <MarkerClusterGroup chunkedLoading>
+          {pharmacies.map((pharmacy, index) => (
+            <PharmacyMarker
+              key={index}
+              pharmacy={pharmacy}
+              isSelected={selectedPharmacy?.address === pharmacy.address}
+              onPharmacySelect={setSelectedPharmacy}
+              ref={(ref) => {
+                markerRefs.current.set(pharmacy.address, ref);
+              }}
+              closePopup={!selectedPharmacy}
+            />
+          ))}
+        </MarkerClusterGroup>
+      )}
+
+      <POI points={points} selectedPharmacy={selectedPharmacy} />
 
       {location.latitude && location.longitude && (
         <Marker
           position={[location.latitude, location.longitude]}
           icon={userLocationMarker}
-        />
+        >
+          <Popup>
+            <span className="flex justify-center p-5">Βρίσκεστε εδώ</span>
+          </Popup>
+        </Marker>
       )}
+      <MapBoundsAdjuster points={points} is_by_city={is_by_city} />
+
+      <FullscreenControl />
     </MapContainer>
   );
 }
