@@ -14,6 +14,8 @@ export interface IPharmacy {
       close_time: string;
     }
   ];
+  open_until_tomorrow?: boolean;
+  next_day_close_time?: string;
 }
 
 export interface IPharmacyResponse {
@@ -22,7 +24,12 @@ export interface IPharmacyResponse {
   message: string | null;
   success: boolean;
 }
-
+export interface ILocationFromMap {
+  lat: number | null;
+  lng: number | null;
+  error: string | null;
+  timestamp?: number | null;
+}
 export interface ILocation {
   latitude: number | null;
   longitude: number | null;

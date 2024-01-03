@@ -1,20 +1,43 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 
 const CurrentTime: React.FC = () => {
-  const [time, setTime] = useState<Date | null>(null);
+  const [currentTime, setCurrentTime] = useState<string>(
+    new Date().toLocaleTimeString("el-GR", {
+      timeZone: "Europe/Athens",
+      hour12: false,
+    })
+  );
 
   useEffect(() => {
-    setTime(new Date()); // Set time on client-side mount
-
-    const timer = setInterval(() => {
-      setTime(new Date());
+    const interval = setInterval(() => {
+      setCurrentTime(
+        new Date().toLocaleTimeString("el-GR", {
+          timeZone: "Europe/Athens",
+          hour12: false,
+        })
+      );
     }, 1000);
-
-    return () => clearInterval(timer);
+    return () => clearInterval(interval);
   }, []);
 
-  return <div>{time ? time.toLocaleTimeString() : "Loading time..."}</div>;
+  return (
+    <div>
+      <p className="text-2xl font-semibold text-white">{currentTime}</p>
+      <p className="text-sm text-white">
+        {new Date().toLocaleDateString("el-GR", {
+          timeZone: "Europe/Athens",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })}
+      </p>
+    </div>
+  );
 };
 
-export default CurrentTime;
+export default dynamic(() => Promise.resolve(CurrentTime), {
+  ssr: false,
+});

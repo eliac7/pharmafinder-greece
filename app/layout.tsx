@@ -1,13 +1,13 @@
 import Header from "@/components/header";
 import Providers from "@/lib/providers";
 import type { Metadata } from "next";
-import { Ubuntu } from "next/font/google";
+import { Comfortaa } from "next/font/google";
 import "./globals.css";
+import Information from "@/components/information";
 
-const ubuntuFont = Ubuntu({
-  display: "swap",
+const comfortaaFont = Comfortaa({
   subsets: ["greek", "latin"],
-  weight: ["300", "400", "500", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -27,12 +27,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <body
-        className={`${ubuntuFont.className} bg-gradient-to-b from-primary-500 to-accent-light bg-fixed m-0"}`}
+        className={`${comfortaaFont.className} bg-gradient-to-b from-primary-500  to-accent-light bg-fixed m-0 flex flex-col min-h-screen h-full justify-between relative  "}`}
       >
         <Header />
-        <Providers>{children}</Providers>
+        <Providers>
+          <main className="flex h-full flex-1 flex-grow items-center justify-center">
+            {children}
+          </main>
+        </Providers>
+        <Information />
       </body>
     </html>
   );

@@ -1,4 +1,5 @@
 "use client";
+
 import MainDataContainer from "@/components/main-data-container";
 import MainDataContainerSkeleton from "@/components/main-data-container-skeleton";
 import { usePharmacies } from "@/hooks/usePharmacies";
@@ -7,7 +8,7 @@ function Page({ searchParams }: { searchParams: { radius: string } }) {
   const radius = searchParams.radius?.toString() || "3";
 
   const { data, isLoading, error } = usePharmacies({
-    endpoint: "nearby_pharmacies_with_hours_now",
+    endpoint: "nearby_pharmacies",
     radius,
   });
 

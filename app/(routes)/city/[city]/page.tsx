@@ -6,6 +6,8 @@ import { IPharmacyResponse } from "@/lib/interfaces";
 import cities from "@/data/options.json";
 import { calculateTimeUntilMidnight } from "@/lib/utils";
 import { useLocationContext } from "@/context/LocationContext";
+import { redirect } from "next/navigation";
+import MainDataContainerSkeleton from "@/components/main-data-container-skeleton";
 
 async function getPharmacies(
   city: string,
@@ -26,22 +28,28 @@ function Page({
   searchParams,
 }: {
   params: { city: string };
-  searchParams: { time: string };
+  searchParams: { date: string };
 }) {
+  if (
+    !searchParams.date ||
+    !["now", "today", "tomorrow"].includes(searchParams.date)
+  ) {
+    redirect(`/city/${params.city}?date=now`);
+  }
   const { location } = useLocationContext();
   const isValidCity = cities.some((cityObj) => cityObj.value === params.city);
   const isLocationValid =
     location && location.latitude != null && location.longitude != null;
 
   const { isPending, isError, data, error } = useQuery({
-    queryKey: ["pharmacies", params.city, searchParams.time, location],
+    queryKey: ["pharmacies", params.city, searchParams.date, location],
     queryFn: () =>
       isLocationValid
-        ? getPharmacies(params.city, searchParams.time, {
+        ? getPharmacies(params.city, searchParams.date, {
             latitude: location.latitude!,
             longitude: location.longitude!,
           })
-        : getPharmacies(params.city, searchParams.time),
+        : getPharmacies(params.city, searchParams.date),
     staleTime: calculateTimeUntilMidnight(),
     enabled: isValidCity && isLocationValid,
   });
@@ -55,27 +63,25 @@ function Page({
   )?.label;
 
   if (isPending) {
-    return <div>Loading...</div>;
+    return <MainDataContainerSkeleton isLoading={true} />;
   }
   if (isError) {
     return <div>Error: {error?.message}</div>;
   }
 
   if (!data || !data.data) {
-    return <div>Not available</div>;
+    return <div>{data.message} </div>;
   }
 
   const count = data.count;
   const pharmacies = data.data;
 
   return (
-    <div className="mt-20 grid">
-      <MainDataContainer
-        pharmacies={pharmacies}
-        count={count}
-        cityLabel={cityLabel}
-      />
-    </div>
+    <MainDataContainer
+      pharmacies={pharmacies}
+      count={count}
+      cityLabel={cityLabel}
+    />
   );
 }
 

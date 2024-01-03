@@ -12,7 +12,6 @@ async function Page({ searchParams }: { searchParams: { radius: string } }) {
   let radius = searchParams.radius?.toString() || "1";
   const { data, count, message, success }: IPharmacyResponse =
     await getPharmacies(radius);
-  // const data = [];
 
   if (!data && message) {
     return <div className="grid">{message}</div>;
@@ -21,11 +20,7 @@ async function Page({ searchParams }: { searchParams: { radius: string } }) {
     return <div className="grid">Δεν βρέθηκαν φαρμακεία</div>;
   }
 
-  return (
-    <div className="grid">
-      <MainDataContainer pharmacies={data} count={count} radius={radius} />
-    </div>
-  );
+  return <MainDataContainer pharmacies={data} count={count} radius={radius} />;
 }
 
 export default Page;

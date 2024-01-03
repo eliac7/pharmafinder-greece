@@ -1,11 +1,12 @@
 "use client";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { ILocation } from "@/lib/interfaces";
+import { ILocation, ILocationFromMap } from "@/lib/interfaces";
 import { createContext, useContext, useCallback, useEffect } from "react";
 
 interface LocationContextType {
   location: ILocation;
   getLocation: () => void;
+  updateLocation: (newLocation: ILocationFromMap) => void;
 }
 
 const LocationContext = createContext<LocationContextType | null>(null);
@@ -79,6 +80,19 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [setLocation]);
 
+  const updateLocation = useCallback(
+    (location: ILocationFromMap) => {
+      const newLocation = {
+        latitude: location.lat,
+        longitude: location.lng,
+        error: null,
+        timestamp: new Date().getTime(),
+      };
+      setLocation(newLocation);
+    },
+    [setLocation]
+  );
+
   useEffect(() => {
     const currentTime = new Date().getTime();
     const oneHour = 60 * 60 * 1000;
@@ -95,7 +109,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [getLocation, location]);
 
   return (
-    <LocationContext.Provider value={{ location, getLocation }}>
+    <LocationContext.Provider value={{ location, getLocation, updateLocation }}>
       {children}
     </LocationContext.Provider>
   );

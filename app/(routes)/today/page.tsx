@@ -15,11 +15,7 @@ async function Page() {
     return <div>Not available</div>;
   }
 
-  return (
-    <div className="grid">
-      <MainDataContainer pharmacies={data} count={count} />
-    </div>
-  );
+  return <MainDataContainer pharmacies={data} count={count} />;
 }
 
 export default Page;

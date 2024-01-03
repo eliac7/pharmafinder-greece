@@ -17,6 +17,7 @@ export const customMarker = L.icon({
   iconAnchor: [16, 32],
   popupAnchor: [10, -25],
   shadowSize: [41, 41],
+  className: "bg-slate-200 rounded-full",
 });
 
 export const glowingCustomMarker = L.icon({

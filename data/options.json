@@ -1362,5 +1362,141 @@
   {
     "label": "Χίος",
     "value": "xios"
+  },
+  {
+    "label": "Άγναντα",
+    "value": "agnanta"
+  },
+  {
+    "label": "Άγιος Στέφανος",
+    "value": "agios-stefanos"
+  },
+  {
+    "label": "Δάφνη",
+    "value": "dafni"
+  },
+  {
+    "label": "Δραπετσώνα",
+    "value": "drapetsona"
+  },
+  {
+    "label": "Ελληνικό",
+    "value": "elliniko"
+  },
+  {
+    "label": "Καισαριανή",
+    "value": "kaisariani"
+  },
+  {
+    "label": "Κάτω Σούλι",
+    "value": "kato-soyli"
+  },
+  {
+    "label": "Λαγονήσι",
+    "value": "lagonisi"
+  },
+  {
+    "label": "Σκάλα Ωρωπού",
+    "value": "skala-oropoy"
+  },
+  {
+    "label": "Φυλή",
+    "value": "fyli"
+  },
+  {
+    "label": "Ακράτα",
+    "value": "akrata"
+  },
+  {
+    "label": "Οβρυά",
+    "value": "obrya"
+  },
+  {
+    "label": "Διαβατά",
+    "value": "diabata"
+  },
+  {
+    "label": "Ελευθέριο",
+    "value": "eleytherio"
+  },
+  {
+    "label": "Ζαγκλιβέρι",
+    "value": "zagkliberi"
+  },
+  {
+    "label": "Κάτω Σχολάρι",
+    "value": "kato-sxolari"
+  },
+  {
+    "label": "Νέα Μηχανιώνα",
+    "value": "nea-mixaniona"
+  },
+  {
+    "label": "Λιμενάρια",
+    "value": "limenaria"
+  },
+  {
+    "label": "Καστελλάνοι Μέσης",
+    "value": "kastellanoi-mesis"
+  },
+  {
+    "label": "Σκριπερό",
+    "value": "skripero"
+  },
+  {
+    "label": "Άγιος Νικόλαος Μεσσηνίας",
+    "value": "agios-nikolaos-messinias"
+  },
+  {
+    "label": "Νέα Ζίχνη",
+    "value": "nea-zixni"
+  },
+  {
+    "label": "Μουρνιές",
+    "value": "moyrnies"
+  },
+  {
+    "label": "Γρεβενά",
+    "value": "grebena"
+  },
+  {
+    "label": "Δράμα",
+    "value": "drama"
+  },
+  {
+    "label": "Ηράκλειο",
+    "value": "irakleio"
+  },
+  {
+    "label": "Ιωάννινα",
+    "value": "ioannina"
+  },
+  {
+    "label": "Λευκάδα",
+    "value": "leykada"
+  },
+  {
+    "label": "Ξάνθη",
+    "value": "ksanthi"
+  },
+  {
+    "label": "Πρέβεζα",
+    "value": "prebeza"
+  },
+  {
+    "label": "Ρέθυμνο",
+    "value": "rethymno"
+  },
+  {
+    "label": "Κομοτηνή",
+    "value": "komotini"
+  },
+  {
+    "label": "Λαμία",
+    "value": "lamia"
+  },
+  {
+    "label": "Φλώρινα",
+    "value": "florina"
   }
 ]
