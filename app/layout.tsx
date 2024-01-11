@@ -3,7 +3,7 @@ import Providers from "@/lib/providers";
 import type { Metadata } from "next";
 import { Comfortaa } from "next/font/google";
 import "./globals.css";
-import Information from "@/components/information";
+import Footer from "@/components/footer";
 
 const comfortaaFont = Comfortaa({
   subsets: ["greek", "latin"],
@@ -27,17 +27,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full transition-colors duration-500">
       <body
-        className={`${comfortaaFont.className} bg-gradient-to-b from-primary-500  to-accent-light bg-fixed m-0 flex flex-col min-h-screen h-full justify-between relative  "}`}
+        className={`${comfortaaFont.className} bg-gradient-to-b from-primary-500 to-accent-light dark:from-gray-700 dark:to-gray-900 bg-fixed m-0 flex flex-col min-h-screen h-full justify-between relative md:max-w-[95vw] w-full md:mx-auto`}
       >
-        <Header />
         <Providers>
-          <main className="flex h-full flex-1 flex-grow items-center justify-center">
+          <Header />
+          <main className="flex h-screen flex-1 flex-grow items-center justify-center overflow-auto">
             {children}
           </main>
+          <Footer />
         </Providers>
-        <Information />
       </body>
     </html>
   );

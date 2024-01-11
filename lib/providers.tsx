@@ -1,10 +1,13 @@
 "use client";
 
-import { LocationProvider } from "@/context/LocationContext";
+import { useState } from "react";
+import { Toaster } from "react-hot-toast";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
-import { useState } from "react";
+
+import { LocationProvider } from "@/context/LocationContext";
+import { ThemeProvider } from "next-themes";
 
 function Providers({ children }: React.PropsWithChildren) {
   const [client] = useState(new QueryClient());
@@ -12,9 +15,14 @@ function Providers({ children }: React.PropsWithChildren) {
   return (
     <QueryClientProvider client={client}>
       <ReactQueryStreamedHydration>
-        <LocationProvider>{children}</LocationProvider>
+        <ThemeProvider key="PHARMAFINDER_DARK_MODE" defaultTheme="light">
+          <LocationProvider>
+            <Toaster position="bottom-center" />
+            {children}
+          </LocationProvider>
+        </ThemeProvider>
       </ReactQueryStreamedHydration>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   );
 }

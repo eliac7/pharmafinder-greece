@@ -1,21 +1,29 @@
 "use client";
 
 import { IPharmacy } from "@/lib/interfaces";
-import { cn, formatGreekPhoneNumber, formatKM } from "@/lib/utils";
-import { useEffect, useRef } from "react";
+import {
+  capitalizeFirstLetterOfEachWord,
+  cn,
+  formatGreekPhoneNumber,
+  formatKM,
+} from "@/lib/utils";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useQueryState, parseAsString } from "nuqs";
 
 import { GiPathDistance } from "react-icons/gi";
-import { FaPhone } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaPhone } from "react-icons/fa";
 import { MdOutlineSchedule } from "react-icons/md";
 
 interface IPharmacyListProps {
   pharmacies: IPharmacy[];
   count?: number;
   selectedPharmacy?: IPharmacy | null;
-  radius?: string;
+  radius: string;
   setSelectedPharmacy: (pharmacy: IPharmacy | null) => void;
   cityLabel?: string;
+  isListExpandedMobile: boolean;
+  setIsListExpandedMobile: (isListExpandedMobile: boolean) => void;
 }
 
 function PharmacyList({
@@ -24,6 +32,8 @@ function PharmacyList({
   selectedPharmacy,
   cityLabel,
   setSelectedPharmacy,
+  isListExpandedMobile,
+  setIsListExpandedMobile,
   radius,
 }: IPharmacyListProps) {
   type Refs = Record<string, HTMLLIElement | null>;
@@ -79,33 +89,42 @@ function PharmacyList({
   };
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center">
-      <span className="mb-2 rounded-full bg-primary-800 px-4 py-2 font-sans text-sm font-semibold text-white no-underline shadow-md focus:outline-none active:shadow-none">
-        {isCityPage ? (
-          <span>
-            {countLabel} στην περιοχή {cityLabel} σε ακτίνα {radius?.toString()}{" "}
-            χλμ.
-          </span>
-        ) : (
-          <span>
-            {countLabel} στην περιοχή σας σε ακτίνα {radius?.toString()} χλμ.
-          </span>
+    <div className="relative flex h-full w-full flex-col items-center justify-center">
+      <span
+        className={cn(
+          "absolute -top-10 flex md:hidden cursor-pointer items-center justify-center rounded-full bg-gray-200 p-2 hover:bg-gray-500 transition-all duration-300",
+          isListExpandedMobile && "bg-slate-500 text-white"
         )}
+        onClick={() => {
+          setIsListExpandedMobile(!isListExpandedMobile);
+        }}
+      >
+        {isListExpandedMobile ? (
+          <FaChevronDown color="white" size={20} />
+        ) : (
+          <FaChevronUp color="black" size={20} />
+        )}
+      </span>
+
+      <span className="mb-2 rounded-full bg-primary-800 px-4 py-2 text-center font-sans text-sm font-semibold text-white no-underline shadow-md focus:outline-none">
+        {isCityPage
+          ? `${countLabel} στην περιοχή ${cityLabel ? cityLabel : "σας"}`
+          : `${countLabel} στην περιοχή σας σε ακτίνα ${radius} χλμ.`}
       </span>
 
       <ul
         ref={listContainerRef}
-        className="relative m-0 h-full max-h-[calc(100vh-4rem)] w-full list-none overflow-y-scroll p-2 text-lg font-medium leading-8 text-gray-700"
+        className="scrollbar-thumb-rounded-full scrollbar-thumb-opacity-50 dark:scrollbar-thumb-opacity-50 scrollbar-track-rounded-full relative m-0 h-full w-full list-none overflow-y-scroll p-2 text-lg font-medium leading-8 text-gray-700 scrollbar-thin scrollbar-track-complementary-400 scrollbar-thumb-slate-500 dark:text-gray-300 dark:scrollbar-track-complementary-700 dark:scrollbar-thumb-slate-400"
       >
         {pharmacies.map((pharmacy) => (
           <li
             ref={(el) => (itemRefs.current[pharmacy.name] = el)}
-            key={pharmacy.name}
+            key={`${pharmacy.name}-${pharmacy.address}`}
             className={cn(
-              "p-2 mb-1  border-2 border-rose-400 border-opacity-40 hover:bg-slate-400 hover:bg-opacity-20 cursor-pointer rounded-lg",
+              "py-2 mb-1  border-2 border-gray-400 border-opacity-40 dark:hover:bg-slate-900 hover:bg-primary-100 cursor-pointer rounded-lg",
               selectedPharmacy &&
                 selectedPharmacy.name === pharmacy.name &&
-                "bg-slate-400 hover:bg-opacity-100"
+                "bg-primary-400 dark:bg-gray-700 hover:bg-opacity-100"
             )}
             onClick={() => {
               {
@@ -116,11 +135,13 @@ function PharmacyList({
             }}
           >
             <div className="flex items-center justify-between">
-              <div className="flex w-full flex-col items-start justify-center">
-                <h1 className="text-xl font-semibold">{pharmacy.name}</h1>
+              <div className="flex w-full flex-col items-start justify-center gap-1 px-1">
+                <h1 className="break-all text-sm font-semibold semilg:text-lg">
+                  {capitalizeFirstLetterOfEachWord(pharmacy.name)}
+                </h1>
                 <p
                   className={cn(
-                    "text-gray-500",
+                    "text-gray-500 text-sm",
                     selectedPharmacy &&
                       selectedPharmacy.name === pharmacy.name &&
                       "text-white"
@@ -174,10 +195,10 @@ function PharmacyList({
                   )}
                 <button
                   onClick={(event) => toggleExpand(event, pharmacy)}
-                  className="rounded-lg bg-primary-800 px-4 py-2 font-semibold text-white hover:bg-primary-700"
+                  className="rounded-lg text-sm font-semibold text-gray-600 underline hover:text-gray-900 focus:outline-none dark:text-white dark:hover:text-gray-300"
                 >
                   {selectedPharmacy && selectedPharmacy.name === pharmacy.name
-                    ? "Less"
+                    ? "Λιγότερα"
                     : "Περισσότερα"}
                 </button>
               </div>

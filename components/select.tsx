@@ -44,7 +44,7 @@ export default function Select() {
         <div className="relative mt-1">
           <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
             <Combobox.Input
-              className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+              className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 placeholder-gray-500 focus:ring-0 dark:text-gray-300"
               displayValue={(option: Option) => option.label}
               onChange={(event) => setQuery(event.target.value)}
               onClick={() => setSelected({ label: "", value: "" })}
@@ -74,7 +74,7 @@ export default function Select() {
                       `relative cursor-default select-none py-2 pl-10 pr-4 ${
                         active
                           ? "bg-complementary-400 text-white"
-                          : "text-gray-900"
+                          : "dark:bg-gray-800 dark:text-gray-300 text-gray-900"
                       }`
                     }
                     value={option}

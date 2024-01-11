@@ -24,12 +24,24 @@ export function formatGreekPhoneNumber(phoneNumber: string): string {
 }
 
 export function formatKM(distance: number): string {
-  return `${distance.toFixed(2)} km`;
+  if (distance < 1) {
+    return `${Math.round(distance * 1000)} m`;
+  } else {
+    return `${distance.toFixed(2)} km`;
+  }
 }
-
 export function calculateTimeUntilMidnight() {
   const now = new Date();
   const midnight = new Date(now);
   midnight.setHours(24, 0, 0, 0);
   return midnight.getTime() - now.getTime();
+}
+
+export function capitalizeFirstLetterOfEachWord(phrase: string): string {
+  return phrase
+    .split(" ")
+    .map(
+      (word) => word.charAt(0).toUpperCase() + word.substring(1).toLowerCase()
+    )
+    .join(" ");
 }

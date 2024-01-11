@@ -6,6 +6,23 @@
 
 .leaflet-popup-content {
   margin: 0 !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+.leaflet-popup-content-wrapper {
+  padding: 0 !important;
+}
+.leaflet-popup-content p {
+  margin: 0 !important;
+}
+.leaflet-container a {
+  text-decoration: none !important;
 }
 
 .marker-glow {
@@ -36,6 +53,11 @@
   100% {
     box-shadow: 0 0 10px 0 rgba(108, 142, 140, 0.7);
   }
+}
+
+.leaflet-container img.leaflet-tile {
+  /* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+  mix-blend-mode: plus-lighter;
 }
 
 /* End of Leaflet */

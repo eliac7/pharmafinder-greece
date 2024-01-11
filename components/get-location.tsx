@@ -18,7 +18,12 @@ const LocationDisplay = () => {
 
   return (
     <div>
-      <button onClick={getLocation}>Get Location</button>
+      <button
+        onClick={getLocation}
+        className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 dark:bg-red-500"
+      >
+        Get Location
+      </button>
       <p>Latitude: {latitude}</p>
       <p>Longitude: {longitude}</p>
       <p>Error: {error}</p>

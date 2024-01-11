@@ -11,27 +11,6 @@ interface LocationContextType {
 
 const LocationContext = createContext<LocationContextType | null>(null);
 
-const getLocationFromIP = async (): Promise<ILocation> => {
-  try {
-    const response = await fetch("https://ipapi.co/json/");
-    const { latitude, longitude } = await response.json();
-    return {
-      latitude,
-      longitude,
-      error: null,
-      timestamp: new Date().getTime(),
-    };
-  } catch (error) {
-    return {
-      latitude: null,
-      longitude: null,
-      error:
-        "Error getting location from IP: " +
-        ((error as Error).message || "Unknown error"),
-    };
-  }
-};
-
 export const useLocationContext = (): LocationContextType => {
   const context = useContext(LocationContext);
   if (!context) {
@@ -80,6 +59,27 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [setLocation]);
 
+  const getLocationFromIP = async (): Promise<ILocation> => {
+    try {
+      const response = await fetch("https://ipapi.co/json/");
+      const { latitude, longitude } = await response.json();
+      return {
+        latitude,
+        longitude,
+        error: null,
+        timestamp: new Date().getTime(),
+      };
+    } catch (error) {
+      return {
+        latitude: null,
+        longitude: null,
+        error:
+          "Error getting location from IP: " +
+          ((error as Error).message || "Unknown error"),
+      };
+    }
+  };
+
   const updateLocation = useCallback(
     (location: ILocationFromMap) => {
       const newLocation = {
@@ -94,15 +94,11 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   useEffect(() => {
-    const currentTime = new Date().getTime();
-    const oneHour = 60 * 60 * 1000;
-
-    // Check if location is null or if an hour has passed since last update
+    // Check if location is null or has null latitude or longitude, and if so, get location
     if (
       !location ||
       location.latitude === null ||
-      location.longitude === null ||
-      (location.timestamp && currentTime - location.timestamp > oneHour)
+      location.longitude === null
     ) {
       getLocation();
     }

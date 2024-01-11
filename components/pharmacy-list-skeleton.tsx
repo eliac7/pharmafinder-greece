@@ -7,7 +7,7 @@ function PharmacyListSkeleton() {
       <ul role="status">
         {Array.from({ length: 5 }, (_, i) => (
           <React.Fragment key={i}>
-            <li className="mb-1 animate-pulse rounded-lg border-2 border-opacity-40 p-2">
+            <li className="my-2 animate-pulse rounded-lg border-2 border-opacity-40 p-2">
               <div className="mb-2.5 h-2 max-w-[360px] rounded-full bg-gray-200 dark:bg-primary-700"></div>
               <div className="mb-2.5 h-2 max-w-[300px] rounded-full bg-gray-200 dark:bg-primary-700"></div>
               <div className="h-2 max-w-[150px] rounded-full bg-gray-200 dark:bg-primary-700"></div>

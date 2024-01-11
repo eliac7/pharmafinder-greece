@@ -32,8 +32,11 @@ export const usePharmacies = ({
     updatedParams.longitude = location.longitude.toString();
   }
 
+  const queryKey = ["pharmacies", endpoint, updatedParams, params.radius];
+
   return useQuery<IPharmacyResponse, Error>({
-    queryKey: ["pharmacies", endpoint, updatedParams],
+    queryKey: queryKey,
     queryFn: () => fetchPharmacies(endpoint, updatedParams),
+    refetchOnWindowFocus: false,
   });
 };

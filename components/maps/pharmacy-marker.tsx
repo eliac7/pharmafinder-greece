@@ -17,7 +17,7 @@ export const customMarker = L.icon({
   iconAnchor: [16, 32],
   popupAnchor: [10, -25],
   shadowSize: [41, 41],
-  className: "bg-slate-200 rounded-full",
+  className: "rounded-full",
 });
 
 export const glowingCustomMarker = L.icon({
@@ -30,10 +30,10 @@ export const glowingCustomMarker = L.icon({
 });
 
 export const userLocationMarker = L.icon({
-  iconUrl: "/me_myself_and_i.png",
-  iconSize: [25, 41],
+  iconUrl: "/location.png",
+  iconSize: [45, 45],
   iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
+  popupAnchor: [3, -40],
   shadowSize: [41, 41],
 });
 
@@ -50,7 +50,7 @@ const PharmacyMarker = forwardRef<L.Marker, PharmacyMarkerProps>(
           click: () => onPharmacySelect(pharmacy),
         }}
       >
-        <Popup>
+        <Popup maxWidth={390} className="overflow-hidden rounded-lg">
           <PharmacyPopUpProps {...pharmacy} />
         </Popup>
       </Marker>

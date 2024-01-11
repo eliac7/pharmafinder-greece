@@ -17,8 +17,9 @@ export interface IPharmacyMapProps {
   pharmacies: IPharmacy[] | null;
   setSelectedPharmacy: React.Dispatch<React.SetStateAction<IPharmacy | null>>;
   selectedPharmacy: IPharmacy | null;
-  radius?: string;
   toggleListVisibility: () => void;
+  radius: string;
+  setRadiusQuery: (radius: string) => void;
 }
 
 export interface ISelectedPharmacy {

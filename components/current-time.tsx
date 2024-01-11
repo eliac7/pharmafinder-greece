@@ -24,7 +24,7 @@ const CurrentTime: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div className="pr-2">
       <p className="text-2xl font-semibold text-white">{currentTime}</p>
       <p className="text-sm text-white">
         {new Date().toLocaleDateString("el-GR", {

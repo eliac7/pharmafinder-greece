@@ -1,56 +1,75 @@
 "use client";
-import { useLocationContext } from "@/context/LocationContext";
-import { useEffect } from "react";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import { useState } from "react";
+import { MapContainer, TileLayer } from "react-leaflet";
+import { useRouter } from "next/navigation";
 
-export default function ThumbnailMap() {
-  const { location } = useLocationContext();
+import "leaflet/dist/leaflet.css";
+import { useTheme } from "next-themes";
 
-  if (!location.latitude || !location.longitude) {
+export default function ThumbnailMap({
+  latitude,
+  longitude,
+  url,
+  hoverText,
+}: {
+  latitude: number;
+  longitude: number;
+  url: string;
+  hoverText: string;
+}) {
+  const [isHovering, setIsHovering] = useState(false);
+  const router = useRouter();
+  const { theme } = useTheme();
+
+  if (!latitude || !longitude) {
     return null;
   }
 
-  const UserLocationView = () => {
-    const map = useMap();
-    const { location } = useLocationContext();
+  const handleClick = () => {
+    if (url) {
+      router.push(url);
+    }
+  };
 
-    useEffect(() => {
-      if (location.latitude && location.longitude) {
-        map.setView([location.latitude, location.longitude], 13);
-      }
-    }, [location, map]);
-
-    return null;
+  const getTileLayerUrl = () => {
+    switch (theme) {
+      case "light":
+        return "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}";
+      case "dark":
+        return "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png";
+      default:
+        return "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}";
+    }
   };
 
   return (
-    <div className="h-40 w-40 overflow-hidden rounded-full">
+    <div
+      className="relative h-40 w-40 overflow-hidden rounded-full"
+      onClick={handleClick}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      {isHovering && hoverText && (
+        <div className="absolute inset-0 z-[9999] flex cursor-pointer select-none items-center justify-center rounded-full bg-black bg-opacity-50 p-2 text-white backdrop-blur-sm backdrop-filter first-letter:text-sm">
+          {hoverText}
+        </div>
+      )}
+
       <MapContainer
-        center={[location.latitude, location.longitude]}
-        zoom={15}
+        center={[latitude, longitude]}
+        zoom={13}
         scrollWheelZoom={false}
         dragging={false}
         touchZoom={false}
         doubleClickZoom={false}
         zoomControl={false}
-        style={{ height: "150px", width: "150px" }}
-        className="rounded-full"
+        className={`h-full w-full rounded-full ${url ? "cursor-pointer" : ""}`}
         attributionControl={false}
       >
         <TileLayer
-          url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+          url={getTileLayerUrl()}
           subdomains={["mt0", "mt1", "mt2", "mt3"]}
-          attribution=""
         />
-
-        {location.latitude && location.longitude && (
-          <Marker
-            position={[location.latitude, location.longitude]}
-            interactive={false}
-          />
-        )}
-
-        <UserLocationView />
       </MapContainer>
     </div>
   );
