@@ -1,4 +1,5 @@
-import Information from "./information";
+import dynamic from "next/dynamic";
+const Information = dynamic(() => import("./information"), { ssr: false });
 
 export default function Footer() {
   return (

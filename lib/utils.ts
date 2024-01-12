@@ -45,3 +45,16 @@ export function capitalizeFirstLetterOfEachWord(phrase: string): string {
     )
     .join(" ");
 }
+
+export function formatDateInGreek(date: string): string {
+  const dateObj = new Date(date);
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: "long",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  };
+  const formattedDate = dateObj.toLocaleDateString("el-GR", options);
+
+  return formattedDate;
+}

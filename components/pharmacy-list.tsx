@@ -7,19 +7,18 @@ import {
   formatGreekPhoneNumber,
   formatKM,
 } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { useQueryState, parseAsString } from "nuqs";
+import { useEffect, useRef } from "react";
 
-import { GiPathDistance } from "react-icons/gi";
 import { FaChevronDown, FaChevronUp, FaPhone } from "react-icons/fa";
+import { GiPathDistance } from "react-icons/gi";
 import { MdOutlineSchedule } from "react-icons/md";
 
 interface IPharmacyListProps {
   pharmacies: IPharmacy[];
-  count?: number;
+  count?: number | undefined;
   selectedPharmacy?: IPharmacy | null;
-  radius: string;
+  radius?: string;
   setSelectedPharmacy: (pharmacy: IPharmacy | null) => void;
   cityLabel?: string;
   isListExpandedMobile: boolean;
@@ -74,7 +73,12 @@ function PharmacyList({
     }
   }, [selectedPharmacy, pharmacies]);
 
-  const countLabel = count === 1 ? `${count} φαρμακείο` : `${count} φαρμακεία`;
+  const countLabel =
+    count === undefined || count === null
+      ? "0 φαρμακεία"
+      : count === 1
+      ? `${count} φαρμακείο`
+      : `${count} φαρμακεία`;
 
   const toggleExpand = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -161,7 +165,12 @@ function PharmacyList({
                       {pharmacy.phone && (
                         <div className="flex items-center justify-start">
                           <FaPhone className="mr-2" />
-                          <p>{formatGreekPhoneNumber(pharmacy.phone)}</p>
+                          <a
+                            href={`tel:${pharmacy.phone}`}
+                            className="font-semibold text-gray-500 underline hover:text-gray-900 dark:text-white dark:hover:text-gray-300"
+                          >
+                            {formatGreekPhoneNumber(pharmacy.phone)}
+                          </a>
                         </div>
                       )}
                       {pharmacy.data_hours && (

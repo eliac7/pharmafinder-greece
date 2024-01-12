@@ -15,9 +15,6 @@ function Page() {
     radius: radiusQuery,
   });
 
-  if (error)
-    return toast.error("Παρουσιάστηκε σφάλμα κατά την ανάκτηση των δεδομένων");
-
   return (
     <MainDataContainer
       pharmacies={data?.data ?? []}
@@ -25,6 +22,7 @@ function Page() {
       radius={radiusQuery}
       setRadiusQuery={setRadiusQuery}
       isLoading={isLoading}
+      isError={error}
     />
   );
 }

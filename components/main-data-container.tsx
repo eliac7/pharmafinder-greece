@@ -5,14 +5,16 @@ import PharmacyList from "./pharmacy-list";
 import { IPharmacy } from "@/lib/interfaces";
 import { DynamicPharmacyMap } from "@/components/maps/";
 import clsx from "clsx";
+import toast from "react-hot-toast";
 
 interface IMainDataContainerProps {
   pharmacies: IPharmacy[];
   count?: number;
   cityLabel?: string;
   isLoading?: boolean;
-  radius: string;
-  setRadiusQuery: (radius: string) => void;
+  radius?: string;
+  setRadiusQuery?: (radius: string) => void;
+  isError: any;
 }
 
 function MainDataContainer({
@@ -22,6 +24,7 @@ function MainDataContainer({
   cityLabel,
   isLoading,
   setRadiusQuery,
+  isError,
 }: IMainDataContainerProps) {
   const [selectedPharmacy, setSelectedPharmacy] = useState<IPharmacy | null>(
     null
@@ -30,10 +33,26 @@ function MainDataContainer({
   const [isListExpandedMobile, setIsListExpandedMobile] =
     useState<boolean>(false);
 
+  // if there is an error, show a toast and reset the selected pharmacy
+  useEffect(() => {
+    if (isError) {
+      if (isError instanceof Error) {
+        toast.error(isError.message);
+      } else {
+        toast.error("Παρουσιάστηκε ένα σφάλμα. Παρακαλώ δοκιμάστε αργότερα.");
+      }
+      setSelectedPharmacy(null);
+    }
+  }, [isError]);
+
   // Auto-select the pharmacy if there's only one
   useEffect(() => {
-    if (pharmacies.length === 1) {
+    if (pharmacies.length === 0) {
+      setSelectedPharmacy(null);
+    } else if (pharmacies.length === 1) {
       setSelectedPharmacy(pharmacies[0]);
+    } else if (pharmacies.length > 1) {
+      setSelectedPharmacy(null);
     }
   }, [pharmacies]);
 

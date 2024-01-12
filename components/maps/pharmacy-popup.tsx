@@ -1,6 +1,6 @@
 "use client";
 import { IPharmacy } from "@/lib/interfaces";
-import { formatGreekPhoneNumber } from "@/lib/utils";
+import { formatDateInGreek, formatGreekPhoneNumber } from "@/lib/utils";
 import Image from "next/image";
 import { FaStreetView } from "react-icons/fa";
 import { MdDirections, MdPhone } from "react-icons/md";
@@ -13,6 +13,8 @@ function PharmacyPopUpProps({
   phone,
   latitude,
   longitude,
+  data_hours,
+  date,
 }: Partial<IPharmacy>) {
   const [layerName] = useQueryState("layer", parseAsString.withDefault("road"));
   const isDarkMode = layerName === "dark";
@@ -32,7 +34,7 @@ function PharmacyPopUpProps({
       <div
         className={clsx(
           "flex w-full flex-col items-start justify-start bg-white p-3",
-          isDarkMode && "bg-slate-300"
+          isDarkMode && "bg-slate-600"
         )}
       >
         <h1 className="text-xsm font-bold text-primary-500">{name}</h1>
@@ -54,6 +56,20 @@ function PharmacyPopUpProps({
             "border-slate-400": isDarkMode,
           })}
         />
+        {/* on duty hours*/}
+        {data_hours && (
+          <div className="flex flex-col gap-2">
+            {data_hours.map((hour, index) => (
+              <div key={index} className="flex items-center gap-2">
+                Εφημερεύει: {hour.open_time} - {hour.close_time}
+                {date && (
+                  <span className="italic">/ {formatDateInGreek(date)}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="flex h-full w-full items-center justify-around gap-4">
           {/* street view */}
 

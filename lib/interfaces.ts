@@ -14,6 +14,7 @@ export interface IPharmacy {
       close_time: string;
     }
   ];
+  date: string;
   open_until_tomorrow?: boolean;
   next_day_close_time?: string;
 }

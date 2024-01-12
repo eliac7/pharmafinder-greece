@@ -1,86 +1,76 @@
 "use client";
 
 import MainDataContainer from "@/components/main-data-container";
-import { useQuery } from "@tanstack/react-query";
-import { IPharmacyResponse } from "@/lib/interfaces";
+import { usePharmacies } from "@/hooks/usePharmacies";
+
 import cities from "@/data/options.json";
-import { calculateTimeUntilMidnight } from "@/lib/utils";
-import { useLocationContext } from "@/context/LocationContext";
-import { redirect } from "next/navigation";
-import MainDataContainerSkeleton from "@/components/main-data-container-skeleton";
-
-async function getPharmacies(
-  city: string,
-  time: string,
-  location?: { latitude: number; longitude: number }
-): Promise<IPharmacyResponse> {
-  let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/city/${city}?time=${time}`;
-  if (location && location.latitude && location.longitude) {
-    url = `${url}&latitude=${location.latitude}&longitude=${location.longitude}`;
-  }
-  const pharmacies = await fetch(url);
-  const res = (await pharmacies.json()) as IPharmacyResponse;
-  return res;
-}
-
+import { parseAsString, useQueryState } from "nuqs";
+import toast from "react-hot-toast";
+import { redirect, useRouter } from "next/navigation";
+import { useEffect, useMemo } from "react";
 function Page({
   params,
   searchParams,
 }: {
-  params: { city: string };
+  params: {
+    city: string;
+  };
   searchParams: { date: string };
 }) {
-  if (
-    !searchParams.date ||
-    !["now", "today", "tomorrow"].includes(searchParams.date)
-  ) {
-    redirect(`/city/${params.city}?date=now`);
-  }
-  const { location } = useLocationContext();
-  const isValidCity = cities.some((cityObj) => cityObj.value === params.city);
-  const isLocationValid =
-    location && location.latitude != null && location.longitude != null;
+  const router = useRouter();
+  const allowedDates = useMemo(() => ["now", "today", "tomorrow"], []);
 
-  const { isPending, isError, data, error } = useQuery({
-    queryKey: ["pharmacies", params.city, searchParams.date, location],
-    queryFn: () =>
-      isLocationValid
-        ? getPharmacies(params.city, searchParams.date, {
-            latitude: location.latitude!,
-            longitude: location.longitude!,
-          })
-        : getPharmacies(params.city, searchParams.date),
-    staleTime: calculateTimeUntilMidnight(),
-    enabled: isValidCity && isLocationValid,
+  const [dateQuery, setDateQuery] = useQueryState(
+    "date",
+    parseAsString.withDefault("now")
+  );
+  const isValidCity = useMemo(
+    () => cities.some((cityObj) => cityObj.value === params.city),
+    [params.city]
+  );
+
+  const cityLabel = useMemo(() => {
+    return cities.find((cityObj) => cityObj.value === params.city)?.label;
+  }, [params.city]);
+
+  useEffect(() => {
+    if (!isValidCity) {
+      toast.error("Η πόλη που ζητήσατε δεν βρέθηκε");
+      router.push("/city/");
+    }
+  }, [isValidCity, router]);
+
+  // Validate and set default for dateQuery
+  useEffect(() => {
+    const dateFromUrl = searchParams.date || "now";
+    if (!allowedDates.includes(dateFromUrl)) {
+      setDateQuery("now"); // Reset to default;
+      toast.error(
+        "Η τιμή που δώσατε για την παράμετρο 'date' δεν είναι έγκυρη. Παρακαλώ δώστε 'now', 'today' ή 'tomorrow'. Γίνεται ανακατεύθυνση στην τιμή 'now'.",
+        {
+          duration: 10000,
+        }
+      );
+      router.push(`?date=now`, undefined);
+    } else {
+      setDateQuery(dateFromUrl);
+    }
+  }, [router, setDateQuery, searchParams.date, allowedDates]);
+
+  const { data, isLoading, error } = usePharmacies({
+    endpoint: "city",
+    city_slug: params.city,
+    city_name: cityLabel ?? "",
+    time: dateQuery,
   });
-
-  if (!isValidCity) {
-    return <div>City not found</div>;
-  }
-
-  const cityLabel = cities.find(
-    (cityObj) => cityObj.value === params.city
-  )?.label;
-
-  if (isPending) {
-    return <MainDataContainerSkeleton isLoading={true} />;
-  }
-  if (isError) {
-    return <div>Error: {error?.message}</div>;
-  }
-
-  if (!data || !data.data) {
-    return <div>{data.message} </div>;
-  }
-
-  const count = data.count;
-  const pharmacies = data.data;
 
   return (
     <MainDataContainer
-      pharmacies={pharmacies}
-      count={count}
+      pharmacies={data?.data ?? []}
+      count={data?.count}
+      isLoading={isLoading}
       cityLabel={cityLabel}
+      isError={error}
     />
   );
 }

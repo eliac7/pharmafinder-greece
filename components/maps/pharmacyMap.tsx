@@ -135,6 +135,56 @@ const RadiusRangeSlider = ({
   );
 };
 
+const TimeframeButtons = () => {
+  enum Timeframe {
+    NOW = "now",
+    TODAY = "today",
+    TOMORROW = "tomorrow",
+  }
+
+  const timeframeLabels: Record<Timeframe, string> = {
+    [Timeframe.NOW]: "Τώρα",
+    [Timeframe.TODAY]: "Σήμερα",
+    [Timeframe.TOMORROW]: "Αύριο",
+  };
+
+  const [date, setDate] = useQueryState(
+    "date",
+    parseAsString.withDefault(Timeframe.NOW)
+  );
+
+  const timeframes: Timeframe[] = [
+    Timeframe.NOW,
+    Timeframe.TODAY,
+    Timeframe.TOMORROW,
+  ];
+
+  const handleClick = useCallback(
+    (timeframe: Timeframe) => {
+      setDate(timeframe);
+    },
+    [setDate]
+  );
+
+  return (
+    <div className="sm:top-0 absolute left-[50%] z-[500] flex translate-x-[-50%] transform gap-2 rounded-b-xl rounded-t-none bg-slate-600 bg-opacity-50 p-1 backdrop-blur-sm backdrop-filter dark:bg-primary-600 dark:bg-opacity-50 md:bottom-0 md:rounded-b-none md:rounded-t-xl md:px-5 md:py-2">
+      {timeframes.map((timeframe) => (
+        <button
+          key={timeframe}
+          className={clsx(
+            "block text-sm font-semibold text-white p-2 rounded-lg transition-all duration-300",
+            date !== timeframe && "hover:bg-white hover:bg-opacity-10",
+            date === timeframe && "bg-primary-900"
+          )}
+          onClick={() => handleClick(timeframe)}
+        >
+          {timeframeLabels[timeframe]}
+        </button>
+      ))}
+    </div>
+  );
+};
+
 export default function PharmacyMap({
   pharmacies,
   selectedPharmacy,
@@ -317,12 +367,15 @@ export default function PharmacyMap({
 
       <FullscreenControl />
       <ToggleListButton toggleListVisibility={toggleListVisibility} />
-      <RadiusRangeSlider
-        radius={radius}
-        circleRef={circleRef}
-        setRadiusQuery={setRadiusQuery}
-        is_by_city={is_by_city}
-      />
+      {radius && setRadiusQuery && (
+        <RadiusRangeSlider
+          radius={radius}
+          circleRef={circleRef}
+          setRadiusQuery={setRadiusQuery}
+          is_by_city={is_by_city}
+        />
+      )}
+      {is_by_city && <TimeframeButtons />}
     </MapContainer>
   );
 }

@@ -17,7 +17,7 @@ function Providers({ children }: React.PropsWithChildren) {
       <ReactQueryStreamedHydration>
         <ThemeProvider key="PHARMAFINDER_DARK_MODE" defaultTheme="light">
           <LocationProvider>
-            <Toaster position="bottom-center" />
+            <Toaster position="bottom-right" />
             {children}
           </LocationProvider>
         </ThemeProvider>

@@ -8,10 +8,14 @@ const fetchPharmacies = async (
   params: { [key: string]: string }
 ): Promise<IPharmacyResponse> => {
   const query = new URLSearchParams(params).toString();
-  const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/${endpoint}?${query}`;
+  const url = `/api/pharmacies/${endpoint}?${query}`;
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error("Network response was not ok");
+    const errorResponse = await response.json();
+    if (errorResponse.message) {
+      throw new Error(errorResponse.message);
+    }
+    throw new Error("Error fetching data");
   }
   return response.json();
 };
@@ -32,11 +36,31 @@ export const usePharmacies = ({
     updatedParams.longitude = location.longitude.toString();
   }
 
-  const queryKey = ["pharmacies", endpoint, updatedParams, params.radius];
+  const queryKey = [
+    "pharmacies",
+    endpoint,
+    updatedParams,
+    params.radius,
+    params.time,
+  ];
+
+  // Data are valid until midnight
+  const now = new Date();
+  const midnight = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() + 1,
+    0,
+    0,
+    0
+  );
+  const staleTime = midnight.getTime() - now.getTime();
 
   return useQuery<IPharmacyResponse, Error>({
     queryKey: queryKey,
     queryFn: () => fetchPharmacies(endpoint, updatedParams),
     refetchOnWindowFocus: false,
+    staleTime: staleTime,
+    retry: false,
   });
 };
