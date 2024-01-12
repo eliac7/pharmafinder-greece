@@ -15,8 +15,6 @@ function Page() {
     radius: radiusQuery,
   });
 
-  if (error) return <div>Error: {error.message}</div>;
-
   return (
     <MainDataContainer
       pharmacies={data?.data ?? []}
@@ -24,6 +22,7 @@ function Page() {
       isLoading={isLoading}
       radius={radiusQuery}
       setRadiusQuery={setRadiusQuery}
+      isError={error}
     />
   );
 }

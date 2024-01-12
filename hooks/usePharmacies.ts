@@ -44,23 +44,12 @@ export const usePharmacies = ({
     params.time,
   ];
 
-  // Data are valid until midnight
-  const now = new Date();
-  const midnight = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate() + 1,
-    0,
-    0,
-    0
-  );
-  const staleTime = midnight.getTime() - now.getTime();
-
   return useQuery<IPharmacyResponse, Error>({
     queryKey: queryKey,
     queryFn: () => fetchPharmacies(endpoint, updatedParams),
     refetchOnWindowFocus: false,
-    staleTime: staleTime,
+    // for 10 minutes
+    staleTime: 1000 * 60 * 10,
     retry: false,
   });
 };
