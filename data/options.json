@@ -112,6 +112,10 @@
     "value": "astros"
   },
   {
+    "label": "Λεβίδι",
+    "value": "lebidi"
+  },
+  {
     "label": "Λεωνίδι",
     "value": "leonidi"
   },
@@ -140,6 +144,10 @@
     "value": "agia-barbara"
   },
   {
+    "label": "Αγία Μαρίνα Κορωπίου",
+    "value": "agia-marina-koropioy"
+  },
+  {
     "label": "Αγία Παρασκευή",
     "value": "agia-paraskeyi"
   },
@@ -148,12 +156,20 @@
     "value": "agioi-anargyroi"
   },
   {
+    "label": "Άγιοι Απόστολοι",
+    "value": "agioi-apostoloi"
+  },
+  {
     "label": "Άγιος Δημήτριος",
     "value": "agios-dimitrios"
   },
   {
     "label": "Άγιος Ιωάννης Ρέντης",
     "value": "agios-ioannis-rentis"
+  },
+  {
+    "label": "Άγιος Στέφανος",
+    "value": "agios-stefanos"
   },
   {
     "label": "Αθήνα",
@@ -168,8 +184,8 @@
     "value": "alimos"
   },
   {
-    "label": "Αμπελάκια",
-    "value": "ampelakia"
+    "label": "Ανάβυσσος",
+    "value": "anabyssos"
   },
   {
     "label": "Άνοιξη",
@@ -236,8 +252,24 @@
     "value": "glyfada"
   },
   {
+    "label": "Δάφνη",
+    "value": "dafni"
+  },
+  {
+    "label": "Δροσιά",
+    "value": "drosia"
+  },
+  {
     "label": "Ελευσίνα",
     "value": "eleysina"
+  },
+  {
+    "label": "Ελληνικό",
+    "value": "elliniko"
+  },
+  {
+    "label": "Ζεφύρι",
+    "value": "zefyri"
   },
   {
     "label": "Ζωγράφος",
@@ -248,8 +280,16 @@
     "value": "ilioypoli"
   },
   {
+    "label": "Θρακομακεδόνες",
+    "value": "thrakomakedones"
+  },
+  {
     "label": "Ίλιον",
     "value": "ilion"
+  },
+  {
+    "label": "Καισαριανή",
+    "value": "kaisariani"
   },
   {
     "label": "Καλλιθέα",
@@ -264,12 +304,20 @@
     "value": "kamatero"
   },
   {
+    "label": "Κάντζα",
+    "value": "kantza"
+  },
+  {
     "label": "Κερατέα",
     "value": "keratea"
   },
   {
     "label": "Κερατσίνι",
     "value": "keratsini"
+  },
+  {
+    "label": "Κηφισιά",
+    "value": "kifisia"
   },
   {
     "label": "Κορυδαλλός",
@@ -280,8 +328,24 @@
     "value": "koropi"
   },
   {
+    "label": "Κρυονέρι",
+    "value": "kryoneri"
+  },
+  {
+    "label": "Λαγονήσι",
+    "value": "lagonisi"
+  },
+  {
     "label": "Λαύριο",
     "value": "layrio"
+  },
+  {
+    "label": "Λυκόβρυση",
+    "value": "lykobrysi"
+  },
+  {
+    "label": "Μαγούλα",
+    "value": "magoyla"
   },
   {
     "label": "Μάνδρα",
@@ -348,8 +412,16 @@
     "value": "nea-filadelfeia"
   },
   {
+    "label": "Νέα Χαλκηδόνα",
+    "value": "nea-xalkidona"
+  },
+  {
     "label": "Νέο Ηράκλειο",
     "value": "neo-irakleio"
+  },
+  {
+    "label": "Νέο Ψυχικό",
+    "value": "neo-psyxiko"
   },
   {
     "label": "Νίκαια",
@@ -358,6 +430,10 @@
   {
     "label": "Παιανία",
     "value": "paiania"
+  },
+  {
+    "label": "Παλαιά Φώκαια",
+    "value": "palaia-fokaia"
   },
   {
     "label": "Παλαιό Φάληρο",
@@ -374,6 +450,10 @@
   {
     "label": "Πειραιάς",
     "value": "peiraias"
+  },
+  {
+    "label": "Πεντέλη",
+    "value": "penteli"
   },
   {
     "label": "Πέραμα",
@@ -404,12 +484,28 @@
     "value": "rafina"
   },
   {
+    "label": "Ροδόπολη Αττικής",
+    "value": "rodopoli-attikis"
+  },
+  {
     "label": "Σαλαμίνα",
     "value": "salamina"
   },
   {
+    "label": "Σαρωνίδα",
+    "value": "saronida"
+  },
+  {
+    "label": "Σκάλα Ωρωπού",
+    "value": "skala-oropoy"
+  },
+  {
     "label": "Σπάτα",
     "value": "spata"
+  },
+  {
+    "label": "Σταμάτα",
+    "value": "stamata"
   },
   {
     "label": "Ταύρος",
@@ -418,6 +514,10 @@
   {
     "label": "Υμηττός",
     "value": "ymittos"
+  },
+  {
+    "label": "Φιλοθέη",
+    "value": "filothei"
   },
   {
     "label": "Χαϊδάρι",
@@ -432,12 +532,24 @@
     "value": "xolargos"
   },
   {
+    "label": "Ψυχικό",
+    "value": "psyxiko"
+  },
+  {
     "label": "Άβυθος",
     "value": "abythos"
   },
   {
     "label": "Αίγιο",
     "value": "aigio"
+  },
+  {
+    "label": "Ακράτα",
+    "value": "akrata"
+  },
+  {
+    "label": "Βραχνέικα",
+    "value": "braxneika"
   },
   {
     "label": "Διακοπτό",
@@ -452,16 +564,12 @@
     "value": "kamares"
   },
   {
-    "label": "Καμίνια",
-    "value": "kaminia"
-  },
-  {
     "label": "Κάτω Αχαία",
     "value": "kato-axaia"
   },
   {
-    "label": "Κράθιο",
-    "value": "krathio"
+    "label": "Οβρυά",
+    "value": "obrya"
   },
   {
     "label": "Παραλία Πατρών",
@@ -496,12 +604,72 @@
     "value": "orxomenos"
   },
   {
+    "label": "Γρεβενά",
+    "value": "grebena"
+  },
+  {
+    "label": "Δράμα",
+    "value": "drama"
+  },
+  {
+    "label": "Αρχάγγελος",
+    "value": "arxaggelos"
+  },
+  {
+    "label": "Αφάντου",
+    "value": "afantoy"
+  },
+  {
+    "label": "Γεννάδι",
+    "value": "gennadi"
+  },
+  {
+    "label": "Έμπωνας",
+    "value": "emponas"
+  },
+  {
+    "label": "Ιαλυσός",
+    "value": "ialysos"
+  },
+  {
     "label": "Κάλυμνος",
     "value": "kalymnos"
   },
   {
+    "label": "Κάρπαθος",
+    "value": "karpathos"
+  },
+  {
+    "label": "Κέφαλος Κω",
+    "value": "kefalos-ko"
+  },
+  {
+    "label": "Κοσκινού",
+    "value": "koskinoy"
+  },
+  {
+    "label": "Κως",
+    "value": "kos"
+  },
+  {
     "label": "Λέρος",
     "value": "leros"
+  },
+  {
+    "label": "Παραδείσι",
+    "value": "paradeisi"
+  },
+  {
+    "label": "Παστίδα",
+    "value": "pastida"
+  },
+  {
+    "label": "Ρόδος",
+    "value": "rodos"
+  },
+  {
+    "label": "Σύμη",
+    "value": "symi"
   },
   {
     "label": "Αλεξανδρούπολη",
@@ -510,6 +678,18 @@
   {
     "label": "Διδυμότειχο",
     "value": "didymoteixo"
+  },
+  {
+    "label": "Δίκαια",
+    "value": "dikaia"
+  },
+  {
+    "label": "Νέα Βύσσα",
+    "value": "nea-byssa"
+  },
+  {
+    "label": "Νέα Χιλή",
+    "value": "nea-xili"
   },
   {
     "label": "Ορεστιάδα",
@@ -540,16 +720,16 @@
     "value": "drosia-eyboias"
   },
   {
+    "label": "Έξω Παναγίτσα",
+    "value": "ekso-panagitsa"
+  },
+  {
     "label": "Ιστιαία",
     "value": "istiaia"
   },
   {
     "label": "Κάρυστος",
     "value": "karystos"
-  },
-  {
-    "label": "Λίμνη",
-    "value": "limni"
   },
   {
     "label": "Νέα Αρτάκη",
@@ -570,6 +750,18 @@
   {
     "label": "Ζάκυνθος",
     "value": "zakynthos"
+  },
+  {
+    "label": "Καταστάρι",
+    "value": "katastari"
+  },
+  {
+    "label": "Μαχαιράδο",
+    "value": "maxairado"
+  },
+  {
+    "label": "Τσιλιβί",
+    "value": "tsilibi"
   },
   {
     "label": "Αμαλιάδα",
@@ -648,6 +840,14 @@
     "value": "platy"
   },
   {
+    "label": "Γάζι",
+    "value": "gazi"
+  },
+  {
+    "label": "Ηράκλειο",
+    "value": "irakleio"
+  },
+  {
     "label": "Ηγουμενίτσα",
     "value": "igoymenitsa"
   },
@@ -664,6 +864,10 @@
     "value": "agios-athanasios"
   },
   {
+    "label": "Άγιος Παύλος",
+    "value": "agios-paylos"
+  },
+  {
     "label": "Αμπελόκηποι",
     "value": "ampelokipoi"
   },
@@ -672,12 +876,16 @@
     "value": "asbestoxori"
   },
   {
-    "label": "Ασπροβάλτα",
-    "value": "asprobalta"
-  },
-  {
     "label": "Γέφυρα Θεσσαλονίκης",
     "value": "gefyra-thessalonikis"
+  },
+  {
+    "label": "Διαβατά",
+    "value": "diabata"
+  },
+  {
+    "label": "Ελευθέριο",
+    "value": "eleytherio"
   },
   {
     "label": "Επανομή",
@@ -692,6 +900,10 @@
     "value": "eyosmos"
   },
   {
+    "label": "Ζαγκλιβέρι",
+    "value": "zagkliberi"
+  },
+  {
     "label": "Θέρμη",
     "value": "thermi"
   },
@@ -700,20 +912,12 @@
     "value": "thessaloniki"
   },
   {
-    "label": "Ιωνία Θεσσαλονίκης",
-    "value": "ionia-thessalonikis"
-  },
-  {
     "label": "Καλαμαριά",
     "value": "kalamaria"
   },
   {
     "label": "Καλοχώρι",
     "value": "kaloxori"
-  },
-  {
-    "label": "Καρδιά",
-    "value": "kardia"
   },
   {
     "label": "Κουφάλια",
@@ -788,6 +992,10 @@
     "value": "triandria"
   },
   {
+    "label": "Τρίλοφος",
+    "value": "trilofos"
+  },
+  {
     "label": "Φίλυρο",
     "value": "filyro"
   },
@@ -808,6 +1016,14 @@
     "value": "oraiokastro"
   },
   {
+    "label": "Ανατολή",
+    "value": "anatoli"
+  },
+  {
+    "label": "Ιωάννινα",
+    "value": "ioannina"
+  },
+  {
     "label": "Ελευθερούπολη",
     "value": "eleytheroypoli"
   },
@@ -818,6 +1034,10 @@
   {
     "label": "Καβάλα",
     "value": "kabala"
+  },
+  {
+    "label": "Λιμενάρια",
+    "value": "limenaria"
   },
   {
     "label": "Χρυσούπολη",
@@ -860,12 +1080,20 @@
     "value": "karoysades"
   },
   {
+    "label": "Καστελλάνοι Μέσης",
+    "value": "kastellanoi-mesis"
+  },
+  {
     "label": "Κέρκυρα",
     "value": "kerkyra"
   },
   {
     "label": "Λευκίμμη",
     "value": "leykimmi"
+  },
+  {
+    "label": "Σκριπερό",
+    "value": "skripero"
   },
   {
     "label": "Αργοστόλι",
@@ -1008,6 +1236,10 @@
     "value": "molaoi"
   },
   {
+    "label": "Μονεμβασιά",
+    "value": "monembasia"
+  },
+  {
     "label": "Νεάπολη Λακωνίας",
     "value": "neapoli-lakonias"
   },
@@ -1052,12 +1284,12 @@
     "value": "nikaia-larisas"
   },
   {
-    "label": "Τύρναβος",
-    "value": "tyrnabos"
+    "label": "Πυργετός",
+    "value": "pyrgetos"
   },
   {
-    "label": "Φαλάνη",
-    "value": "falani"
+    "label": "Τύρναβος",
+    "value": "tyrnabos"
   },
   {
     "label": "Φάρσαλα",
@@ -1108,16 +1340,16 @@
     "value": "mytilini"
   },
   {
-    "label": "Παππάδος",
-    "value": "pappados"
-  },
-  {
     "label": "Πλωμάρι",
     "value": "plomari"
   },
   {
     "label": "Πολίχνιτος",
     "value": "polixnitos"
+  },
+  {
+    "label": "Λευκάδα",
+    "value": "leykada"
   },
   {
     "label": "Αγριά",
@@ -1196,6 +1428,10 @@
     "value": "xora-trifylias"
   },
   {
+    "label": "Ξάνθη",
+    "value": "ksanthi"
+  },
+  {
     "label": "Αριδαία",
     "value": "aridaia"
   },
@@ -1244,6 +1480,18 @@
     "value": "platamonas"
   },
   {
+    "label": "Πρέβεζα",
+    "value": "prebeza"
+  },
+  {
+    "label": "Ρέθυμνο",
+    "value": "rethymno"
+  },
+  {
+    "label": "Κομοτηνή",
+    "value": "komotini"
+  },
+  {
     "label": "Βαθύ Σάμου",
     "value": "bathy-samoy"
   },
@@ -1256,8 +1504,16 @@
     "value": "irakleia"
   },
   {
+    "label": "Νέος Σκοπός",
+    "value": "neos-skopos"
+  },
+  {
     "label": "Νιγρίτα",
     "value": "nigrita"
+  },
+  {
+    "label": "Ροδόπολη",
+    "value": "rodopoli"
   },
   {
     "label": "Σέρρες",
@@ -1266,6 +1522,10 @@
   {
     "label": "Σιδηρόκαστρο",
     "value": "sidirokastro"
+  },
+  {
+    "label": "Χρυσό",
+    "value": "xryso"
   },
   {
     "label": "Καλαμπάκα",
@@ -1282,6 +1542,14 @@
   {
     "label": "Φαρκαδώνα",
     "value": "farkadona"
+  },
+  {
+    "label": "Λαμία",
+    "value": "lamia"
+  },
+  {
+    "label": "Φλώρινα",
+    "value": "florina"
   },
   {
     "label": "Άμφισσα",
@@ -1306,6 +1574,10 @@
   {
     "label": "Κασσάνδρεια",
     "value": "kassandreia"
+  },
+  {
+    "label": "Νέα Ηράκλεια",
+    "value": "nea-irakleia"
   },
   {
     "label": "Νέα Καλλικράτεια",
@@ -1340,8 +1612,8 @@
     "value": "alikianos"
   },
   {
-    "label": "Κουνουπιδιανά",
-    "value": "koynoypidiana"
+    "label": "Πλατανιάς",
+    "value": "platanias"
   },
   {
     "label": "Σούδα",
@@ -1360,143 +1632,11 @@
     "value": "thymiana"
   },
   {
+    "label": "Καρδάμυλα",
+    "value": "kardamyla"
+  },
+  {
     "label": "Χίος",
     "value": "xios"
-  },
-  {
-    "label": "Άγναντα",
-    "value": "agnanta"
-  },
-  {
-    "label": "Άγιος Στέφανος",
-    "value": "agios-stefanos"
-  },
-  {
-    "label": "Δάφνη",
-    "value": "dafni"
-  },
-  {
-    "label": "Δραπετσώνα",
-    "value": "drapetsona"
-  },
-  {
-    "label": "Ελληνικό",
-    "value": "elliniko"
-  },
-  {
-    "label": "Καισαριανή",
-    "value": "kaisariani"
-  },
-  {
-    "label": "Κάτω Σούλι",
-    "value": "kato-soyli"
-  },
-  {
-    "label": "Λαγονήσι",
-    "value": "lagonisi"
-  },
-  {
-    "label": "Σκάλα Ωρωπού",
-    "value": "skala-oropoy"
-  },
-  {
-    "label": "Φυλή",
-    "value": "fyli"
-  },
-  {
-    "label": "Ακράτα",
-    "value": "akrata"
-  },
-  {
-    "label": "Οβρυά",
-    "value": "obrya"
-  },
-  {
-    "label": "Διαβατά",
-    "value": "diabata"
-  },
-  {
-    "label": "Ελευθέριο",
-    "value": "eleytherio"
-  },
-  {
-    "label": "Ζαγκλιβέρι",
-    "value": "zagkliberi"
-  },
-  {
-    "label": "Κάτω Σχολάρι",
-    "value": "kato-sxolari"
-  },
-  {
-    "label": "Νέα Μηχανιώνα",
-    "value": "nea-mixaniona"
-  },
-  {
-    "label": "Λιμενάρια",
-    "value": "limenaria"
-  },
-  {
-    "label": "Καστελλάνοι Μέσης",
-    "value": "kastellanoi-mesis"
-  },
-  {
-    "label": "Σκριπερό",
-    "value": "skripero"
-  },
-  {
-    "label": "Άγιος Νικόλαος Μεσσηνίας",
-    "value": "agios-nikolaos-messinias"
-  },
-  {
-    "label": "Νέα Ζίχνη",
-    "value": "nea-zixni"
-  },
-  {
-    "label": "Μουρνιές",
-    "value": "moyrnies"
-  },
-  {
-    "label": "Γρεβενά",
-    "value": "grebena"
-  },
-  {
-    "label": "Δράμα",
-    "value": "drama"
-  },
-  {
-    "label": "Ηράκλειο",
-    "value": "irakleio"
-  },
-  {
-    "label": "Ιωάννινα",
-    "value": "ioannina"
-  },
-  {
-    "label": "Λευκάδα",
-    "value": "leykada"
-  },
-  {
-    "label": "Ξάνθη",
-    "value": "ksanthi"
-  },
-  {
-    "label": "Πρέβεζα",
-    "value": "prebeza"
-  },
-  {
-    "label": "Ρέθυμνο",
-    "value": "rethymno"
-  },
-  {
-    "label": "Κομοτηνή",
-    "value": "komotini"
-  },
-  {
-    "label": "Λαμία",
-    "value": "lamia"
-  },
-  {
-    "label": "Φλώρινα",
-    "value": "florina"
   }
 ]
