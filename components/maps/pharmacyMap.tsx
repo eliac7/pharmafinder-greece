@@ -15,6 +15,7 @@ import {
   TileLayer,
   useMap,
   Circle,
+  useMapEvents,
 } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { FullscreenControl } from "react-leaflet-fullscreen";
@@ -26,6 +27,7 @@ import { useQueryState, parseAsString } from "nuqs";
 import { CiViewList } from "react-icons/ci";
 import { useTheme } from "next-themes";
 import clsx from "clsx";
+import { FaLocationArrow } from "react-icons/fa";
 
 const POI: React.FC<IMapProps> = ({ points, selectedPharmacy }) => {
   const map = useMap();
@@ -185,6 +187,33 @@ const TimeframeButtons = () => {
   );
 };
 
+const ReloacateButton = ({ lat, lng }: { lat: number; lng: number }) => {
+  const map = useMap();
+  const [currentZoom, setCurrentZoom] = useState(map.getZoom());
+
+  // We use the useMapEvents hook to access the map instance so we can keep track of the current zoom level
+  useMapEvents({
+    zoomend: () => {
+      setCurrentZoom(map.getZoom());
+    },
+  });
+
+  const handleClick = () => {
+    map.setView([lat, lng], currentZoom);
+  };
+
+  return (
+    <button
+      className="absolute left-3 top-28 z-[400] rounded-full bg-white p-2 shadow-md transition-all duration-300 hover:bg-gray-100"
+      onClick={handleClick}
+      aria-label="Επανατοποθέτηση χάρτη στην τοποθεσία σας"
+      title="Επανατοποθέτηση χάρτη στην τοποθεσία σας"
+    >
+      <FaLocationArrow size={16} color="black" />
+    </button>
+  );
+};
+
 export default function PharmacyMap({
   pharmacies,
   selectedPharmacy,
@@ -235,6 +264,9 @@ export default function PharmacyMap({
   }, [pharmacies]);
 
   let circleCenter = { lat: 37.97562008259405, lng: 23.734130859375 };
+  if (location.latitude && location.longitude) {
+    circleCenter = { lat: location.latitude, lng: location.longitude };
+  }
 
   const setMap = (map: L.Map) => {
     mapRef.current = map;
@@ -330,25 +362,29 @@ export default function PharmacyMap({
       <POI points={points} selectedPharmacy={selectedPharmacy} />
 
       {location.latitude && location.longitude && (
-        <Marker
-          draggable={true}
-          icon={userLocationMarker}
-          eventHandlers={{
-            dragend: (e) => {
-              const marker = e.target;
-              const position = marker.getLatLng();
-              updateLocation(position);
-            },
-          }}
-          position={[location.latitude, location.longitude]}
-        >
-          <Popup>
-            <span className="flex justify-center p-5">
-              Βρίσκεστε εδώ, αν θέλετε να αλλάξετε την τοποθεσία σας σύρετε το
-              εικονίδιο.
-            </span>
-          </Popup>
-        </Marker>
+        <>
+          <Marker
+            draggable={true}
+            icon={userLocationMarker}
+            eventHandlers={{
+              dragend: (e) => {
+                const marker = e.target;
+                const position = marker.getLatLng();
+                updateLocation(position);
+              },
+            }}
+            position={[location.latitude, location.longitude]}
+          >
+            <Popup>
+              <span className="flex justify-center rounded-lg bg-white p-3 text-center">
+                Βρίσκεστε εδώ, αν θέλετε να αλλάξετε την τοποθεσία σας σύρετε το
+                εικονίδιο.
+              </span>
+            </Popup>
+          </Marker>
+
+          <ReloacateButton lat={location.latitude} lng={location.longitude} />
+        </>
       )}
 
       {radius && location.latitude && location.longitude && (

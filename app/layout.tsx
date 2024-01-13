@@ -34,7 +34,7 @@ export default function RootLayout({
       >
         <Providers>
           <Header />
-          <main className="flex-1">{children}</main>
+          {children}
           <Footer />
         </Providers>
       </body>

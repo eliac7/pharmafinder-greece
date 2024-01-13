@@ -1,5 +1,5 @@
-import PharmacyListSkeleton from "./pharmacy-list-skeleton";
-import PharmacyMapSkeleton from "./pharmacy-map-skeleton";
+import PharmacyListSkeleton from "./maps/pharmacy-list-skeleton";
+import PharmacyMapSkeleton from "./maps/pharmacy-map-skeleton";
 
 function MainDataContainerSkeleton({ isLoading }: { isLoading?: boolean }) {
   return (

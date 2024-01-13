@@ -17,7 +17,7 @@ export default function ThumbnailMap({
   url: string;
   hoverText: string;
 }) {
-  const [isHovering, setIsHovering] = useState(false);
+  const [isHovering, setIsHovering] = useState<boolean>(false);
   const router = useRouter();
   const { theme } = useTheme();
 
@@ -50,7 +50,7 @@ export default function ThumbnailMap({
       onMouseLeave={() => setIsHovering(false)}
     >
       {isHovering && hoverText && (
-        <div className="absolute inset-0 z-[9999] flex cursor-pointer select-none items-center justify-center rounded-full bg-black bg-opacity-50 p-2 text-white backdrop-blur-sm backdrop-filter first-letter:text-sm">
+        <div className="absolute inset-0 z-[500] flex cursor-pointer select-none items-center justify-center rounded-full bg-black bg-opacity-50 p-2 text-white backdrop-blur-sm backdrop-filter first-letter:text-sm">
           {hoverText}
         </div>
       )}

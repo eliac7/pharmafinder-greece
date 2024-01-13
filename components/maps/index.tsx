@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import PharmacyThumbnailSkeleton from "./pharmacy-thumbnail-skeleton";
 
 const DynamicPharmacyMap = dynamic(
   () => import("@/components/maps/pharmacyMap"),
@@ -10,6 +11,7 @@ const DynamicPharmacyMap = dynamic(
 const DynamicThumbnailMap = dynamic(
   () => import("@/components/maps/thumbnailMap"),
   {
+    loading: () => <PharmacyThumbnailSkeleton />,
     ssr: false,
   }
 );
