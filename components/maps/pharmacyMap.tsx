@@ -97,9 +97,7 @@ const RadiusRangeSlider = ({
     setValue(e.target.value);
   };
 
-  const handleSliderInteractionEnd = (
-    e: React.MouseEvent<HTMLInputElement>
-  ) => {
+  const handleInteractionEnd = (e: React.SyntheticEvent) => {
     if (map) {
       map.dragging.enable();
     }
@@ -114,7 +112,8 @@ const RadiusRangeSlider = ({
         is_by_city && "hidden"
       )}
       onMouseDown={() => map?.dragging.disable()}
-      onMouseUp={handleSliderInteractionEnd}
+      onMouseUp={handleInteractionEnd}
+      onTouchEnd={handleInteractionEnd}
     >
       <label
         htmlFor="steps-range"
@@ -131,7 +130,7 @@ const RadiusRangeSlider = ({
         step="1"
         className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-300 outline-none dark:bg-gray-700"
         onChange={handleSliderChange}
-        onMouseUp={handleSliderInteractionEnd}
+        onMouseUp={handleInteractionEnd}
       />
     </div>
   );
