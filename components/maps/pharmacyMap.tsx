@@ -110,7 +110,7 @@ const RadiusRangeSlider = ({
   return (
     <div
       className={clsx(
-        "sm:top-0 absolute left-[50%] z-[500] block translate-x-[-50%] transform rounded-b-xl rounded-t-none bg-slate-600 bg-opacity-50 px-5 py-2 backdrop-blur-sm backdrop-filter dark:bg-primary-600 dark:bg-opacity-50 md:bottom-0 md:rounded-b-none md:rounded-t-xl",
+        "sm:top-0 absolute left-[50%] z-[500] block translate-x-[-50%] transform rounded-b-xl rounded-t-none bg-slate-600 bg-opacity-50 px-5 py-2 backdrop-blur-sm backdrop-filter dark:bg-primary-600 dark:bg-opacity-50 md:bottom-4 md:rounded-xl",
         is_by_city && "hidden"
       )}
       onMouseDown={() => map?.dragging.disable()}
@@ -169,7 +169,7 @@ const TimeframeButtons = () => {
   );
 
   return (
-    <div className="sm:top-0 absolute left-[50%] z-[500] flex translate-x-[-50%] transform gap-2 rounded-b-xl rounded-t-none bg-slate-600 bg-opacity-50 p-1 backdrop-blur-sm backdrop-filter dark:bg-primary-600 dark:bg-opacity-50 md:bottom-0 md:rounded-b-none md:rounded-t-xl md:px-5 md:py-2">
+    <div className="sm:top-0 absolute left-[50%] z-[500] flex translate-x-[-50%] transform gap-2 rounded-b-xl rounded-t-none bg-slate-600 bg-opacity-50 p-1 backdrop-blur-sm backdrop-filter dark:bg-primary-600 dark:bg-opacity-50 md:bottom-4 md:rounded-xl md:px-5 md:py-2">
       {timeframes.map((timeframe) => (
         <button
           key={timeframe}
