@@ -1,10 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
+import { limiter } from "../../config/limiter";
 
 export async function GET(req: NextRequest) {
   const url = req.nextUrl;
   const endpoint = url.pathname.split("/").pop();
   const params = Object.fromEntries(url.searchParams);
   const secret = process.env.API_SECRET || "";
+  const remaining = await limiter.removeTokens(1);
+  const origin = req.headers.get("origin");
+
+  if (remaining < 1) {
+    const body = JSON.stringify({
+      message: "Υπερβολικός αριθμός αιτημάτων, παρακαλώ δοκίμαστε σε λίγο",
+    });
+
+    return new NextResponse(body, {
+      status: 429,
+      statusText: "Too Many Requests",
+      headers: {
+        "Retry-After": "60",
+        "Access-Control-Allow-Origin": origin || "*", // CORS
+        "Content-Type": "plain/text",
+      },
+    });
+  }
 
   const query = new URLSearchParams(params).toString();
   const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/${endpoint}?${query}`;
