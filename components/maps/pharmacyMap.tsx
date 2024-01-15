@@ -1,5 +1,4 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocationContext } from "@/context/LocationContext";
 import { useMapMovement } from "@/hooks/mapMovementHook";
 import * as L from "leaflet";
@@ -7,14 +6,16 @@ import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet/dist/leaflet.css";
 import { usePathname } from "next/navigation";
+import { parseAsString, useQueryState } from "nuqs";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  Circle,
   LayersControl,
   MapContainer,
   Marker,
   Popup,
   TileLayer,
   useMap,
-  Circle,
   useMapEvents,
 } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
@@ -22,11 +23,12 @@ import { FullscreenControl } from "react-leaflet-fullscreen";
 import "react-leaflet-fullscreen/styles.css";
 import { IMapProps, IPharmacyMapProps, IPoint } from "./interfaces";
 import PharmacyMarker, { userLocationMarker } from "./pharmacy-marker";
-import { useQueryState, parseAsString } from "nuqs";
 
-import { CiViewList } from "react-icons/ci";
-import { useTheme } from "next-themes";
+import { ILocation } from "@/lib/interfaces";
+import { cn } from "@/lib/utils";
 import clsx from "clsx";
+import { useTheme } from "next-themes";
+import { CiViewList } from "react-icons/ci";
 import { FaLocationArrow } from "react-icons/fa";
 
 const POI: React.FC<IMapProps> = ({ points, selectedPharmacy }) => {
@@ -186,8 +188,15 @@ const TimeframeButtons = () => {
   );
 };
 
-const ReloacateButton = ({ lat, lng }: { lat: number; lng: number }) => {
+const ReloacateButton = ({
+  getLocation,
+  location,
+}: {
+  getLocation: () => void;
+  location: Partial<ILocation>;
+}) => {
   const map = useMap();
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [currentZoom, setCurrentZoom] = useState(map.getZoom());
 
   // We use the useMapEvents hook to access the map instance so we can keep track of the current zoom level
@@ -197,19 +206,53 @@ const ReloacateButton = ({ lat, lng }: { lat: number; lng: number }) => {
     },
   });
 
-  const handleClick = () => {
-    map.setView([lat, lng], currentZoom);
+  const relocateUser = () => {
+    if (!location.latitude || !location.longitude) {
+      return;
+    }
+    map.setView([location.latitude, location.longitude], currentZoom);
+    setIsPopupOpen(false);
   };
 
   return (
-    <button
-      className="absolute left-3 top-28 z-[400] rounded-full bg-white p-2 shadow-md transition-all duration-300 hover:bg-gray-100"
-      onClick={handleClick}
-      aria-label="Επανατοποθέτηση χάρτη στην τοποθεσία σας"
-      title="Επανατοποθέτηση χάρτη στην τοποθεσία σας"
-    >
-      <FaLocationArrow size={16} color="black" />
-    </button>
+    <div className="absolute left-3 top-28 z-[400] transition-all duration-300">
+      <button
+        className={cn(
+          "rounded-full bg-white p-2 shadow-md hover:bg-gray-100",
+          isPopupOpen && "bg-slate-500 hover:bg-slate-600"
+        )}
+        onClick={() => setIsPopupOpen(!isPopupOpen)}
+        aria-label="Επαναϋπολόγισε ή εστίασε σην τρέχουσα τοποθεσία"
+        title="Επαναϋπολόγισε ή εστίασε σην τρέχουσα τοποθεσία"
+      >
+        <FaLocationArrow size={16} color="black" />
+      </button>
+
+      <div
+        className={cn(
+          "absolute left-0 top-10 z-[401] flex cursor-auto items-center rounded-lg  text-xs font-semibold text-gray-700  duration-300 invisible opacity-0 transition-all backdrop-blur-sm backdrop-filter bg-gray-500 dark:bg-primary-600 bg-opacity-50",
+          isPopupOpen && "visible opacity-100"
+        )}
+      >
+        <ul className="flex list-none flex-col gap-1 p-2">
+          <li
+            className="cursor-pointer rounded-lg bg-primary-100 p-2 hover:bg-primary-300"
+            onClick={relocateUser}
+          >
+            Τρέχουσα
+          </li>
+          <li
+            className="cursor-pointer rounded-lg bg-primary-100 p-2 hover:bg-primary-300"
+            onClick={() => {
+              getLocation();
+              setIsPopupOpen(false);
+            }}
+          >
+            Επανατοποθέτηση
+          </li>
+        </ul>
+      </div>
+    </div>
   );
 };
 
@@ -221,7 +264,7 @@ export default function PharmacyMap({
   radius,
   setRadiusQuery,
 }: IPharmacyMapProps) {
-  const { location, updateLocation } = useLocationContext();
+  const { location, updateLocation, getLocation } = useLocationContext();
   const { theme } = useTheme();
 
   const defaultLayer = theme === "dark" ? "dark" : "road";
@@ -382,7 +425,7 @@ export default function PharmacyMap({
             </Popup>
           </Marker>
 
-          <ReloacateButton lat={location.latitude} lng={location.longitude} />
+          <ReloacateButton getLocation={getLocation} location={location} />
         </>
       )}
 
