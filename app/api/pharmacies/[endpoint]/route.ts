@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { limiter } from "../../config/limiter";
+import { encrypt } from "@/app/api/utils/cryptoUtils";
 
 export async function GET(req: NextRequest) {
   const url = req.nextUrl;
@@ -61,9 +62,12 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await apiRes.json();
-    return NextResponse.json(data);
+    const secretKey = process.env.NEXT_PUBLIC_CRYPTO_SECRET!;
+    const encryptedData = encrypt(JSON.stringify(data), secretKey);
+
+    return NextResponse.json(encryptedData);
   } catch (error) {
-    let errorMessage = "Error fetching data";
+    let errorMessage = "Σφάλμα κατά την ανάκτηση δεδομένων";
     if (error instanceof Error) {
       errorMessage = error.message;
     }
