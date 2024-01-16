@@ -22,7 +22,7 @@ function PharmacyPopUpProps({
   return (
     <div className="flex h-full w-fit flex-col overflow-hidden rounded-lg md:w-96 md:flex-row">
       {/* Left Column */}
-      <div className="flex w-full basis-full items-center justify-center bg-primary-500 md:w-1/4">
+      <div className="flex w-full items-center justify-center bg-primary-500 md:w-1/4">
         <Image
           src="/pharmacy_popup_logo.png"
           alt="pharmacy logo"
@@ -35,7 +35,7 @@ function PharmacyPopUpProps({
       {/* Right Column */}
       <div
         className={clsx(
-          "flex w-full flex-col items-start justify-start bg-white p-3 basis-full",
+          "flex w-full flex-col items-start justify-start bg-white p-3",
           isDarkMode && "bg-slate-600"
         )}
       >

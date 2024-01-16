@@ -57,6 +57,7 @@ export const usePharmacies = ({
     refetchOnWindowFocus: false,
     // for 10 minutes
     staleTime: 1000 * 60 * 10,
-    retry: false,
+    retry: 2,
+    refetchInterval: 1000 * 60 * 60,
   });
 };

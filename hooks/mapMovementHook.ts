@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import L from "leaflet";
-import { IPoint, ISelectedPharmacy } from "@/components/maps/interfaces";
+import { IPoint, ISelectedPharmacy } from "@/components/maps/types";
 
 export const useMapMovement = (
   map: L.Map,

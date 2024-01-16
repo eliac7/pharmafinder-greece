@@ -1,7 +1,6 @@
 "use client";
-import MainDataContainer from "@/components/main-data-container";
+import MainDataContainer from "@/components/maps/main-data-container";
 import { usePharmacies } from "@/hooks/usePharmacies";
-import { toast } from "react-hot-toast";
 import { useQueryState, parseAsString } from "nuqs";
 
 function Page() {

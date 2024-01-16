@@ -1,9 +1,9 @@
-import Header from "@/components/header";
+import Header from "@/components/global/header";
 import Providers from "@/lib/providers";
 import type { Metadata } from "next";
 import { Comfortaa } from "next/font/google";
 import "./globals.css";
-import Footer from "@/components/footer";
+import Footer from "@/components/global/footer";
 
 const comfortaaFont = Comfortaa({
   subsets: ["greek", "latin"],

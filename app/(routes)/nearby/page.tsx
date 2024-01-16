@@ -1,6 +1,6 @@
 "use client";
 
-import MainDataContainer from "@/components/main-data-container";
+import MainDataContainer from "@/components/maps/main-data-container";
 import { usePharmacies } from "@/hooks/usePharmacies";
 import { parseAsString, useQueryState } from "nuqs";
 

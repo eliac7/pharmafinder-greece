@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import PharmacyList from "./maps/pharmacy-list";
+import PharmacyList from "./pharmacy-list";
 import { IPharmacy } from "@/lib/interfaces";
 import { DynamicPharmacyMap } from "@/components/maps/";
 import clsx from "clsx";

@@ -118,7 +118,7 @@ function PharmacyList({
 
       <ul
         ref={listContainerRef}
-        className="scrollbar-thumb-rounded-full scrollbar-thumb-opacity-50 dark:scrollbar-thumb-opacity-50 scrollbar-track-rounded-full relative m-0 h-full w-full list-none overflow-y-scroll p-2 text-lg font-medium leading-8 text-gray-700 scrollbar-thin scrollbar-track-complementary-400 scrollbar-thumb-slate-500 dark:text-gray-300 dark:scrollbar-track-complementary-700 dark:scrollbar-thumb-slate-400"
+        className="scrollbar-thumb-rounded-full scrollbar-thumb-opacity-50 dark:scrollbar-thumb-opacity-50 scrollbar-track-rounded-full relative m-0 w-full list-none overflow-y-scroll p-2 text-lg font-medium leading-8 text-gray-700 scrollbar-thin scrollbar-track-complementary-400 scrollbar-thumb-slate-500 dark:text-gray-300 dark:scrollbar-track-complementary-700 dark:scrollbar-thumb-slate-400 md:h-full"
       >
         {pharmacies.map((pharmacy) => (
           <li
