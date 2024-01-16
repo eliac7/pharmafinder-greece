@@ -16,34 +16,19 @@ const DarkModeToggle = dynamic(() => import("./dark-mode-toggle"), {
 
 function Header() {
   const pathname = usePathname();
-  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false);
   const mobileNavRef = useRef<HTMLDivElement>(null);
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      mobileNavRef.current &&
-      !mobileNavRef.current.contains(event.target as Node)
-    ) {
-      setIsMobileNavOpen(false);
-    }
+  const toggleMobileNav = () => {
+    setIsMobileNavOpen((prevState) => !prevState);
   };
-  const toggleMobileNav = () => setIsMobileNavOpen(!isMobileNavOpen);
-
   useEffect(() => {
     setIsMobileNavOpen(false);
   }, [pathname]);
 
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   return (
     <header
-      className="mx-2 flex h-28 items-center justify-center rounded-b-2xl bg-transparent py-2 shadow-[rgba(0,0,0,0.20)_0px_25px_32px_-10px]"
+      className="mx-2 flex h-20 items-center justify-center rounded-b-2xl bg-transparent py-2 shadow-[rgba(0,0,0,0.20)_0px_25px_32px_-10px] md:h-28"
       aria-label="Header"
     >
       <div className="flex h-full w-1/2 place-items-center">
@@ -95,17 +80,17 @@ function Header() {
         <div className="flex items-center justify-center md:hidden">
           <GiHamburgerMenu
             size={20}
-            className="cursor-pointer"
-            onClick={toggleMobileNav}
+            className="GiHamburgerMenu block cursor-pointer"
+            onClick={() => toggleMobileNav()}
           />
         </div>
         {isMobileNavOpen && (
           <div
             ref={mobileNavRef}
-            className="sm:hidden absolute left-0 top-10 z-[600] w-full rounded-lg bg-gray-500 shadow-md"
+            className="sm:hidden absolute left-0 top-10 z-[600] w-[50vw] rounded-lg bg-gray-500 shadow-md"
           >
             <nav>
-              <ul className="text-text flex w-full flex-col items-center justify-center gap-y-1 text-[0.9rem] font-medium before:h-0 before:w-0 before:-translate-y-5 before:transform before:border-[10px] before:border-solid before:border-transparent before:border-b-gray-500 before:text-gray-500">
+              <ul className="text-text flexflex-col items-center justify-center gap-y-1 text-[0.9rem] font-medium before:h-0 before:w-0 before:-translate-y-5 before:transform before:border-[10px] before:border-solid before:border-transparent before:border-b-gray-500 before:text-gray-500">
                 {links.map((link) => {
                   const linkPath = link.href.split("?")[0];
                   const activeLink =

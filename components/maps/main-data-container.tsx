@@ -31,7 +31,7 @@ function MainDataContainer({
   );
   const [isListVisible, setIsListVisible] = useState<boolean>(true);
   const [isListExpandedMobile, setIsListExpandedMobile] =
-    useState<boolean>(true);
+    useState<boolean>(false);
 
   // if there is an error, show a toast and reset the selected pharmacy
   useEffect(() => {
@@ -91,7 +91,7 @@ function MainDataContainer({
           isListVisible
             ? "translate-x-0 opacity-100"
             : "translate-x-full opacity-0",
-          isListExpandedMobile ? "h-[20vh]" : "h-[60vh]"
+          isListExpandedMobile ? "h-[60vh]" : "h-[20vh]"
         )}
       >
         <PharmacyList

@@ -100,9 +100,9 @@ function PharmacyList({
         }}
       >
         {isListExpandedMobile ? (
-          <FaChevronUp color="white" size={20} />
-        ) : (
           <FaChevronDown color="white" size={20} />
+        ) : (
+          <FaChevronUp color="white" size={20} />
         )}
       </span>
 
