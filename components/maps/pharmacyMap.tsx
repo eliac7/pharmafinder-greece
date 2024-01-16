@@ -339,7 +339,7 @@ export default function PharmacyMap({
       case "road":
         return "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
       case "satellite":
-        return "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png";
+        return "https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png";
       case "dark":
         return "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png";
       default:
@@ -376,7 +376,7 @@ export default function PharmacyMap({
           checked={layerName === "satellite"}
         >
           <TileLayer
-            url="https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"
+            url="https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png"
             subdomains={["a", "b", "c"]}
             eventHandlers={{
               add: () => {
