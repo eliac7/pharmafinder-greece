@@ -20,20 +20,22 @@ function PharmacyPopUpProps({
   const isDarkMode = layerName === "dark";
 
   return (
-    <div className="flex h-full w-[380px] overflow-hidden rounded-lg">
+    <div className="flex h-full w-fit flex-col overflow-hidden rounded-lg md:w-96 md:flex-row">
       {/* Left Column */}
-      <div className="flex w-1/4 items-center justify-center bg-primary-500">
+      <div className="flex w-full basis-full items-center justify-center bg-primary-500 md:w-1/4">
         <Image
           src="/pharmacy_popup_logo.png"
-          alt="pharmacy"
-          width={100}
-          height={100}
+          alt="pharmacy logo"
+          width={0}
+          height={0}
+          sizes="100vw"
+          className="h-auto w-1/4 object-contain md:w-full"
         />
       </div>
       {/* Right Column */}
       <div
         className={clsx(
-          "flex w-full flex-col items-start justify-start bg-white p-3",
+          "flex w-full flex-col items-start justify-start bg-white p-3 basis-full",
           isDarkMode && "bg-slate-600"
         )}
       >
@@ -78,7 +80,7 @@ function PharmacyPopUpProps({
             target="_blank"
             rel="noreferrer"
             className={clsx(
-              "flex items-center gap-2 rounded-lg bg-primary-200 p-2 text-sm font-semibold !text-white no-underline transition duration-300 ease-in-out hover:bg-primary-300",
+              "flex items-center gap-2 rounded-lg bg-primary-200 p-2 text-sm font-semibold !text-white no-underline transition duration-300 ease-in-out hover:bg-primary-300 flex-1",
               {
                 "!text-gray-700": isDarkMode,
               }
@@ -93,7 +95,7 @@ function PharmacyPopUpProps({
             target="_blank"
             rel="noreferrer"
             className={clsx(
-              "flex items-center gap-2 rounded-lg bg-primary-200 p-2 text-sm font-semibold !text-white no-underline transition duration-300 ease-in-out hover:bg-primary-300",
+              "flex items-center gap-2 rounded-lg bg-primary-200 p-2 text-sm font-semibold !text-white no-underline transition duration-300 ease-in-out hover:bg-primary-300 flex-1",
               {
                 "!text-gray-700": isDarkMode,
               }
