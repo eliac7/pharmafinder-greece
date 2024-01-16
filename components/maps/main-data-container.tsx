@@ -31,7 +31,7 @@ function MainDataContainer({
   );
   const [isListVisible, setIsListVisible] = useState<boolean>(true);
   const [isListExpandedMobile, setIsListExpandedMobile] =
-    useState<boolean>(false);
+    useState<boolean>(true);
 
   // if there is an error, show a toast and reset the selected pharmacy
   useEffect(() => {
@@ -63,7 +63,7 @@ function MainDataContainer({
   const toggleListVisibility = () => {
     setIsListVisible(!isListVisible);
   };
-  ``;
+
   return (
     <div className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-3xl transition-all duration-500 md:flex-row">
       {isLoading && (
@@ -87,11 +87,11 @@ function MainDataContainer({
       </div>
       <div
         className={clsx(
-          "bg-white p-4 transition-all duration-500 transform md:w-1/4  dark:bg-gray-800 dark:text-white absolute  left-0 z-[1100] md:z-0 right-0 md:static h-full sm:rounded-t-xl md:rounded-none",
+          "bg-white md:p-2 p-4 transition-all duration-500 transform md:w-1/4  dark:bg-gray-800 dark:text-white absolute bottom-0 left-0 z-[1100] md:z-0 right-0 md:static h-full sm:rounded-t-xl md:rounded-none md:h-full",
           isListVisible
             ? "translate-x-0 opacity-100"
             : "translate-x-full opacity-0",
-          isListExpandedMobile ? "top-[10vh]" : "top-[60vh]"
+          isListExpandedMobile ? "h-[20vh]" : "h-[60vh]"
         )}
       >
         <PharmacyList

@@ -8,7 +8,7 @@ import {
   formatKM,
 } from "@/lib/utils";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { FaChevronDown, FaChevronUp, FaPhone } from "react-icons/fa";
 import { GiPathDistance } from "react-icons/gi";
@@ -41,7 +41,6 @@ function PharmacyList({
   const listContainerRef = useRef<HTMLUListElement>(null);
   const pathname = usePathname();
   const isCityPage = pathname.includes("/city/");
-  const isNowPage = pathname.includes("/now");
 
   useEffect(() => {
     // Check if the selected pharmacy is set, the corresponding list item exists, and the list container is mounted
@@ -95,18 +94,15 @@ function PharmacyList({
   return (
     <div className="relative flex h-full w-full flex-col items-center justify-center">
       <span
-        className={cn(
-          "absolute -top-10 flex md:hidden cursor-pointer items-center justify-center rounded-full bg-gray-200 p-2 hover:bg-gray-500 transition-all duration-300",
-          isListExpandedMobile && "bg-slate-500 text-white"
-        )}
+        className="absolute -top-10 flex cursor-pointer items-center justify-center rounded-full bg-slate-500 p-2 transition-all duration-300 hover:bg-gray-500 md:hidden"
         onClick={() => {
           setIsListExpandedMobile(!isListExpandedMobile);
         }}
       >
         {isListExpandedMobile ? (
-          <FaChevronDown color="white" size={20} />
+          <FaChevronUp color="white" size={20} />
         ) : (
-          <FaChevronUp color="black" size={20} />
+          <FaChevronDown color="white" size={20} />
         )}
       </span>
 
@@ -118,14 +114,14 @@ function PharmacyList({
 
       <ul
         ref={listContainerRef}
-        className="scrollbar-thumb-rounded-full scrollbar-thumb-opacity-50 dark:scrollbar-thumb-opacity-50 scrollbar-track-rounded-full relative m-0 w-full list-none overflow-y-scroll p-2 text-lg font-medium leading-8 text-gray-700 scrollbar-thin scrollbar-track-complementary-400 scrollbar-thumb-slate-500 dark:text-gray-300 dark:scrollbar-track-complementary-700 dark:scrollbar-thumb-slate-400 md:h-full"
+        className="scrollbar-thumb-rounded-full scrollbar-thumb-opacity-50 dark:scrollbar-thumb-opacity-50 scrollbar-track-rounded-full relative m-0 w-full list-none overflow-y-auto p-2 text-lg font-medium leading-8 text-gray-700 scrollbar-thin scrollbar-track-complementary-400 scrollbar-thumb-slate-500 dark:text-gray-300 dark:scrollbar-track-complementary-700 dark:scrollbar-thumb-slate-400 md:h-full"
       >
         {pharmacies.map((pharmacy) => (
           <li
             ref={(el) => (itemRefs.current[pharmacy.name] = el)}
             key={`${pharmacy.name}-${pharmacy.address}`}
             className={cn(
-              "py-2 mb-1  border-2 border-gray-400 border-opacity-40 dark:hover:bg-slate-900 hover:bg-primary-100 cursor-pointer rounded-lg",
+              "py-2 mb-1 border-2 border-gray-400 border-opacity-40 dark:hover:bg-slate-900 hover:bg-primary-100 cursor-pointer rounded-lg",
               selectedPharmacy &&
                 selectedPharmacy.name === pharmacy.name &&
                 "bg-primary-400 dark:bg-gray-700 hover:bg-opacity-100"
@@ -167,7 +163,12 @@ function PharmacyList({
                           <FaPhone className="mr-2" />
                           <a
                             href={`tel:${pharmacy.phone}`}
-                            className="font-semibold text-gray-500 underline hover:text-gray-900 dark:text-white dark:hover:text-gray-300"
+                            className={cn(
+                              "font-semibold text-gray-500 underline hover:text-gray-900 dark:text-white dark:hover:text-gray-300",
+                              selectedPharmacy &&
+                                selectedPharmacy.name === pharmacy.name &&
+                                "text-gray-200"
+                            )}
                           >
                             {formatGreekPhoneNumber(pharmacy.phone)}
                           </a>
