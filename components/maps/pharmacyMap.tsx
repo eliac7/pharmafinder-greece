@@ -21,7 +21,7 @@ import {
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { FullscreenControl } from "react-leaflet-fullscreen";
 import "react-leaflet-fullscreen/styles.css";
-import { IMapProps, IPharmacyMapProps, IPoint } from "./interfaces";
+import { IMapProps, IPharmacyMapProps, IPoint } from "./types";
 import PharmacyMarker, { userLocationMarker } from "./pharmacy-marker";
 
 import { ILocation } from "@/lib/interfaces";
@@ -57,6 +57,22 @@ const ToggleListButton = ({
 }) => {
   const map = useMap();
 
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const handleFullscreenChange = () => {
+    setIsFullscreen((isFullscreen) => !isFullscreen);
+  };
+
+  useEffect(() => {
+    map.on("enterFullscreen", handleFullscreenChange);
+    map.on("exitFullscreen", handleFullscreenChange);
+
+    return () => {
+      map.off("enterFullscreen", handleFullscreenChange);
+      map.off("exitFullscreen", handleFullscreenChange);
+    };
+  }, [map]);
+
   const handleClick = () => {
     toggleListVisibility();
     if (map) {
@@ -65,6 +81,10 @@ const ToggleListButton = ({
       }, 300);
     }
   };
+
+  if (isFullscreen) {
+    return null;
+  }
 
   return (
     <button
@@ -130,7 +150,7 @@ const RadiusRangeSlider = ({
         max="10"
         value={value}
         step="1"
-        className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-300 outline-none dark:bg-gray-700"
+        className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-300 outline-none dark:bg-gray-700 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-red-400 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-red-400"
         onChange={handleSliderChange}
         onMouseUp={handleInteractionEnd}
       />
@@ -443,8 +463,13 @@ export default function PharmacyMap({
 
       <MapBoundsAdjuster points={points} />
 
-      <FullscreenControl />
+      <FullscreenControl
+        title="Εμφάνιση σε πλήρη οθόνη"
+        titleCancel="Έξοδος από πλήρη οθόνη"
+      />
+
       <ToggleListButton toggleListVisibility={toggleListVisibility} />
+
       {radius && setRadiusQuery && (
         <RadiusRangeSlider
           radius={radius}
@@ -453,6 +478,7 @@ export default function PharmacyMap({
           is_by_city={is_by_city}
         />
       )}
+
       {is_by_city && <TimeframeButtons />}
     </MapContainer>
   );
