@@ -87,7 +87,7 @@ function MainDataContainer({
       </div>
       <div
         className={clsx(
-          "bg-white md:p-2 p-4 transition-all duration-500 transform md:w-1/4  dark:bg-gray-800 dark:text-white absolute bottom-0 left-0 z-[1100] md:z-0 right-0 md:static h-full sm:rounded-t-xl md:rounded-none md:h-full",
+          "bg-white md:p-2 p-4 transition-all duration-500 transform md:w-1/4  dark:bg-gray-800 dark:text-white absolute bottom-0 left-0 z-[1100] md:z-0 right-0 md:static sm:rounded-t-xl md:rounded-none md:h-full",
           isListVisible
             ? "translate-x-0 opacity-100"
             : "translate-x-full opacity-0",
