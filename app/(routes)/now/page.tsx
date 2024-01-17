@@ -6,7 +6,7 @@ import { useQueryState, parseAsString } from "nuqs";
 function Page() {
   const [radiusQuery, setRadiusQuery] = useQueryState(
     "radius",
-    parseAsString.withDefault("3")
+    parseAsString.withDefault("3"),
   );
 
   const { data, isLoading, error } = usePharmacies({

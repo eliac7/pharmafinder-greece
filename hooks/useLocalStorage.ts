@@ -7,7 +7,7 @@ type UseLocalStorageResult<T> = [T, (value: T) => void, () => void];
 // Function to get an item from local storage
 function useLocalStorage<T>(
   key: string,
-  initialValue: T
+  initialValue: T,
 ): UseLocalStorageResult<T> {
   const getItem = (): T => {
     // Check if running in a browser environment

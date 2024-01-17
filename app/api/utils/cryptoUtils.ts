@@ -25,7 +25,7 @@ export const decrypt = (hash: EncryptedData, secretKey: string): string => {
   const decipher: Decipher = crypto.createDecipheriv(
     algorithm,
     keyBuffer,
-    ivBuffer
+    ivBuffer,
   );
 
   const decrypted = Buffer.concat([

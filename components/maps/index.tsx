@@ -5,7 +5,7 @@ const DynamicPharmacyMap = dynamic(
   () => import("@/components/maps/pharmacyMap"),
   {
     ssr: false,
-  }
+  },
 );
 
 const DynamicThumbnailMap = dynamic(
@@ -13,7 +13,7 @@ const DynamicThumbnailMap = dynamic(
   {
     loading: () => <PharmacyThumbnailSkeleton />,
     ssr: false,
-  }
+  },
 );
 
 export { DynamicPharmacyMap, DynamicThumbnailMap };

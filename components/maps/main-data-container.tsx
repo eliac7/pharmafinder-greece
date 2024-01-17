@@ -27,7 +27,7 @@ function MainDataContainer({
   isError,
 }: IMainDataContainerProps) {
   const [selectedPharmacy, setSelectedPharmacy] = useState<IPharmacy | null>(
-    null
+    null,
   );
   const [isListVisible, setIsListVisible] = useState<boolean>(true);
   const [isListExpandedMobile, setIsListExpandedMobile] =
@@ -72,8 +72,8 @@ function MainDataContainer({
         </div>
       )}
       <div
-        className={`relative transition-all duration-500 flex-shrink-0 h-full  ${
-          isListVisible ? "flex-grow w-full md:w-2/3" : "w-full"
+        className={`relative h-full flex-shrink-0 transition-all duration-500  ${
+          isListVisible ? "w-full flex-grow md:w-2/3" : "w-full"
         }`}
       >
         <DynamicPharmacyMap
@@ -87,11 +87,11 @@ function MainDataContainer({
       </div>
       <div
         className={clsx(
-          "bg-white md:p-2 p-4 transition-all duration-500 transform md:w-1/4  dark:bg-gray-800 dark:text-white absolute bottom-0 left-0 z-[1100] md:z-0 right-0 md:static sm:rounded-t-xl md:rounded-none md:h-full",
+          "sm:rounded-t-xl absolute bottom-0 left-0 right-0 z-[1100] transform  bg-white p-4 transition-all duration-500 dark:bg-gray-800 dark:text-white md:static md:z-0 md:h-full md:w-1/4 md:rounded-none md:p-2",
           isListVisible
             ? "translate-x-0 opacity-100"
             : "translate-x-full opacity-0",
-          isListExpandedMobile ? "h-[60vh]" : "h-[20vh]"
+          isListExpandedMobile ? "h-[60vh]" : "h-[20vh]",
         )}
       >
         <PharmacyList

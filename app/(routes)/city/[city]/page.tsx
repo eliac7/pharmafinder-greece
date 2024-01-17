@@ -22,11 +22,11 @@ function Page({
 
   const [dateQuery, setDateQuery] = useQueryState(
     "date",
-    parseAsString.withDefault("now")
+    parseAsString.withDefault("now"),
   );
   const isValidCity = useMemo(
     () => cities.some((cityObj) => cityObj.value === params.city),
-    [params.city]
+    [params.city],
   );
 
   const cityLabel = useMemo(() => {
@@ -49,7 +49,7 @@ function Page({
         "Η τιμή που δώσατε για την παράμετρο 'date' δεν είναι έγκυρη. Παρακαλώ δώστε 'now', 'today' ή 'tomorrow'. Γίνεται ανακατεύθυνση στην τιμή 'now'.",
         {
           duration: 10000,
-        }
+        },
       );
       router.push(`?date=now`, undefined);
     } else {

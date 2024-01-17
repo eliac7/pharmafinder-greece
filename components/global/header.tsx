@@ -59,12 +59,12 @@ function Header() {
                   <li className="relative flex items-center justify-center text-center">
                     <Link
                       className={clsx(
-                        "flex w-full items-center justify-center px-3 py-3 transition rounded-xl text-gray-200 dark:text-gray-400 ",
+                        "flex w-full items-center justify-center rounded-xl px-3 py-3 text-gray-200 transition dark:text-gray-400 ",
                         {
                           "bg-complementary-400 !text-white": activeLink,
-                          "dark:hover:text-white hover:bg-slate-500":
+                          "hover:bg-slate-500 dark:hover:text-white":
                             !activeLink,
-                        }
+                        },
                       )}
                       href={link.href}
                     >
@@ -90,7 +90,7 @@ function Header() {
             className="sm:hidden absolute left-0 top-10 z-[600] w-[50vw] rounded-lg bg-gray-500 shadow-md"
           >
             <nav>
-              <ul className="text-text flexflex-col items-center justify-center gap-y-1 text-[0.9rem] font-medium before:h-0 before:w-0 before:-translate-y-5 before:transform before:border-[10px] before:border-solid before:border-transparent before:border-b-gray-500 before:text-gray-500">
+              <ul className="text-text flex-col items-center justify-center gap-y-1 text-[0.9rem] font-medium before:h-0 before:w-0 before:-translate-y-5 before:transform before:border-[10px] before:border-solid before:border-transparent before:border-b-gray-500 before:text-gray-500">
                 {links.map((link) => {
                   const linkPath = link.href.split("?")[0];
                   const activeLink =
@@ -104,9 +104,9 @@ function Header() {
                       <li className="relative flex w-full items-center justify-center text-center">
                         <Link
                           className={cn(
-                            "flex w-full items-center justify-center px-3 py-3 transition text-white hover:text-gray-300 hover:bg-gray-900 ",
+                            "flex w-full items-center justify-center px-3 py-3 text-white transition hover:bg-gray-900 hover:text-gray-300 ",
                             activeLink &&
-                              "bg-complementary-400 hover:bg-complementary-400"
+                              "bg-complementary-400 hover:bg-complementary-400",
                           )}
                           href={link.href}
                         >

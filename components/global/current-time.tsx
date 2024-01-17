@@ -8,7 +8,7 @@ const CurrentTime: React.FC = () => {
     new Date().toLocaleTimeString("el-GR", {
       timeZone: "Europe/Athens",
       hour12: false,
-    })
+    }),
   );
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const CurrentTime: React.FC = () => {
         new Date().toLocaleTimeString("el-GR", {
           timeZone: "Europe/Athens",
           hour12: false,
-        })
+        }),
       );
     }, 1000);
     return () => clearInterval(interval);

@@ -131,7 +131,7 @@ const RadiusRangeSlider = ({
     <div
       className={clsx(
         "sm:top-0 absolute left-[50%] z-[500] block translate-x-[-50%] transform rounded-b-xl rounded-t-none bg-slate-600 bg-opacity-50 px-5 py-2 backdrop-blur-sm backdrop-filter dark:bg-primary-600 dark:bg-opacity-50 md:bottom-4 md:rounded-xl",
-        is_by_city && "hidden"
+        is_by_city && "hidden",
       )}
       onMouseDown={() => map?.dragging.disable()}
       onMouseUp={handleInteractionEnd}
@@ -173,7 +173,7 @@ const TimeframeButtons = () => {
 
   const [date, setDate] = useQueryState(
     "date",
-    parseAsString.withDefault(Timeframe.NOW)
+    parseAsString.withDefault(Timeframe.NOW),
   );
 
   const timeframes: Timeframe[] = [
@@ -186,7 +186,7 @@ const TimeframeButtons = () => {
     (timeframe: Timeframe) => {
       setDate(timeframe);
     },
-    [setDate]
+    [setDate],
   );
 
   return (
@@ -195,9 +195,9 @@ const TimeframeButtons = () => {
         <button
           key={timeframe}
           className={clsx(
-            "block text-sm font-semibold text-white p-2 rounded-lg transition-all duration-300",
+            "block rounded-lg p-2 text-sm font-semibold text-white transition-all duration-300",
             date !== timeframe && "hover:bg-white hover:bg-opacity-10",
-            date === timeframe && "bg-primary-900"
+            date === timeframe && "bg-primary-900",
           )}
           onClick={() => handleClick(timeframe)}
         >
@@ -239,7 +239,7 @@ const ReloacateButton = ({
       <button
         className={cn(
           "rounded-full bg-white p-2 shadow-md hover:bg-gray-100",
-          isPopupOpen && "bg-slate-500 hover:bg-slate-600"
+          isPopupOpen && "bg-slate-500 hover:bg-slate-600",
         )}
         onClick={() => setIsPopupOpen(!isPopupOpen)}
         aria-label="Επαναϋπολόγισε ή εστίασε σην τρέχουσα τοποθεσία"
@@ -250,8 +250,8 @@ const ReloacateButton = ({
 
       <div
         className={cn(
-          "absolute left-0 top-10 z-[401] flex cursor-auto items-center rounded-lg  text-xs font-semibold text-gray-700  duration-300 invisible opacity-0 transition-all backdrop-blur-sm backdrop-filter bg-gray-500 dark:bg-primary-600 bg-opacity-50",
-          isPopupOpen && "visible opacity-100"
+          "invisible absolute left-0 top-10 z-[401] flex cursor-auto items-center  rounded-lg bg-gray-500 bg-opacity-50  text-xs font-semibold text-gray-700 opacity-0 backdrop-blur-sm backdrop-filter transition-all duration-300 dark:bg-primary-600",
+          isPopupOpen && "visible opacity-100",
         )}
       >
         <ul className="flex list-none flex-col gap-1 p-2">
@@ -291,7 +291,7 @@ export default function PharmacyMap({
 
   const [layerName, setLayerName] = useQueryState(
     "layer",
-    parseAsString.withDefault(defaultLayer)
+    parseAsString.withDefault(defaultLayer),
   );
 
   const pathname = usePathname().split("/")[1];
@@ -337,13 +337,13 @@ export default function PharmacyMap({
   const getTileLayerUrl = () => {
     switch (layerName) {
       case "road":
-        return "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+        return "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}";
       case "satellite":
         return "https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png";
       case "dark":
         return "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png";
       default:
-        return "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+        return "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}";
     }
   };
   return (
@@ -362,8 +362,8 @@ export default function PharmacyMap({
           checked={layerName === "road"}
         >
           <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            subdomains={["a", "b", "c"]}
+            url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+            subdomains={["mt0", "mt1", "mt2", "mt3"]}
             eventHandlers={{
               add: () => {
                 setLayerName("road");

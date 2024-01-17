@@ -12,7 +12,7 @@ export interface IPharmacy {
     {
       open_time: string;
       close_time: string;
-    }
+    },
   ];
   date: string;
   open_until_tomorrow?: boolean;

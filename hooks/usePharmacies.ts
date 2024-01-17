@@ -6,7 +6,7 @@ import { decrypt } from "@/app/api/utils/cryptoUtils";
 
 const fetchPharmacies = async (
   endpoint: string,
-  params: { [key: string]: string }
+  params: { [key: string]: string },
 ): Promise<IPharmacyResponse> => {
   const query = new URLSearchParams(params).toString();
   const url = `/api/pharmacies/${endpoint}?${query}`;

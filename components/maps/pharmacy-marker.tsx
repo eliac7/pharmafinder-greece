@@ -55,7 +55,7 @@ const PharmacyMarker = forwardRef<L.Marker, PharmacyMarkerProps>(
         </Popup>
       </Marker>
     );
-  }
+  },
 );
 
 PharmacyMarker.displayName = "PharmacyMarker";

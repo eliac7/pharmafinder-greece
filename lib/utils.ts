@@ -17,7 +17,7 @@ export function formatGreekPhoneNumber(phoneNumber: string): string {
   // Format the number as desired
   const formattedNumber = `${cleanedNumber.substring(
     0,
-    3
+    3,
   )} ${cleanedNumber.substring(3, 6)} ${cleanedNumber.substring(6)}`;
 
   return formattedNumber;
@@ -41,7 +41,7 @@ export function capitalizeFirstLetterOfEachWord(phrase: string): string {
   return phrase
     .split(" ")
     .map(
-      (word) => word.charAt(0).toUpperCase() + word.substring(1).toLowerCase()
+      (word) => word.charAt(0).toUpperCase() + word.substring(1).toLowerCase(),
     )
     .join(" ");
 }

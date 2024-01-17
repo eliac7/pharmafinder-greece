@@ -52,12 +52,12 @@ export async function GET(req: NextRequest) {
             headers: {
               "Content-Type": "application/json",
             },
-          }
+          },
         );
       }
 
       throw new Error(
-        `API responded with status ${apiRes.status}: ${errorResponse.message}`
+        `API responded with status ${apiRes.status}: ${errorResponse.message}`,
       );
     }
 

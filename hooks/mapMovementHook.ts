@@ -5,7 +5,7 @@ import { IPoint, ISelectedPharmacy } from "@/components/maps/types";
 export const useMapMovement = (
   map: L.Map,
   points: IPoint[],
-  selectedPharmacy: ISelectedPharmacy | null
+  selectedPharmacy: ISelectedPharmacy | null,
 ) => {
   useEffect(() => {
     if (!map || !selectedPharmacy) return;
@@ -13,7 +13,7 @@ export const useMapMovement = (
     if (selectedPharmacy) {
       const selectedLatLng = L.latLng(
         selectedPharmacy.latitude,
-        selectedPharmacy.longitude
+        selectedPharmacy.longitude,
       );
       map.setView(selectedLatLng, 18);
     }

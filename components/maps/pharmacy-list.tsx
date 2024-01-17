@@ -76,12 +76,12 @@ function PharmacyList({
     count === undefined || count === null
       ? "0 φαρμακεία"
       : count === 1
-      ? `${count} φαρμακείο`
-      : `${count} φαρμακεία`;
+        ? `${count} φαρμακείο`
+        : `${count} φαρμακεία`;
 
   const toggleExpand = (
     event: React.MouseEvent<HTMLButtonElement>,
-    pharmacy: IPharmacy
+    pharmacy: IPharmacy,
   ) => {
     event.stopPropagation(); // Prevent triggering the list item's onClick
     if (selectedPharmacy && selectedPharmacy.name === pharmacy.name) {
@@ -121,10 +121,10 @@ function PharmacyList({
             ref={(el) => (itemRefs.current[pharmacy.name] = el)}
             key={`${pharmacy.name}-${pharmacy.address}`}
             className={cn(
-              "py-2 mb-1 border-2 border-gray-400 border-opacity-40 dark:hover:bg-slate-900 hover:bg-primary-100 cursor-pointer rounded-lg",
+              "mb-1 cursor-pointer rounded-lg border-2 border-gray-400 border-opacity-40 py-2 hover:bg-primary-100 dark:hover:bg-slate-900",
               selectedPharmacy &&
                 selectedPharmacy.name === pharmacy.name &&
-                "bg-primary-400 dark:bg-gray-700 hover:bg-opacity-100"
+                "bg-primary-400 hover:bg-opacity-100 dark:bg-gray-700",
             )}
             onClick={() => {
               {
@@ -141,10 +141,10 @@ function PharmacyList({
                 </h1>
                 <p
                   className={cn(
-                    "text-gray-500 text-sm",
+                    "text-sm text-gray-500",
                     selectedPharmacy &&
                       selectedPharmacy.name === pharmacy.name &&
-                      "text-white"
+                      "text-white",
                   )}
                 >
                   {pharmacy.address.trim().split(",").slice(0, -1).join(",")}
@@ -167,7 +167,7 @@ function PharmacyList({
                               "font-semibold text-gray-500 underline hover:text-gray-900 dark:text-white dark:hover:text-gray-300",
                               selectedPharmacy &&
                                 selectedPharmacy.name === pharmacy.name &&
-                                "text-gray-200"
+                                "text-gray-200",
                             )}
                           >
                             {formatGreekPhoneNumber(pharmacy.phone)}
@@ -193,7 +193,7 @@ function PharmacyList({
                                         month: "2-digit",
                                         year: "2-digit",
                                       }).format(
-                                        new Date(pharmacy.next_day_close_time)
+                                        new Date(pharmacy.next_day_close_time),
                                       )
                                     : "Αύριο")}
                               </div>

@@ -35,7 +35,7 @@ export default function Select() {
     query === ""
       ? cities
       : cities.filter((option) =>
-          normalizeText(option.label).includes(normalizeText(query))
+          normalizeText(option.label).includes(normalizeText(query)),
         );
 
   return (
@@ -74,7 +74,7 @@ export default function Select() {
                       `relative cursor-default select-none py-2 pl-10 pr-4 ${
                         active
                           ? "bg-complementary-400 text-white"
-                          : "dark:bg-gray-800 dark:text-gray-300 text-gray-900"
+                          : "text-gray-900 dark:bg-gray-800 dark:text-gray-300"
                       }`
                     }
                     value={option}

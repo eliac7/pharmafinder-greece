@@ -36,7 +36,7 @@ function PharmacyPopUpProps({
       <div
         className={clsx(
           "flex w-full flex-col items-start justify-start bg-white p-3",
-          isDarkMode && "bg-slate-600"
+          isDarkMode && "bg-slate-600",
         )}
       >
         <h1 className="text-xsm font-bold text-primary-500">{name}</h1>
@@ -72,7 +72,7 @@ function PharmacyPopUpProps({
           </div>
         )}
 
-        <div className="flex h-full w-full items-center justify-around gap-4">
+        <div className="flex h-full w-full items-center justify-center gap-4">
           {/* street view */}
 
           <a
@@ -80,10 +80,10 @@ function PharmacyPopUpProps({
             target="_blank"
             rel="noreferrer"
             className={clsx(
-              "flex items-center gap-2 rounded-lg bg-primary-200 p-2 text-sm font-semibold !text-white no-underline transition duration-300 ease-in-out hover:bg-primary-300 flex-1",
+              "flex items-center gap-2 rounded-lg bg-primary-200 p-2 text-sm font-semibold !text-white no-underline transition duration-300 ease-in-out hover:bg-primary-300",
               {
                 "!text-gray-700": isDarkMode,
-              }
+              },
             )}
           >
             <FaStreetView />
@@ -95,10 +95,10 @@ function PharmacyPopUpProps({
             target="_blank"
             rel="noreferrer"
             className={clsx(
-              "flex items-center gap-2 rounded-lg bg-primary-200 p-2 text-sm font-semibold !text-white no-underline transition duration-300 ease-in-out hover:bg-primary-300 flex-1",
+              "flex items-center gap-2 rounded-lg bg-primary-200 p-2 text-sm font-semibold !text-white no-underline transition duration-300 ease-in-out hover:bg-primary-300 ",
               {
                 "!text-gray-700": isDarkMode,
-              }
+              },
             )}
           >
             <MdDirections />

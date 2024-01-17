@@ -15,7 +15,7 @@ export const useLocationContext = (): LocationContextType => {
   const context = useContext(LocationContext);
   if (!context) {
     throw new Error(
-      "useLocationContext must be used within a LocationProvider"
+      "useLocationContext must be used within a LocationProvider",
     );
   }
   return context;
@@ -31,7 +31,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
       longitude: null,
       error: null,
       timestamp: null,
-    }
+    },
   );
 
   const getLocation = useCallback(async () => {
@@ -50,7 +50,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
           // GPS failed, try getting location from IP
           const ipLocation = await getLocationFromIP();
           setLocation(ipLocation);
-        }
+        },
       );
     } else {
       // Geolocation not supported, try getting location from IP
@@ -90,7 +90,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({
       };
       setLocation(newLocation);
     },
-    [setLocation]
+    [setLocation],
   );
 
   useEffect(() => {
