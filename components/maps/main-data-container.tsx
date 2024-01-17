@@ -29,7 +29,9 @@ function MainDataContainer({
   const [selectedPharmacy, setSelectedPharmacy] = useState<IPharmacy | null>(
     null,
   );
-  const [isListVisible, setIsListVisible] = useState<boolean>(true);
+  const [isListVisible, setIsListVisible] = useState<boolean>(
+    pharmacies.length > 0,
+  );
   const [isListExpandedMobile, setIsListExpandedMobile] =
     useState<boolean>(false);
 
@@ -81,6 +83,7 @@ function MainDataContainer({
           selectedPharmacy={selectedPharmacy}
           setSelectedPharmacy={setSelectedPharmacy}
           toggleListVisibility={toggleListVisibility}
+          isListVisible={isListVisible}
           radius={radius}
           setRadiusQuery={setRadiusQuery}
         />

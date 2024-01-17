@@ -52,8 +52,10 @@ const MapBoundsAdjuster = ({ points }: { points: IPoint[] }) => {
 
 const ToggleListButton = ({
   toggleListVisibility,
+  isListVisible,
 }: {
   toggleListVisibility: () => void;
+  isListVisible: boolean;
 }) => {
   const map = useMap();
 
@@ -88,12 +90,15 @@ const ToggleListButton = ({
 
   return (
     <button
-      className="absolute right-0 top-20 z-[1000] m-4 hidden rounded-full bg-complementary-400 p-2 shadow-md transition-all duration-300 hover:bg-complementary-500 md:block"
+      className={cn(
+        "absolute right-0 top-20 z-[1000] m-4 hidden rounded-full bg-white p-2 shadow-md transition-all duration-300 hover:bg-complementary-500 md:block",
+        isListVisible && "bg-complementary-500",
+      )}
       onClick={handleClick}
       aria-label="Εμφάνιση/Απόκρυψη λίστας φαρμακείων"
       title="Εμφάνιση/Απόκρυψη λίστας φαρμακείων"
     >
-      <CiViewList size={24} color="white" />
+      <CiViewList size={24} color={isListVisible ? "white" : "black"} />
     </button>
   );
 };
@@ -281,6 +286,7 @@ export default function PharmacyMap({
   selectedPharmacy,
   setSelectedPharmacy,
   toggleListVisibility,
+  isListVisible,
   radius,
   setRadiusQuery,
 }: IPharmacyMapProps) {
@@ -468,7 +474,10 @@ export default function PharmacyMap({
         titleCancel="Έξοδος από πλήρη οθόνη"
       />
 
-      <ToggleListButton toggleListVisibility={toggleListVisibility} />
+      <ToggleListButton
+        toggleListVisibility={toggleListVisibility}
+        isListVisible={isListVisible}
+      />
 
       {radius && setRadiusQuery && (
         <RadiusRangeSlider

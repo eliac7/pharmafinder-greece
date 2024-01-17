@@ -28,7 +28,7 @@ function Header() {
 
   return (
     <header
-      className="mx-2 flex h-20 items-center justify-center rounded-b-2xl bg-transparent py-2 shadow-[rgba(0,0,0,0.20)_0px_25px_32px_-10px] md:h-28"
+      className="mx-2 flex h-20 items-center justify-center rounded-b-2xl bg-transparent py-2 md:h-28"
       aria-label="Header"
     >
       <div className="flex h-full w-1/2 place-items-center">
