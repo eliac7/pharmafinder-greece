@@ -14,7 +14,9 @@ interface IMainDataContainerProps {
   isLoading?: boolean;
   radius?: string;
   setRadiusQuery?: (radius: string) => void;
-  isError: any;
+  isError: boolean;
+  error: Error | null;
+  searchType: "city" | "nearby";
 }
 
 function MainDataContainer({
@@ -25,27 +27,27 @@ function MainDataContainer({
   isLoading,
   setRadiusQuery,
   isError,
+  error,
+  searchType,
 }: IMainDataContainerProps) {
   const [selectedPharmacy, setSelectedPharmacy] = useState<IPharmacy | null>(
     null,
   );
-  const [isListVisible, setIsListVisible] = useState<boolean>(
-    pharmacies.length > 0,
-  );
+  const [isListVisible, setIsListVisible] = useState<boolean>(true);
   const [isListExpandedMobile, setIsListExpandedMobile] =
     useState<boolean>(false);
 
   // if there is an error, show a toast and reset the selected pharmacy
   useEffect(() => {
     if (isError) {
-      if (isError instanceof Error) {
-        toast.error(isError.message);
+      if (error instanceof Error) {
+        toast.error(error.message);
       } else {
         toast.error("Παρουσιάστηκε ένα σφάλμα. Παρακαλώ δοκιμάστε αργότερα.");
       }
       setSelectedPharmacy(null);
     }
-  }, [isError]);
+  }, [isError, error]);
 
   // Auto-select the pharmacy if there's only one
   useEffect(() => {
@@ -67,17 +69,29 @@ function MainDataContainer({
   };
 
   return (
-    <div className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-3xl transition-all duration-500 md:flex-row">
-      {isLoading && (
-        <div className="absolute inset-0 z-[2000] flex items-center justify-center bg-white bg-opacity-50 backdrop-blur-sm backdrop-filter dark:bg-gray-800 dark:bg-opacity-50">
-          <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-gray-900 dark:border-white"></div>
-        </div>
-      )}
+    <div className="relative mx-auto flex h-full w-full flex-col overflow-hidden transition-all duration-500 md:flex-row">
       <div
-        className={`relative h-full flex-shrink-0 transition-all duration-500  ${
-          isListVisible ? "w-full flex-grow md:w-2/3" : "w-full"
-        }`}
+        className={clsx(
+          "sm:rounded-t-xl absolute bottom-0 left-0 right-0 z-[1100] transform bg-white transition-all duration-500 ease-in-out dark:bg-gray-800 dark:text-white md:static md:z-0 md:h-full md:w-1/3 md:rounded-none",
+          isListVisible
+            ? "max-w-[100%] opacity-100 md:max-w-[50%]"
+            : "m-0 max-w-0 opacity-0",
+          isListExpandedMobile ? "h-[60vh]" : "h-[20vh]",
+        )}
       >
+        <PharmacyList
+          pharmacies={pharmacies}
+          count={count || pharmacies.length}
+          setSelectedPharmacy={handelClickToFlyOnMap}
+          selectedPharmacy={selectedPharmacy}
+          cityLabel={cityLabel}
+          isListExpandedMobile={isListExpandedMobile}
+          setIsListExpandedMobile={setIsListExpandedMobile}
+          searchType={searchType}
+        />
+      </div>
+
+      <div className="relative h-full w-full transition-all duration-500">
         <DynamicPharmacyMap
           pharmacies={pharmacies}
           selectedPharmacy={selectedPharmacy}
@@ -86,26 +100,7 @@ function MainDataContainer({
           isListVisible={isListVisible}
           radius={radius}
           setRadiusQuery={setRadiusQuery}
-        />
-      </div>
-      <div
-        className={clsx(
-          "sm:rounded-t-xl absolute bottom-0 left-0 right-0 z-[1100] transform  bg-white p-4 transition-all duration-500 dark:bg-gray-800 dark:text-white md:static md:z-0 md:h-full md:w-1/4 md:rounded-none md:p-2",
-          isListVisible
-            ? "translate-x-0 opacity-100"
-            : "translate-x-full opacity-0",
-          isListExpandedMobile ? "h-[60vh]" : "h-[20vh]",
-        )}
-      >
-        <PharmacyList
-          pharmacies={pharmacies}
-          count={count}
-          setSelectedPharmacy={handelClickToFlyOnMap}
-          selectedPharmacy={selectedPharmacy}
-          cityLabel={cityLabel}
-          radius={radius}
-          isListExpandedMobile={isListExpandedMobile}
-          setIsListExpandedMobile={setIsListExpandedMobile}
+          searchType={searchType}
         />
       </div>
     </div>

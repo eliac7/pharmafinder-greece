@@ -9,7 +9,9 @@ const DarkModeToggle = () => {
   return (
     <div
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="cursor-pointer rounded-full p-2 transition-colors duration-200 hover:bg-white/[0.8]"
+      className="cursor-pointer rounded-full p-2 transition-colors duration-200 
+      hover:bg-gray-200  dark:text-gray-400 dark:hover:bg-gray-800
+      "
     >
       {theme === "dark" ? <BiSun size={24} /> : <CiDark size={24} />}
     </div>

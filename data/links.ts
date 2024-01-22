@@ -4,15 +4,11 @@ export const links = [
     href: "/",
   },
   {
-    name: "Εφημερεύοντα Φαρμακεία",
-    href: "/now?radius=3",
+    name: "Εφαρμογή",
+    href: "/app",
   },
   {
-    name: "Ανά Πόλη",
-    href: "/city",
-  },
-  {
-    name: "Κοντινά Φαρμακεία",
-    href: "/nearby",
+    name: "Test",
+    href: "/test",
   },
 ] as const;

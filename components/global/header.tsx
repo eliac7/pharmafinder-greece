@@ -1,15 +1,19 @@
 "use client";
-import { useEffect, useState, Fragment, useRef } from "react";
 import { links } from "@/data/links";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import CurrentTime from "./current-time";
+import { Fragment, useEffect, useRef, useState } from "react";
 
-import dynamic from "next/dynamic";
-import { GiHamburgerMenu } from "react-icons/gi";
 import clsx from "clsx";
+import { GiHamburgerMenu } from "react-icons/gi";
+import dynamic from "next/dynamic";
+
+const CurrentTime = dynamic(() => import("./current-time"), {
+  ssr: false,
+});
+
 const DarkModeToggle = dynamic(() => import("./dark-mode-toggle"), {
   ssr: false,
 });
@@ -28,13 +32,13 @@ function Header() {
 
   return (
     <header
-      className="mx-2 flex h-20 items-center justify-center rounded-b-2xl bg-transparent py-2 md:h-28"
+      className="flex h-20 items-center justify-center border-b border-gray-200 bg-transparent dark:border-gray-700 md:h-28 md:px-8"
       aria-label="Header"
     >
       <div className="flex h-full w-1/2 place-items-center">
         <Link href="/" className="h-full">
           <Image
-            className="title-font mb-4 h-full items-center object-contain font-medium text-gray-900 md:mb-0"
+            className="title-font filter:invert mb-4 h-full items-center object-contain font-medium text-gray-900 md:mb-0"
             src="/logo.png"
             alt="logo"
             width={120}
@@ -59,7 +63,7 @@ function Header() {
                   <li className="relative flex items-center justify-center text-center">
                     <Link
                       className={clsx(
-                        "flex w-full items-center justify-center rounded-xl px-3 py-3 text-gray-200 transition dark:text-gray-400 ",
+                        "flex w-full items-center justify-center rounded-xl px-3 py-3 text-slate-600 transition hover:text-gray-200 dark:text-gray-400 ",
                         {
                           "bg-complementary-400 !text-white": activeLink,
                           "hover:bg-slate-500 dark:hover:text-white":

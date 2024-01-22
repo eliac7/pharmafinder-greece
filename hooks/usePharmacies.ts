@@ -28,36 +28,57 @@ const fetchPharmacies = async (
   return JSON.parse(decryptedData);
 };
 export const usePharmacies = ({
-  endpoint,
-  ...params
+  searchType,
+  radius,
+  citySlug,
+  city,
+  time,
 }: {
-  endpoint: string;
-  [key: string]: string;
+  searchType: "nearby" | "city";
+  radius?: number;
+  citySlug?: string;
+  city?: string;
+  time?: "now" | "today" | "tomorrow";
 }) => {
   const { location } = useLocationContext();
 
-  let updatedParams: { [key: string]: string } = { ...params };
+  let endpoint = "";
+  let params: { [key: string]: any } = {};
+  let shouldFetch = true;
 
-  if (location.latitude !== null && location.longitude !== null) {
-    updatedParams.latitude = location.latitude.toString();
-    updatedParams.longitude = location.longitude.toString();
+  if (searchType === "nearby") {
+    endpoint =
+      time === "now"
+        ? "nearby_pharmacies_with_hours_now"
+        : time === "today"
+          ? "nearby_pharmacies_with_hours_today"
+          : "nearby_pharmacies_with_hours_tomorrow";
+    params = {
+      latitude: location.latitude,
+      longitude: location.longitude,
+      radius,
+    };
+  } else if (searchType === "city") {
+    if (!citySlug && !city) {
+      shouldFetch = false;
+    } else {
+      endpoint = "city";
+      params = {
+        city_slug: citySlug,
+        city_name: city,
+        time,
+        // if location is available, add it to the query
+        ...(location.latitude && { latitude: location.latitude }),
+        ...(location.longitude && { longitude: location.longitude }),
+      };
+    }
   }
 
-  const queryKey = [
-    "pharmacies",
-    endpoint,
-    updatedParams,
-    params.radius,
-    params.time,
-  ];
+  const queryKey = ["pharmacies", endpoint, params];
 
   return useQuery<IPharmacyResponse, Error>({
     queryKey: queryKey,
-    queryFn: () => fetchPharmacies(endpoint, updatedParams),
-    refetchOnWindowFocus: false,
-    // for 10 minutes
-    staleTime: 1000 * 60 * 10,
-    retry: false,
-    refetchInterval: 1000 * 60 * 60,
+    queryFn: () => fetchPharmacies(endpoint, params),
+    enabled: shouldFetch,
   });
 };

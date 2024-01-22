@@ -21,9 +21,21 @@ export interface IPharmacyMapProps {
   isListVisible: boolean;
   radius?: string;
   setRadiusQuery?: (radius: string) => void;
+  searchType?: string;
 }
 
 export interface ISelectedPharmacy {
   latitude: number;
   longitude: number;
+}
+
+export interface IPharmacyListProps {
+  pharmacies: IPharmacy[];
+  count: number;
+  selectedPharmacy?: IPharmacy | null;
+  setSelectedPharmacy: (pharmacy: IPharmacy | null) => void;
+  cityLabel?: string;
+  isListExpandedMobile: boolean;
+  setIsListExpandedMobile: (isListExpandedMobile: boolean) => void;
+  searchType: "city" | "nearby";
 }

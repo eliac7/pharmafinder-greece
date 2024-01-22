@@ -7,23 +7,34 @@ import {
   formatGreekPhoneNumber,
   formatKM,
 } from "@/lib/utils";
-import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import { FaChevronDown, FaChevronUp, FaPhone } from "react-icons/fa";
 import { GiPathDistance } from "react-icons/gi";
 import { MdOutlineSchedule } from "react-icons/md";
+import { IPharmacyListProps } from "./types";
 
-interface IPharmacyListProps {
-  pharmacies: IPharmacy[];
-  count?: number | undefined;
-  selectedPharmacy?: IPharmacy | null;
-  radius?: string;
-  setSelectedPharmacy: (pharmacy: IPharmacy | null) => void;
-  cityLabel?: string;
-  isListExpandedMobile: boolean;
-  setIsListExpandedMobile: (isListExpandedMobile: boolean) => void;
-}
+const getPharmacyCountLabel = (
+  count: number,
+  searchType: "city" | "nearby",
+  cityLabel: string | undefined,
+) => {
+  const baseLabel =
+    searchType === "city" ? `στην πόλη ${cityLabel}` : `στην περιοχή σας`;
+
+  if (searchType === "city" && !cityLabel) {
+    return `Παρακαλώ επιλέξτε μια πόλη.`;
+  }
+
+  switch (count) {
+    case 0:
+      return `Δεν βρέθηκαν φαρμακεία ${baseLabel}.`;
+    case 1:
+      return `Βρέθηκε 1 φαρμακείο ${baseLabel}.`;
+    default:
+      return `Βρέθηκαν ${count} φαρμακεία ${baseLabel}.`;
+  }
+};
 
 function PharmacyList({
   pharmacies,
@@ -33,14 +44,12 @@ function PharmacyList({
   setSelectedPharmacy,
   isListExpandedMobile,
   setIsListExpandedMobile,
-  radius,
+  searchType,
 }: IPharmacyListProps) {
   type Refs = Record<string, HTMLLIElement | null>;
 
   const itemRefs = useRef<Refs>({});
   const listContainerRef = useRef<HTMLUListElement>(null);
-  const pathname = usePathname();
-  const isCityPage = pathname.includes("/city/");
 
   useEffect(() => {
     // Check if the selected pharmacy is set, the corresponding list item exists, and the list container is mounted
@@ -72,13 +81,6 @@ function PharmacyList({
     }
   }, [selectedPharmacy, pharmacies]);
 
-  const countLabel =
-    count === undefined || count === null
-      ? "0 φαρμακεία"
-      : count === 1
-        ? `${count} φαρμακείο`
-        : `${count} φαρμακεία`;
-
   const toggleExpand = (
     event: React.MouseEvent<HTMLButtonElement>,
     pharmacy: IPharmacy,
@@ -92,7 +94,12 @@ function PharmacyList({
   };
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center justify-center">
+    <div
+      className="relative flex h-full w-full flex-col items-center
+      justify-center after:absolute after:bottom-0 after:left-0 after:right-0 after:z-10 after:h-10 after:bg-gradient-to-t
+      after:from-primary-100 after:to-transparent after:opacity-60 after:content-[''] dark:after:from-slate-700 dark:after:to-transparent
+      "
+    >
       <span
         className="absolute -top-10 flex cursor-pointer items-center justify-center rounded-full bg-slate-500 p-2 transition-all duration-300 hover:bg-gray-500 md:hidden"
         onClick={() => {
@@ -106,10 +113,8 @@ function PharmacyList({
         )}
       </span>
 
-      <span className="mb-2 rounded-full bg-primary-800 px-4 py-2 text-center font-sans text-sm font-semibold text-white no-underline shadow-md focus:outline-none">
-        {isCityPage
-          ? `${countLabel} στην περιοχή ${cityLabel ? cityLabel : "σας"}`
-          : `${countLabel} στην περιοχή σας σε ακτίνα ${radius} χλμ.`}
+      <span className=" mx-2 mt-2 rounded-full bg-primary-800 px-4 py-2 text-center font-sans text-sm font-semibold text-white no-underline shadow-md focus:outline-none">
+        {getPharmacyCountLabel(count, searchType, cityLabel)}
       </span>
 
       <ul

@@ -9,6 +9,7 @@ const config: Config = {
   ],
   theme: {
     screens: {
+      tablet: "640px",
       md: "960px",
       semilg: "1100px",
     },

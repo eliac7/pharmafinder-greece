@@ -21,15 +21,14 @@ import {
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { FullscreenControl } from "react-leaflet-fullscreen";
 import "react-leaflet-fullscreen/styles.css";
-import { IMapProps, IPharmacyMapProps, IPoint } from "./types";
 import PharmacyMarker, { userLocationMarker } from "./pharmacy-marker";
+import { IMapProps, IPharmacyMapProps, IPoint } from "./types";
 
 import { ILocation } from "@/lib/interfaces";
 import { cn } from "@/lib/utils";
 import clsx from "clsx";
 import { useTheme } from "next-themes";
-import { CiViewList } from "react-icons/ci";
-import { FaLocationArrow } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaLocationArrow } from "react-icons/fa";
 
 const POI: React.FC<IMapProps> = ({ points, selectedPharmacy }) => {
   const map = useMap();
@@ -91,125 +90,27 @@ const ToggleListButton = ({
   return (
     <button
       className={cn(
-        "absolute right-0 top-20 z-[1000] m-4 hidden rounded-full bg-white p-2 shadow-md transition-all duration-300 hover:bg-complementary-500 md:block",
-        isListVisible && "bg-complementary-500",
+        "absolute left-2 top-10 z-[1000] hidden rounded-lg bg-white p-2 shadow-md transition-all duration-300 hover:bg-complementary-500 md:block",
+        isListVisible && "bg-complementary-500 hover:bg-complementary-700",
       )}
       onClick={handleClick}
-      aria-label="Εμφάνιση/Απόκρυψη λίστας φαρμακείων"
-      title="Εμφάνιση/Απόκρυψη λίστας φαρμακείων"
+      aria-label={
+        isListVisible
+          ? "Απόκρυψη λίστας φαρμακείων"
+          : "Εμφάνιση λίστας φαρμακείων"
+      }
+      title={
+        isListVisible
+          ? "Απόκρυψη λίστας φαρμακείων"
+          : "Εμφάνιση λίστας φαρμακείων"
+      }
     >
-      <CiViewList size={24} color={isListVisible ? "white" : "black"} />
-    </button>
-  );
-};
-
-const RadiusRangeSlider = ({
-  radius,
-  circleRef,
-  setRadiusQuery,
-  is_by_city,
-}: {
-  radius: string | undefined;
-  circleRef: React.MutableRefObject<L.Circle | null>;
-  setRadiusQuery: (radius: string) => void;
-  is_by_city: boolean;
-}) => {
-  const map = useMap();
-  const [value, setValue] = useState(radius || "1");
-
-  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (map) {
-      map.dragging.disable();
-    }
-    setValue(e.target.value);
-  };
-
-  const handleInteractionEnd = (e: React.SyntheticEvent) => {
-    if (map) {
-      map.dragging.enable();
-    }
-    setRadiusQuery(value);
-    circleRef.current?.setRadius(parseFloat(value) * 1000);
-  };
-
-  return (
-    <div
-      className={clsx(
-        "sm:top-0 absolute left-[50%] z-[500] block translate-x-[-50%] transform rounded-b-xl rounded-t-none bg-slate-600 bg-opacity-50 px-5 py-2 backdrop-blur-sm backdrop-filter dark:bg-primary-600 dark:bg-opacity-50 md:bottom-4 md:rounded-xl",
-        is_by_city && "hidden",
+      {isListVisible ? (
+        <FaChevronLeft size={24} color={"white"} />
+      ) : (
+        <FaChevronRight size={24} color={"black"} />
       )}
-      onMouseDown={() => map?.dragging.disable()}
-      onMouseUp={handleInteractionEnd}
-      onTouchEnd={handleInteractionEnd}
-    >
-      <label
-        htmlFor="steps-range"
-        className="mb-2 block text-sm font-semibold text-white"
-      >
-        Ακτίνα αναζήτησης: {value} χλμ
-      </label>
-      <input
-        id="steps-range"
-        type="range"
-        min="1"
-        max="10"
-        value={value}
-        step="1"
-        className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-300 outline-none dark:bg-gray-700 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-red-400 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-red-400"
-        onChange={handleSliderChange}
-        onMouseUp={handleInteractionEnd}
-      />
-    </div>
-  );
-};
-
-const TimeframeButtons = () => {
-  enum Timeframe {
-    NOW = "now",
-    TODAY = "today",
-    TOMORROW = "tomorrow",
-  }
-
-  const timeframeLabels: Record<Timeframe, string> = {
-    [Timeframe.NOW]: "Τώρα",
-    [Timeframe.TODAY]: "Σήμερα",
-    [Timeframe.TOMORROW]: "Αύριο",
-  };
-
-  const [date, setDate] = useQueryState(
-    "date",
-    parseAsString.withDefault(Timeframe.NOW),
-  );
-
-  const timeframes: Timeframe[] = [
-    Timeframe.NOW,
-    Timeframe.TODAY,
-    Timeframe.TOMORROW,
-  ];
-
-  const handleClick = useCallback(
-    (timeframe: Timeframe) => {
-      setDate(timeframe);
-    },
-    [setDate],
-  );
-
-  return (
-    <div className="sm:top-0 absolute left-[50%] z-[500] flex translate-x-[-50%] transform gap-2 rounded-b-xl rounded-t-none bg-slate-600 bg-opacity-50 p-1 backdrop-blur-sm backdrop-filter dark:bg-primary-600 dark:bg-opacity-50 md:bottom-4 md:rounded-xl md:px-5 md:py-2">
-      {timeframes.map((timeframe) => (
-        <button
-          key={timeframe}
-          className={clsx(
-            "block rounded-lg p-2 text-sm font-semibold text-white transition-all duration-300",
-            date !== timeframe && "hover:bg-white hover:bg-opacity-10",
-            date === timeframe && "bg-primary-900",
-          )}
-          onClick={() => handleClick(timeframe)}
-        >
-          {timeframeLabels[timeframe]}
-        </button>
-      ))}
-    </div>
+    </button>
   );
 };
 
@@ -222,25 +123,17 @@ const ReloacateButton = ({
 }) => {
   const map = useMap();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [currentZoom, setCurrentZoom] = useState(map.getZoom());
-
-  // We use the useMapEvents hook to access the map instance so we can keep track of the current zoom level
-  useMapEvents({
-    zoomend: () => {
-      setCurrentZoom(map.getZoom());
-    },
-  });
 
   const relocateUser = () => {
     if (!location.latitude || !location.longitude) {
       return;
     }
-    map.setView([location.latitude, location.longitude], currentZoom);
+    map.setView([location.latitude, location.longitude], 16);
     setIsPopupOpen(false);
   };
 
   return (
-    <div className="absolute left-3 top-28 z-[400] transition-all duration-300">
+    <div className="absolute right-3 top-28 z-[400] transition-all duration-300">
       <button
         className={cn(
           "rounded-full bg-white p-2 shadow-md hover:bg-gray-100",
@@ -255,7 +148,7 @@ const ReloacateButton = ({
 
       <div
         className={cn(
-          "invisible absolute left-0 top-10 z-[401] flex cursor-auto items-center  rounded-lg bg-gray-500 bg-opacity-50  text-xs font-semibold text-gray-700 opacity-0 backdrop-blur-sm backdrop-filter transition-all duration-300 dark:bg-primary-600",
+          "invisible absolute right-0 top-10 z-[401] flex cursor-auto items-center  rounded-lg bg-gray-500 bg-opacity-50  text-xs font-semibold text-gray-700 opacity-0 backdrop-blur-sm backdrop-filter transition-all duration-300 dark:bg-primary-600",
           isPopupOpen && "visible opacity-100",
         )}
       >
@@ -288,7 +181,7 @@ export default function PharmacyMap({
   toggleListVisibility,
   isListVisible,
   radius,
-  setRadiusQuery,
+  searchType,
 }: IPharmacyMapProps) {
   const { location, updateLocation, getLocation } = useLocationContext();
   const { theme } = useTheme();
@@ -314,6 +207,10 @@ export default function PharmacyMap({
       });
     }
   }, [layerName]);
+
+  useEffect(() => {
+    setLayerName(defaultLayer);
+  }, [defaultLayer, setLayerName]);
 
   useEffect(() => {
     if (selectedPharmacy) {
@@ -362,7 +259,7 @@ export default function PharmacyMap({
       ref={setMap}
       maxZoom={18}
     >
-      <LayersControl position="topright">
+      <LayersControl position="bottomright">
         <LayersControl.BaseLayer
           name="Οδικός Χάρτης"
           checked={layerName === "road"}
@@ -455,40 +352,33 @@ export default function PharmacyMap({
         </>
       )}
 
-      {radius && location.latitude && location.longitude && (
-        <Circle
-          center={[location.latitude, location.longitude]}
-          radius={parseFloat(radius) * 1000}
-          fillOpacity={0}
-          weight={2}
-          ref={circleRef}
-          color={layerName === "dark" ? "#6c8e8c" : "#3a515d "}
-          dashArray="10,10"
-        />
-      )}
+      {searchType === "nearby" &&
+        radius &&
+        location.latitude &&
+        location.longitude && (
+          <Circle
+            center={[location.latitude, location.longitude]}
+            radius={parseFloat(radius) * 1000}
+            fillOpacity={0}
+            weight={2}
+            ref={circleRef}
+            color={layerName === "dark" ? "#6c8e8c" : "#3a515d "}
+            dashArray="10,10"
+          />
+        )}
 
       <MapBoundsAdjuster points={points} />
 
       <FullscreenControl
         title="Εμφάνιση σε πλήρη οθόνη"
         titleCancel="Έξοδος από πλήρη οθόνη"
+        position="topright"
       />
 
       <ToggleListButton
         toggleListVisibility={toggleListVisibility}
         isListVisible={isListVisible}
       />
-
-      {radius && setRadiusQuery && (
-        <RadiusRangeSlider
-          radius={radius}
-          circleRef={circleRef}
-          setRadiusQuery={setRadiusQuery}
-          is_by_city={is_by_city}
-        />
-      )}
-
-      {is_by_city && <TimeframeButtons />}
     </MapContainer>
   );
 }

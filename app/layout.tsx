@@ -29,7 +29,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full transition-colors duration-500">
       <body
-        className={`${comfortaaFont.className} relative m-0 flex h-full min-h-screen w-full flex-col justify-between bg-gradient-to-b from-primary-500 to-accent-light bg-fixed scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-slate-600 dark:from-gray-700 dark:to-gray-900 dark:scrollbar-track-gray-900 dark:scrollbar-thumb-gray-400 md:mx-auto md:max-w-[95vw]
+        className={`${comfortaaFont.className} relative m-0 flex h-full min-h-screen w-full flex-col justify-between bg-[#fafafa] 
+        scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-slate-600 dark:bg-[#1f1f1f] dark:from-gray-700 dark:to-gray-900 dark:scrollbar-track-gray-900 dark:scrollbar-thumb-gray-400 md:mx-auto
         `}
       >
         <Providers>
