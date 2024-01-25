@@ -1,3 +1,4 @@
+import { IFiltersMobileProps } from "@/app/(routes)/app/page";
 import { IPharmacy } from "@/lib/interfaces";
 
 export interface IPoint {
@@ -13,7 +14,7 @@ export interface IMapProps {
   } | null;
 }
 
-export interface IPharmacyMapProps {
+export interface IPharmacyMapProps extends IFiltersMobileProps {
   pharmacies: IPharmacy[] | null;
   setSelectedPharmacy: React.Dispatch<React.SetStateAction<IPharmacy | null>>;
   selectedPharmacy: IPharmacy | null;
@@ -38,4 +39,12 @@ export interface IPharmacyListProps {
   isListExpandedMobile: boolean;
   setIsListExpandedMobile: (isListExpandedMobile: boolean) => void;
   searchType: "city" | "nearby";
+}
+
+export interface IThumbnailMapProps {
+  latitude: number;
+  longitude: number;
+  url: string;
+  hoverText: string;
+  zoom?: number;
 }

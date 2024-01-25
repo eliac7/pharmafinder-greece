@@ -1,6 +1,5 @@
 "use client";
-import Filters from "@/components/global/filters";
-import MainDataContainer from "@/components/maps/main-data-container";
+import MainDataContainer from "@/components/maps/MainDataContainer";
 import { usePharmacies } from "@/hooks/usePharmacies";
 import { cities } from "@/data/cities";
 import {
@@ -9,8 +8,14 @@ import {
   parseAsStringEnum,
   parseAsFloat,
 } from "nuqs";
-import { useMemo } from "react";
-import LoadingAnimation from "@/components/maps/loading-animation";
+import { useMemo, useState } from "react";
+import LoadingAnimation from "@/components/maps/LoadingAnimation";
+import Filters from "@/components/global/FiltersComponent";
+
+export interface IFiltersMobileProps {
+  isFilterMobileOpen: boolean;
+  setIsFilterMobileOpen: (isFilterMobileOpen: boolean) => void;
+}
 
 function Page() {
   const [searchType, setSearchType] = useQueryState(
@@ -39,12 +44,15 @@ function Page() {
 
   const [timeQuery, setTimeQuery] = useQueryState(
     "time",
-    parseAsStringEnum<"now" | "today" | "tomorrow">([
+    parseAsStringEnum<"now" | "today" | "tomorrow" | "all">([
       "now",
       "today",
       "tomorrow",
+      "all",
     ]).withDefault("now"),
   );
+
+  const [isFilterMobileOpen, setIsFilterMobileOpen] = useState<boolean>(true);
 
   const {
     data: pharmacyResponse,
@@ -72,6 +80,8 @@ function Page() {
         onCityChange={setCityQuery}
         timeQuery={timeQuery}
         onTimeChange={setTimeQuery}
+        isFilterMobileOpen={isFilterMobileOpen}
+        setIsFilterMobileOpen={setIsFilterMobileOpen}
       />
       <MainDataContainer
         pharmacies={pharmacyResponse?.data || []}
@@ -82,6 +92,8 @@ function Page() {
         cityLabel={cityLabel.split(" ").slice(0, -1).join(" ")}
         isLoading={isLoading}
         searchType={searchType}
+        isFilterMobileOpen={isFilterMobileOpen}
+        setIsFilterMobileOpen={setIsFilterMobileOpen}
       />
     </>
   );

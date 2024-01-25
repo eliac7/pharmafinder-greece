@@ -7,7 +7,7 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet/dist/leaflet.css";
 import { usePathname } from "next/navigation";
 import { parseAsString, useQueryState } from "nuqs";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Circle,
   LayersControl,
@@ -16,19 +16,23 @@ import {
   Popup,
   TileLayer,
   useMap,
-  useMapEvents,
 } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { FullscreenControl } from "react-leaflet-fullscreen";
 import "react-leaflet-fullscreen/styles.css";
-import PharmacyMarker, { userLocationMarker } from "./pharmacy-marker";
+import PharmacyMarker, { userLocationMarker } from "./PharmacyMarker";
 import { IMapProps, IPharmacyMapProps, IPoint } from "./types";
 
+import { IFiltersMobileProps } from "@/app/(routes)/app/page";
 import { ILocation } from "@/lib/interfaces";
 import { cn } from "@/lib/utils";
-import clsx from "clsx";
 import { useTheme } from "next-themes";
-import { FaChevronLeft, FaChevronRight, FaLocationArrow } from "react-icons/fa";
+import {
+  FaChevronLeft,
+  FaChevronRight,
+  FaFilter,
+  FaLocationArrow,
+} from "react-icons/fa";
 
 const POI: React.FC<IMapProps> = ({ points, selectedPharmacy }) => {
   const map = useMap();
@@ -174,6 +178,36 @@ const ReloacateButton = ({
   );
 };
 
+const ToggleFilterButton = ({
+  isFilterMobileOpen,
+  setIsFilterMobileOpen,
+}: IFiltersMobileProps) => {
+  const map = useMap();
+
+  const toggleFilter = () => {
+    setIsFilterMobileOpen(!isFilterMobileOpen);
+  };
+
+  let label = {
+    open: "Εμφάνιση φίλτρων",
+    close: "Απόκρυψη φίλτρων",
+  };
+
+  return (
+    <button
+      className={cn(
+        "absolute left-2 top-10 z-[1000] block rounded-lg bg-white p-2 shadow-md transition-all duration-300 hover:bg-complementary-500 md:hidden",
+        isFilterMobileOpen && "bg-primary-800 hover:bg-complementary-700",
+      )}
+      onClick={toggleFilter}
+      aria-label={isFilterMobileOpen ? label.close : label.open}
+      title={isFilterMobileOpen ? label.close : label.open}
+    >
+      <FaFilter size={24} color={isFilterMobileOpen ? "white" : "black"} />
+    </button>
+  );
+};
+
 export default function PharmacyMap({
   pharmacies,
   selectedPharmacy,
@@ -182,6 +216,8 @@ export default function PharmacyMap({
   isListVisible,
   radius,
   searchType,
+  isFilterMobileOpen,
+  setIsFilterMobileOpen,
 }: IPharmacyMapProps) {
   const { location, updateLocation, getLocation } = useLocationContext();
   const { theme } = useTheme();
@@ -378,6 +414,11 @@ export default function PharmacyMap({
       <ToggleListButton
         toggleListVisibility={toggleListVisibility}
         isListVisible={isListVisible}
+      />
+
+      <ToggleFilterButton
+        isFilterMobileOpen={isFilterMobileOpen}
+        setIsFilterMobileOpen={setIsFilterMobileOpen}
       />
     </MapContainer>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 
 export default function RadiusSlider({
@@ -19,6 +19,12 @@ export default function RadiusSlider({
   const handleRadiusChangeComplete = (radius: number) => {
     onRadiusChange(radius);
   };
+
+  useEffect(() => {
+    setTempRadius(radiusQuery);
+    onRadiusChange(radiusQuery);
+  }, [radiusQuery, onRadiusChange]);
+
   const renderStepper = () => {
     const steps = [];
     for (let i = 1; i <= 10; i++) {

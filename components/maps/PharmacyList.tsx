@@ -95,9 +95,7 @@ function PharmacyList({
 
   return (
     <div
-      className="relative flex h-full w-full flex-col items-center
-      justify-center after:absolute after:bottom-0 after:left-0 after:right-0 after:z-10 after:h-10 after:bg-gradient-to-t
-      after:from-primary-100 after:to-transparent after:opacity-60 after:content-[''] dark:after:from-slate-700 dark:after:to-transparent
+      className="relative flex h-full w-full flex-col items-center justify-start after:absolute after:bottom-0 after:left-0 after:right-0 after:z-10 after:h-10 after:bg-gradient-to-t after:from-primary-100 after:to-transparent after:opacity-60 after:content-[''] dark:after:from-slate-700 dark:after:to-transparent
       "
     >
       <span
@@ -141,7 +139,7 @@ function PharmacyList({
           >
             <div className="flex items-center justify-between">
               <div className="flex w-full flex-col items-start justify-center gap-1 px-1">
-                <h1 className="break-all text-sm font-semibold semilg:text-lg">
+                <h1 className="text-balance text-sm font-semibold semilg:text-lg">
                   {capitalizeFirstLetterOfEachWord(pharmacy.name)}
                 </h1>
                 <p

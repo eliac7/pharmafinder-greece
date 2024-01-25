@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import PharmacyList from "./pharmacy-list";
+import PharmacyList from "./PharmacyList";
 import { IPharmacy } from "@/lib/interfaces";
-import { DynamicPharmacyMap } from "@/components/maps/";
 import clsx from "clsx";
 import toast from "react-hot-toast";
+import { IFiltersMobileProps } from "@/app/(routes)/app/page";
+import { DynamicPharmacyMap } from "./Index";
 
-interface IMainDataContainerProps {
+interface IMainDataContainerProps extends IFiltersMobileProps {
   pharmacies: IPharmacy[];
   count?: number;
   cityLabel?: string;
@@ -24,11 +25,12 @@ function MainDataContainer({
   count,
   radius,
   cityLabel,
-  isLoading,
   setRadiusQuery,
   isError,
   error,
   searchType,
+  isFilterMobileOpen,
+  setIsFilterMobileOpen,
 }: IMainDataContainerProps) {
   const [selectedPharmacy, setSelectedPharmacy] = useState<IPharmacy | null>(
     null,
@@ -76,7 +78,7 @@ function MainDataContainer({
           isListVisible
             ? "max-w-[100%] opacity-100 md:max-w-[50%]"
             : "m-0 max-w-0 opacity-0",
-          isListExpandedMobile ? "h-[60vh]" : "h-[20vh]",
+          isListExpandedMobile ? "h-[50vh]" : "h-[20vh]",
         )}
       >
         <PharmacyList
@@ -101,6 +103,8 @@ function MainDataContainer({
           radius={radius}
           setRadiusQuery={setRadiusQuery}
           searchType={searchType}
+          isFilterMobileOpen={isFilterMobileOpen}
+          setIsFilterMobileOpen={setIsFilterMobileOpen}
         />
       </div>
     </div>

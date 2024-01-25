@@ -4,27 +4,35 @@ import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
 
 import { LocationProvider } from "@/context/LocationContext";
 import { ThemeProvider } from "next-themes";
+import { CustomToaster } from "@/components/global/CustomToaster";
 
-function Providers({ children }: React.PropsWithChildren) {
-  const [client] = useState(new QueryClient());
+export default function Providers({ children }: { children: React.ReactNode }) {
+  const [client] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false,
+            staleTime: 1000 * 60 * 5, // 5 minutes
+            refetchInterval: 1000 * 60 * 5,
+            retry: false,
+          },
+        },
+      }),
+  );
 
   return (
     <QueryClientProvider client={client}>
-      <ReactQueryStreamedHydration>
-        <ThemeProvider key="PHARMAFINDER_DARK_MODE" defaultTheme="light">
-          <LocationProvider>
-            <Toaster position="bottom-right" />
-            {children}
-          </LocationProvider>
-        </ThemeProvider>
-      </ReactQueryStreamedHydration>
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      <ThemeProvider key="PHARMAFINDER_DARK_MODE">
+        <LocationProvider>
+          <CustomToaster position="bottom-right" />
+          {children}
+        </LocationProvider>
+      </ThemeProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
-
-export default Providers;

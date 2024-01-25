@@ -7,8 +7,4 @@ export const links = [
     name: "Εφαρμογή",
     href: "/app",
   },
-  {
-    name: "Test",
-    href: "/test",
-  },
 ] as const;

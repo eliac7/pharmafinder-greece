@@ -5,18 +5,15 @@ import { useRouter } from "next/navigation";
 
 import "leaflet/dist/leaflet.css";
 import { useTheme } from "next-themes";
+import { IThumbnailMapProps } from "./types";
 
 export default function ThumbnailMap({
   latitude,
   longitude,
   url,
   hoverText,
-}: {
-  latitude: number;
-  longitude: number;
-  url: string;
-  hoverText: string;
-}) {
+  zoom,
+}: IThumbnailMapProps) {
   const [isHovering, setIsHovering] = useState<boolean>(false);
   const router = useRouter();
   const { theme } = useTheme();
@@ -57,7 +54,7 @@ export default function ThumbnailMap({
 
       <MapContainer
         center={[latitude, longitude]}
-        zoom={13}
+        zoom={zoom ? zoom : 13}
         scrollWheelZoom={false}
         dragging={false}
         touchZoom={false}

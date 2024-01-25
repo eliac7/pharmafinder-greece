@@ -11,7 +11,7 @@ export default function Footer() {
           <span role="img" aria-label="love">
             ❤️
           </span>{" "}
-          and a bit of Next.js, Tailwind CSS, TypeScript, Leaflet
+          and a bit of Next.js, TypeScript, Tailwind CSS, Leaflet
         </span>
       </div>
       <div className="flex w-fit items-center justify-center md:flex-1 md:justify-end">

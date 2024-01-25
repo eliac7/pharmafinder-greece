@@ -1,7 +1,7 @@
 import { Marker, Popup } from "react-leaflet";
 import { IPharmacy } from "@/lib/interfaces";
 import * as L from "leaflet";
-import PharmacyPopUpProps from "./pharmacy-popup";
+import PharmacyPopUpProps from "./PharmacyPopUp";
 import { forwardRef } from "react";
 
 interface PharmacyMarkerProps {

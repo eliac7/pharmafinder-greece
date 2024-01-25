@@ -1,6 +1,7 @@
 "use client";
 import { useLocationContext } from "@/context/LocationContext";
 import clsx from "clsx";
+import { useEffect, useState } from "react";
 
 interface IPharmacyToggleButtonsProps {
   searchType: "nearby" | "city";
@@ -13,10 +14,21 @@ function PharmacyToggleButtons({
 }: IPharmacyToggleButtonsProps) {
   const { location } = useLocationContext();
 
+  // Initialize isNearbyButtonDisabled based on the current location
+  const initialButtonState =
+    location?.latitude === null || location?.longitude === null;
+  const [isNearbyButtonDisabled, setIsNearbyButtonDisabled] =
+    useState(initialButtonState);
+
+  useEffect(() => {
+    // Update isNearbyButtonDisabled when location changes
+    const isDisabled =
+      location?.latitude === null || location?.longitude === null;
+    setIsNearbyButtonDisabled(isDisabled);
+  }, [location]);
+
   const toggleNearbyView = () => {
-    if (location?.latitude === null || location?.longitude === null) {
-      return;
-    }
+    if (isNearbyButtonDisabled) return;
     setSearchType("nearby");
   };
 
@@ -37,14 +49,12 @@ function PharmacyToggleButtons({
           commonButtonClasses,
           searchType === "nearby" && activeButtonClasses,
           searchType === "nearby" && "rounded-bl-lg rounded-tl-lg",
-          location?.latitude === null || location?.longitude === null
+          isNearbyButtonDisabled
             ? "cursor-not-allowed bg-gray-500 opacity-50"
             : "",
         )}
         onClick={toggleNearbyView}
-        aria-disabled={
-          location?.latitude === null || location?.longitude === null
-        }
+        aria-disabled={isNearbyButtonDisabled}
       >
         Κοντά μου
       </div>

@@ -67,7 +67,7 @@ dependencies:
     version: 2.1.0
   tailwind-scrollbar:
     specifier: ^3.0.5
-    version: 3.0.5(tailwindcss@3.3.6)
+    version: 3.0.5(tailwindcss@3.4.1)
 
 devDependencies:
   '@types/leaflet':
@@ -101,8 +101,8 @@ devDependencies:
     specifier: ^0.5.11
     version: 0.5.11(prettier@3.2.4)
   tailwindcss:
-    specifier: ^3.3.6
-    version: 3.3.6
+    specifier: ^3.4.1
+    version: 3.4.1
   typescript:
     specifier: ^5
     version: 5.3.3
@@ -2885,17 +2885,17 @@ packages:
       '@babel/runtime': 7.23.6
     dev: false
 
-  /tailwind-scrollbar@3.0.5(tailwindcss@3.3.6):
+  /tailwind-scrollbar@3.0.5(tailwindcss@3.4.1):
     resolution: {integrity: sha512-0ZwxTivevqq9BY9fRP9zDjHl7Tu+J5giBGbln+0O1R/7nHtBUKnjQcA1aTIhK7Oyjp6Uc/Dj6/dn8Dq58k5Uww==}
     engines: {node: '>=12.13.0'}
     peerDependencies:
       tailwindcss: 3.x
     dependencies:
-      tailwindcss: 3.3.6
+      tailwindcss: 3.4.1
     dev: false
 
-  /tailwindcss@3.3.6:
-    resolution: {integrity: sha512-AKjF7qbbLvLaPieoKeTjG1+FyNZT6KaJMJPFeQyLfIp7l82ggH1fbHJSsYIvnbTFQOlkh+gBYpyby5GT1LIdLw==}
+  /tailwindcss@3.4.1:
+    resolution: {integrity: sha512-qAYmXRfk3ENzuPBakNK0SRrUDipP8NQnEY6772uDhflcQz5EhRdD7JNZxyrFHVQNCwULPBn6FNPp9brpO7ctcA==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
