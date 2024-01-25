@@ -88,7 +88,7 @@ function Header() {
         {isMobileNavOpen && (
           <div
             ref={mobileNavRef}
-            className="sm:hidden absolute left-0 top-10 z-[600] w-[50vw] overflow-hidden rounded-lg bg-gray-500 shadow-md"
+            className="sm:hidden absolute left-0 top-10 z-[2000] w-[50vw] overflow-hidden rounded-lg bg-gray-500 shadow-md"
           >
             <nav>
               <ul className="text-text flex-col items-center justify-center gap-y-1 text-[0.9rem] font-medium">
