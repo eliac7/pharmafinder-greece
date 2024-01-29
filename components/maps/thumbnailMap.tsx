@@ -41,7 +41,7 @@ export default function ThumbnailMap({
 
   return (
     <div
-      className="relative h-40 w-40 overflow-hidden rounded-full"
+      className="relative h-32 w-32 overflow-hidden rounded-full tablet:h-40 tablet:w-40"
       onClick={handleClick}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}

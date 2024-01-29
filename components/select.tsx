@@ -86,7 +86,7 @@ export default function Select({
             "
             >
               {filteredOptions.length === 0 && query !== "" ? (
-                <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
+                <div className="relative cursor-default select-none px-4 py-2 text-gray-300 dark:text-gray-700">
                   Δεν βρέθηκαν αποτελέσματα
                 </div>
               ) : (

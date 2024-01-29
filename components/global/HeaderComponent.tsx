@@ -3,10 +3,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment, useEffect, useRef, useState } from "react";
 
-import { links } from "@/data/links";
 import { cn } from "@/lib/utils";
 import clsx from "clsx";
 
+import { Links } from "@/data/Links";
 import dynamic from "next/dynamic";
 import { GiHamburgerMenu } from "react-icons/gi";
 const Logo = dynamic(() => import("./HeaderLogo"), {
@@ -24,18 +24,41 @@ const DarkModeToggle = dynamic(() => import("./DarkModeToggle"), {
 function Header() {
   const pathname = usePathname();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false);
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const mobileNavRef = useRef<HTMLDivElement>(null);
-
+  const isHomePage = pathname === "/";
   const toggleMobileNav = () => {
     setIsMobileNavOpen((prevState) => !prevState);
   };
+
+  const handleScroll = () => {
+    const offset = window.scrollY;
+    setIsScrolled(offset > 0);
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   useEffect(() => {
     setIsMobileNavOpen(false);
   }, [pathname]);
 
   return (
     <header
-      className="flex h-20 items-center justify-center border-b border-gray-200 bg-transparent py-2 dark:border-gray-700 md:h-28 md:px-8"
+      className={clsx(
+        "flex w-full items-center justify-center bg-transparent p-2 md:p-4",
+        {
+          "fixed top-0  z-[5000] bg-opacity-30 bg-clip-padding backdrop-blur-md backdrop-filter":
+            isHomePage,
+          "h-20 md:h-28": !isScrolled,
+          "h-16 md:h-20": isScrolled,
+        },
+      )}
       aria-label="Header"
     >
       <div className="flex h-full w-1/2 place-items-center">
@@ -47,7 +70,7 @@ function Header() {
         {/* Default Header */}
         <nav>
           <ul className="text-text sm:w-[initial] sm:flex-nowrap sm:gap-5 hidden w-full flex-wrap items-center justify-center gap-1 text-[0.9rem] font-medium md:flex">
-            {links.map((link) => {
+            {Links.map((link) => {
               const linkPath = link.href.split("?")[0];
               const activeLink =
                 (pathname === "/" && linkPath === "/") ||
@@ -60,7 +83,7 @@ function Header() {
                   <li className="relative flex items-center justify-center text-center">
                     <Link
                       className={clsx(
-                        "flex w-full items-center justify-center rounded-lg px-3 py-3 text-slate-600 transition hover:text-gray-200 dark:text-gray-400 ",
+                        "text-md flex w-full items-center justify-center rounded-lg px-3 py-3 font-bold text-gray-300 transition hover:text-gray-200",
                         {
                           "bg-complementary-400 !text-white": activeLink,
                           "hover:bg-slate-500 dark:hover:text-white":
@@ -81,7 +104,7 @@ function Header() {
         <div className="flex items-center justify-center md:hidden">
           <GiHamburgerMenu
             size={20}
-            className="GiHamburgerMenu block cursor-pointer"
+            className="block cursor-pointer text-white"
             onClick={() => toggleMobileNav()}
           />
         </div>
@@ -92,7 +115,7 @@ function Header() {
           >
             <nav>
               <ul className="text-text flex-col items-center justify-center gap-y-1 text-[0.9rem] font-medium">
-                {links.map((link) => {
+                {Links.map((link) => {
                   const linkPath = link.href.split("?")[0];
                   const activeLink =
                     (pathname === "/" && linkPath === "/") ||

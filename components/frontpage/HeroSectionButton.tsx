@@ -18,7 +18,7 @@ export default function HeroText() {
         {latitude && longitude
           ? "Βρείτε φαρμακεία στην τοποθεσία σας"
           : "Βρείτε φαρμακεία στην πόλη σας"}{" "}
-        <FaArrowRight className="inline-block h-4 w-4" />
+        <FaArrowRight className="hidden h-4 w-4 tablet:inline-block" />
       </Link>
     </div>
   );

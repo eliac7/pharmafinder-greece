@@ -1,7 +1,6 @@
 "use client";
 import MainDataContainer from "@/components/maps/MainDataContainer";
 import { usePharmacies } from "@/hooks/usePharmacies";
-import { cities } from "@/data/cities";
 import {
   useQueryState,
   parseAsString,
@@ -11,6 +10,7 @@ import {
 import { useMemo, useState } from "react";
 import LoadingAnimation from "@/components/maps/LoadingAnimation";
 import Filters from "@/components/global/FiltersComponent";
+import { CitiesData } from "@/data/CitiesData";
 
 export interface IFiltersMobileProps {
   isFilterMobileOpen: boolean;
@@ -36,7 +36,7 @@ function Page() {
 
   const cityLabel = useMemo(() => {
     if (cityQuery) {
-      const city = cities.find((city) => city.value === cityQuery);
+      const city = CitiesData.find((city) => city.value === cityQuery);
       return city?.label || "";
     }
     return "";
