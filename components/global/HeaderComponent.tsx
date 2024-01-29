@@ -2,13 +2,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment, useEffect, useRef, useState } from "react";
-
 import { cn } from "@/lib/utils";
 import clsx from "clsx";
 
-import { Links } from "@/data/Links";
 import dynamic from "next/dynamic";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { LinksData } from "@/data/Links";
+
 const Logo = dynamic(() => import("./HeaderLogo"), {
   ssr: false,
 });
@@ -70,7 +70,7 @@ function Header() {
         {/* Default Header */}
         <nav>
           <ul className="text-text sm:w-[initial] sm:flex-nowrap sm:gap-5 hidden w-full flex-wrap items-center justify-center gap-1 text-[0.9rem] font-medium md:flex">
-            {Links.map((link) => {
+            {LinksData.map((link) => {
               const linkPath = link.href.split("?")[0];
               const activeLink =
                 (pathname === "/" && linkPath === "/") ||
@@ -115,7 +115,7 @@ function Header() {
           >
             <nav>
               <ul className="text-text flex-col items-center justify-center gap-y-1 text-[0.9rem] font-medium">
-                {Links.map((link) => {
+                {LinksData.map((link) => {
                   const linkPath = link.href.split("?")[0];
                   const activeLink =
                     (pathname === "/" && linkPath === "/") ||
