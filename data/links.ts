@@ -1,4 +1,4 @@
-export const links = [
+export const Links = [
   {
     name: "Αρχική",
     href: "/",

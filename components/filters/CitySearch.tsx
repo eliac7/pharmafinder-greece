@@ -1,6 +1,6 @@
 "use client";
 
-import { cities } from "@/data/cities";
+import { CitiesData } from "@/data/CitiesData";
 import Select from "../select";
 
 interface ICitySearchProps {
@@ -24,7 +24,7 @@ export default function CitySearch({
 
   return (
     <Select
-      options={cities.map((city) => ({
+      options={CitiesData.map((city) => ({
         value: city.value,
         label: city.label,
       }))}

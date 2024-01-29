@@ -2,14 +2,23 @@
 
 import { useTheme } from "next-themes";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 function Logo() {
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
   const { theme } = useTheme();
-  const imagePath = theme === "dark" ? "/logo.png" : "/logo-dark.png";
+
+  // Determine imagePath based on whether it's the homepage or the theme type
+  const imagePath = isHomePage
+    ? "/logo.png"
+    : theme === "dark"
+      ? "/logo.png"
+      : "/logo-dark.png";
 
   return (
     <Image
-      className="title-font filter:invert mb-4 h-full items-center object-contain font-medium text-gray-900 md:mb-0"
+      className="filter:invert  h-full items-center object-contain font-medium text-gray-900"
       src={imagePath}
       alt="PharmaFinder Logo"
       width={120}

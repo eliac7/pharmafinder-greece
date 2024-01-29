@@ -14,6 +14,19 @@ const config: Config = {
       semilg: "1100px",
     },
     extend: {
+      animation: {
+        "mouse-wheel": "mouse-wheel 1s infinite alternate",
+      },
+      keyframes: {
+        "mouse-wheel": {
+          "0%": {
+            transform: "translateY(0)",
+          },
+          "100%": {
+            transform: "translateY(5px)",
+          },
+        },
+      },
       colors: {
         primary: {
           100: "#b0c1bf",

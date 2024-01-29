@@ -32,7 +32,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           {children}
         </LocationProvider>
       </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
     </QueryClientProvider>
   );
 }

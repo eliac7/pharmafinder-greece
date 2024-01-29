@@ -1,8 +1,12 @@
 "use client";
 
+import clsx from "clsx";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const CurrentTime: React.FC = () => {
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
   const [currentTime, setCurrentTime] = useState<string>(
     new Date().toLocaleTimeString("el-GR", {
       timeZone: "Europe/Athens",
@@ -24,10 +28,24 @@ const CurrentTime: React.FC = () => {
 
   return (
     <div>
-      <p className="text-2xl font-semibold text-slate-700 dark:text-white">
+      <p
+        className={clsx(
+          "text-lg font-semibold text-slate-700 dark:text-white tablet:text-2xl",
+          {
+            "!text-white": isHomePage,
+          },
+        )}
+      >
         {currentTime}
       </p>
-      <p className="text-sm text-slate-700 dark:text-white">
+      <p
+        className={clsx(
+          "text-xs text-slate-700 dark:text-white tablet:text-sm",
+          {
+            "!text-white": isHomePage,
+          },
+        )}
+      >
         {new Date().toLocaleDateString("el-GR", {
           timeZone: "Europe/Athens",
           year: "numeric",

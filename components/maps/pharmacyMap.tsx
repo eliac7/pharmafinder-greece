@@ -34,9 +34,9 @@ import {
   FaLocationArrow,
 } from "react-icons/fa";
 
-const POI: React.FC<IMapProps> = ({ points, selectedPharmacy }) => {
+const POI: React.FC<IMapProps> = ({ selectedPharmacy }) => {
   const map = useMap();
-  useMapMovement(map, points, selectedPharmacy);
+  useMapMovement(map, selectedPharmacy);
   return null;
 };
 

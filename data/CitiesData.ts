@@ -1,4 +1,4 @@
-export const cities = [
+export const CitiesData = [
   {
     label: "Άγιος Κωνσταντίνος (Αιτωλοακαρνανίας)",
     value: "agios-konstantinos",
@@ -892,7 +892,7 @@ export const cities = [
     value: "kozani",
   },
   {
-    label: "Πτολεμαίδα (Κοζάνης)",
+    label: "Πτολεμαΐδα (Κοζάνης)",
     value: "ptolemaida",
   },
   {
