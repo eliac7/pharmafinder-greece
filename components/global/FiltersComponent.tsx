@@ -53,7 +53,7 @@ export default function Filters({
   return (
     <div
       className={cn(
-        "z-[1102] w-full flex-col items-center justify-center gap-x-2 gap-y-2 border-b border-b-gray-200 py-2 shadow-xl marker:z-[500] dark:border-gray-600 tablet:flex-row tablet:gap-y-0",
+        "z-[1102] w-full flex-col items-center justify-center gap-x-2 gap-y-2 border-y border-gray-200 py-2 shadow-xl marker:z-[500] dark:border-gray-600 tablet:flex-row tablet:gap-y-0",
         isFilterMobileOpen ? "flex" : "hidden",
       )}
     >

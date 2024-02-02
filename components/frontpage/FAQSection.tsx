@@ -16,7 +16,7 @@ function FAQ() {
   };
 
   return (
-    <section className="bg-white dark:bg-gray-900">
+    <section className="bg-gray-900">
       <div className="container mx-auto flex h-full w-full flex-col items-center justify-center gap-y-6 py-5 text-center text-white">
         <h1 className="py-2 text-center text-2xl font-bold text-white">
           Συχνές ερωτήσεις
@@ -24,15 +24,12 @@ function FAQ() {
 
         <div className="mt-6 space-y-4 px-2 tablet:px-0">
           {FaqData.map((item, index) => (
-            <div
-              className="rounded-lg border-2 border-gray-100 dark:border-gray-700"
-              key={index}
-            >
+            <div className="rounded-lg border-2 border-gray-700" key={index}>
               <button
                 className="flex w-full items-center justify-between gap-x-2 p-4 focus-visible:outline-none"
                 onClick={() => handleSelect(index)}
               >
-                <h1 className="text-left font-semibold text-gray-700 dark:text-white">
+                <h1 className="stext-white text-left font-semibold">
                   {item.question}
                 </h1>
 
@@ -47,7 +44,7 @@ function FAQ() {
 
               <p
                 className={clsx(
-                  "overflow-hidden text-left text-sm text-gray-500 transition-all duration-500 ease-in-out dark:text-gray-300",
+                  "overflow-hidden text-left text-sm text-gray-300 transition-all duration-500 ease-in-out",
                   {
                     "h-0 opacity-0": selected !== index,
                     "h-auto p-4 opacity-100": selected === index,

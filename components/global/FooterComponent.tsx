@@ -7,11 +7,11 @@ export default function Footer() {
       <div className="hidden md:flex md:flex-1"></div>
       <div className="flex-1 basis-1/2 text-center">
         <span>
-          Made with{" "}
+          Δημιουργήθηκε με{" "}
           <span role="img" aria-label="love">
             ❤️
           </span>{" "}
-          and a bit of Next.js, TypeScript, Tailwind CSS, Leaflet
+          και λίγο Next.js, TypeScript, Tailwind CSS, Leaflet
         </span>
       </div>
       <div className="flex w-fit items-center justify-center md:flex-1 md:justify-end">

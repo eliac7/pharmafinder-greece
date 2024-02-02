@@ -81,8 +81,7 @@ export default function Select({
             afterLeave={() => setQuery("")}
           >
             <Combobox.Options
-              className="sm:text-sm absolute mt-1 max-h-60 w-fit overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 scrollbar scrollbar-track-gray-100
-            scrollbar-thumb-gray-300 focus:outline-none dark:bg-slate-800 dark:scrollbar-track-gray-600 dark:scrollbar-thumb-primary-400
+              className="sm:text-sm absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 scrollbar scrollbar-track-gray-100 scrollbar-thumb-gray-300 focus:outline-none dark:bg-slate-800 dark:scrollbar-track-gray-600 dark:scrollbar-thumb-primary-400 tablet:w-fit
             "
             >
               {filteredOptions.length === 0 && query !== "" ? (
