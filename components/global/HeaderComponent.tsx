@@ -83,13 +83,11 @@ function Header() {
                   <li className="relative flex items-center justify-center text-center">
                     <Link
                       className={clsx(
-                        "text-md flex w-full items-center justify-center rounded-lg px-3 py-3 font-bold transition hover:text-gray-200",
+                        "text-md flex w-full items-center justify-center rounded-lg px-3 py-3 font-bold text-gray-300 transition hover:text-gray-200",
                         {
-                          "bg-complementary-400 !text-white": activeLink,
+                          "bg-complementary-400 text-white": activeLink,
                           "hover:bg-slate-500 dark:hover:text-white":
                             !activeLink,
-                          "text-gray-600": !isHomePage,
-                          "text-gray-300": isHomePage,
                         },
                       )}
                       href={link.href}

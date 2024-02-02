@@ -43,8 +43,14 @@ function PharmacyToggleButtons({
     "border-primary-700 bg-primary-400 text-white dark:text-white";
 
   return (
-    <div className="relative flex h-full w-full max-w-[15rem] overflow-hidden rounded-lg border border-primary-700 shadow-sm dark:border-gray-600">
+    <div
+      role="tablist"
+      className="relative flex h-full w-full max-w-[15rem] overflow-hidden rounded-lg border border-primary-700 shadow-sm dark:border-gray-600"
+    >
       <div
+        role="tab"
+        aria-selected={searchType === "nearby"}
+        aria-disabled={isNearbyButtonDisabled}
         className={clsx(
           commonButtonClasses,
           searchType === "nearby" && activeButtonClasses,
@@ -54,11 +60,12 @@ function PharmacyToggleButtons({
             : "",
         )}
         onClick={toggleNearbyView}
-        aria-disabled={isNearbyButtonDisabled}
       >
         Κοντά μου
       </div>
       <div
+        role="tab"
+        aria-selected={searchType === "city"}
         className={clsx(
           commonButtonClasses,
           searchType === "city" && activeButtonClasses,

@@ -1,7 +1,7 @@
 "use client";
 
 import { Combobox, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { FaChevronCircleDown } from "react-icons/fa";
 
 interface Option {
@@ -24,6 +24,7 @@ export default function Select({
 }: SelectProps) {
   const [selected, setSelected] = useState<Option>(initialSelection);
   const [query, setQuery] = useState("");
+  const comboboxButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     setSelected(initialSelection);
@@ -59,7 +60,10 @@ export default function Select({
                 "
                 displayValue={(option: Option) => option.label}
                 onChange={(event) => setQuery(event.target.value)}
-                onClick={() => setSelected({ label: "", value: "" })}
+                onClick={() => {
+                  setSelected({ label: "", value: "" });
+                  comboboxButtonRef.current?.click();
+                }}
               />
             ) : (
               <Combobox.Button>
@@ -69,7 +73,10 @@ export default function Select({
               </Combobox.Button>
             )}
 
-            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+            <Combobox.Button
+              ref={comboboxButtonRef}
+              className="absolute inset-y-0 right-0 flex items-center pr-2"
+            >
               <FaChevronCircleDown className="h-5 w-5 text-gray-400" />
             </Combobox.Button>
           </div>
@@ -85,7 +92,7 @@ export default function Select({
             "
             >
               {filteredOptions.length === 0 && query !== "" ? (
-                <div className="relative cursor-default select-none px-4 py-2 text-gray-300 dark:text-gray-700">
+                <div className="relative cursor-default select-none px-4 py-2 text-gray-700 dark:text-gray-300">
                   Δεν βρέθηκαν αποτελέσματα
                 </div>
               ) : (
