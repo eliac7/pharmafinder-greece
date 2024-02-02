@@ -52,7 +52,7 @@ function Page() {
     ]).withDefault("now"),
   );
 
-  const [isFilterMobileOpen, setIsFilterMobileOpen] = useState<boolean>(true);
+  const [isFilterMobileOpen, setIsFilterMobileOpen] = useState<boolean>(false);
 
   const {
     data: pharmacyResponse,

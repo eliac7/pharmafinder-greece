@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import "leaflet/dist/leaflet.css";
 import { useTheme } from "next-themes";
 import { IThumbnailMapProps } from "./types";
+import Link from "next/link";
 
 export default function ThumbnailMap({
   latitude,
@@ -22,12 +23,6 @@ export default function ThumbnailMap({
     return null;
   }
 
-  const handleClick = () => {
-    if (url) {
-      router.push(url);
-    }
-  };
-
   const getTileLayerUrl = () => {
     switch (theme) {
       case "light":
@@ -40,9 +35,9 @@ export default function ThumbnailMap({
   };
 
   return (
-    <div
+    <Link
       className="relative h-32 w-32 overflow-hidden rounded-full tablet:h-40 tablet:w-40"
-      onClick={handleClick}
+      href={url}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
@@ -68,6 +63,6 @@ export default function ThumbnailMap({
           subdomains={["mt0", "mt1", "mt2", "mt3"]}
         />
       </MapContainer>
-    </div>
+    </Link>
   );
 }

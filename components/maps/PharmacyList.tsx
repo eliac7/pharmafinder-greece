@@ -95,11 +95,11 @@ function PharmacyList({
 
   return (
     <div
-      className="relative flex h-full w-full flex-col items-center justify-start gap-y-2 after:absolute after:bottom-0 after:left-0 after:right-0 after:z-10 after:h-10 after:bg-gradient-to-t after:from-primary-100 after:to-transparent after:opacity-60 after:content-[''] dark:after:from-slate-700 dark:after:to-transparent
+      className="relative z-10 flex h-full w-full flex-col items-center justify-start gap-y-2 after:absolute after:bottom-0 after:left-0 after:right-0 after:z-10 after:h-10 after:bg-gradient-to-t after:from-primary-100 after:to-transparent after:opacity-60 after:content-[''] dark:after:from-slate-700 dark:after:to-transparent
       "
     >
       <span
-        className="absolute -top-10 flex cursor-pointer items-center justify-center rounded-full bg-slate-500 p-2 transition-all duration-300 hover:bg-gray-500 md:hidden"
+        className="absolute -top-8 z-0 flex cursor-pointer items-center justify-center rounded-full bg-slate-500 p-2 transition-all duration-300 hover:bg-gray-500 md:hidden"
         onClick={() => {
           setIsListExpandedMobile(!isListExpandedMobile);
         }}
@@ -135,6 +135,7 @@ function PharmacyList({
                   ? setSelectedPharmacy(null)
                   : setSelectedPharmacy(pharmacy);
               }
+              setIsListExpandedMobile(false);
             }}
           >
             <div className="flex items-center justify-between">

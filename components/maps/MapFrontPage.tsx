@@ -1,24 +1,25 @@
 "use client";
 
-import { MutableRefObject, useEffect, useRef } from "react";
+import greeceGeoJSON from "@/data/Greece.json";
+import { topCities } from "@/data/topCities";
+import L, { Polygon as LPolygon, LatLngExpression } from "leaflet";
+import { GestureHandling } from "leaflet-gesture-handling";
+import "leaflet-gesture-handling/dist/leaflet-gesture-handling.css";
+import "leaflet/dist/leaflet.css";
+import { useTheme } from "next-themes";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { MutableRefObject, useEffect, useRef } from "react";
 import {
   MapContainer,
   Marker,
+  Polygon,
   Popup,
   TileLayer,
   useMap,
-  Polygon,
 } from "react-leaflet";
-import L, { LatLngExpression, Polygon as LPolygon } from "leaflet";
-import { topCities } from "@/data/topCities";
-import "leaflet/dist/leaflet.css";
-import { useTheme } from "next-themes";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { customMarker } from "./PharmacyMarker";
-import { GestureHandling } from "leaflet-gesture-handling";
-import "leaflet-gesture-handling/dist/leaflet-gesture-handling.css";
-import greeceGeoJSON from "@/data/Greece.json";
 
 type MultiPolygonCoordinates = number[][][][];
 type PolygonRefs = MutableRefObject<(LPolygon<any> | null)[]>;
@@ -122,16 +123,12 @@ export default function MapFrontPage() {
               >
                 <div className="flex flex-col items-center justify-center rounded-lg bg-white">
                   <h1 className="text-lg font-bold">{city.name}</h1>
-                  <button
-                    className="my-2 rounded-md bg-primary-700 px-4 py-2 text-white hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                    onClick={() => {
-                      router.push(
-                        `/app?time=now&searchType=city&city=${city.url_name}`,
-                      );
-                    }}
+                  <Link
+                    className="my-2 rounded-md bg-primary-700 px-4 py-2 !text-white hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                    href={`/app?time=now&searchType=city&city=${city.url_name}`}
                   >
                     Επιλογή
-                  </button>
+                  </Link>
                 </div>
               </Popup>
             </Marker>

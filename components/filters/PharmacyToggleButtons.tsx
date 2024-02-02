@@ -45,7 +45,7 @@ function PharmacyToggleButtons({
   return (
     <div
       role="tablist"
-      className="relative flex h-full w-full max-w-[15rem] overflow-hidden rounded-lg border border-primary-700 shadow-sm dark:border-gray-600"
+      className="relative flex h-full w-full overflow-hidden rounded-lg border border-primary-700 shadow-sm dark:border-gray-600 tablet:max-w-[15rem]"
     >
       <div
         role="tab"

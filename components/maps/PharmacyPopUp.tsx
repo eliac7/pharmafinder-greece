@@ -20,7 +20,7 @@ function PharmacyPopUpProps({
   const isDarkMode = layerName === "dark";
 
   return (
-    <div className="flex h-full w-fit flex-col overflow-hidden rounded-lg md:w-96 md:flex-row">
+    <div className="flex h-full w-full max-w-[80vw] flex-col overflow-hidden rounded-lg md:w-96 md:flex-row">
       {/* Left Column */}
       <div className="flex w-full items-center justify-center bg-primary-500 md:w-1/4">
         <Image
@@ -62,17 +62,23 @@ function PharmacyPopUpProps({
         {data_hours && (
           <div className="flex flex-col gap-2">
             {data_hours.map((hour, index) => (
-              <div key={index} className="flex items-center gap-2">
+              <div
+                key={index}
+                className="flex flex-col items-start gap-2 tablet:flex-row tablet:items-center"
+              >
                 Εφημερεύει: {hour.open_time} - {hour.close_time}
                 {date && (
-                  <span className="italic">/ {formatDateInGreek(date)}</span>
+                  <span className="italic">
+                    <span className="hidden tablet:block">/</span>
+                    {formatDateInGreek(date)}
+                  </span>
                 )}
               </div>
             ))}
           </div>
         )}
 
-        <div className="flex h-full w-full items-center justify-center gap-4">
+        <div className="mt-2 flex h-full w-full items-center justify-center gap-4">
           {/* street view */}
 
           <a
