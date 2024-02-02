@@ -1,6 +1,6 @@
 "use client";
 import { useLocationContext } from "@/context/LocationContext";
-import { useMapMovement } from "@/hooks/mapMovementHook";
+import { useMapMovement } from "@/hooks/useMapMovement";
 import * as L from "leaflet";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
