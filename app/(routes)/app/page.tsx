@@ -1,5 +1,5 @@
 "use client";
-import MainDataContainer from "@/components/maps/MainDataContainer";
+import MainDataContainer from "@/components/maps/AppContainer";
 import { usePharmacies } from "@/hooks/usePharmacies";
 import {
   useQueryState,
@@ -60,7 +60,7 @@ function Page() {
     isLoading,
     error,
   } = usePharmacies({
-    searchType: searchType,
+    searchType,
     radius: radiusQuery,
     citySlug: cityQuery,
     city: cityLabel,

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { useLocationContext } from "@/context/LocationContext";
 import { FaArrowRight } from "react-icons/fa";
@@ -16,9 +18,9 @@ export default function HeroText() {
         className="rounded-md bg-complementary-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-complementary-700  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-complementary-200"
       >
         {latitude && longitude
-          ? "Βρείτε φαρμακεία στην τοποθεσία σας"
+          ? "Βρείτε φαρμακεία κοντά σας"
           : "Βρείτε φαρμακεία στην πόλη σας"}{" "}
-        <FaArrowRight className="hidden h-4 w-4 tablet:inline-block" />
+        <FaArrowRight className="hidden h-4 w-4 tablet:ml-2 tablet:inline-block" />
       </Link>
     </div>
   );

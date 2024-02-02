@@ -1,5 +1,4 @@
-"use client";
-import Cities from "@/components/frontpage/CitiesSection";
+import Cities from "@/components/frontpage/MapSection";
 import FAQ from "@/components/frontpage/FAQSection";
 import Hero from "@/components/frontpage/HeroSection";
 import HowItWorks from "@/components/frontpage/HowItWorksSection";

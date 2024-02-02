@@ -31,8 +31,7 @@ export default function RadiusSlider({
       steps.push(
         <div
           key={i}
-          className={`step ${tempRadius === i ? "active" : ""}`}
-          style={{ left: `${(i - 1) * 10}%` }}
+          className={`step ml-2 text-gray-300 ${tempRadius === i ? "active font-semibold text-white" : ""}`}
         >
           {i}
         </div>,
@@ -47,7 +46,7 @@ export default function RadiusSlider({
     >
       {tempRadius} χλμ. <BiChevronDown className="ml-4" size={20} />
       <div
-        className={`absolute left-0 top-10  z-[1000] flex h-10 w-32 flex-col items-center justify-center rounded-lg  bg-primary-300 text-white ${
+        className={`absolute left-0 top-10 z-[1000] flex h-16 w-60 flex-col items-center justify-center rounded-lg bg-primary-300  px-2 text-white ${
           radiusPopUpSlider ? "block" : "hidden"
         }`}
       >
@@ -62,7 +61,7 @@ export default function RadiusSlider({
           value={tempRadius}
           onChange={(e) => handleRadiusChange(parseInt(e.target.value))}
           onMouseUp={() => handleRadiusChangeComplete(tempRadius)}
-          className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 accent-red-500 dark:bg-gray-700"
+          className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 accent-emerald-600 dark:bg-gray-700"
           onTouchStart={() => setRadiusPopUpSlider(true)}
           onTouchEnd={() => setRadiusPopUpSlider(false)}
         />

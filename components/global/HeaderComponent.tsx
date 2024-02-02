@@ -56,7 +56,7 @@ function Header() {
           "fixed top-0  z-[5000] bg-opacity-30 bg-clip-padding backdrop-blur-md backdrop-filter":
             isHomePage,
           "h-20 md:h-28": !isScrolled,
-          "h-16 md:h-20": isScrolled,
+          "h-16 md:h-20 md:p-1": isScrolled,
         },
       )}
       aria-label="Header"
@@ -83,11 +83,13 @@ function Header() {
                   <li className="relative flex items-center justify-center text-center">
                     <Link
                       className={clsx(
-                        "text-md flex w-full items-center justify-center rounded-lg px-3 py-3 font-bold text-gray-300 transition hover:text-gray-200",
+                        "text-md flex w-full items-center justify-center rounded-lg px-3 py-3 font-bold transition hover:text-gray-200",
                         {
                           "bg-complementary-400 !text-white": activeLink,
                           "hover:bg-slate-500 dark:hover:text-white":
                             !activeLink,
+                          "text-gray-600": !isHomePage,
+                          "text-gray-300": isHomePage,
                         },
                       )}
                       href={link.href}

@@ -13,7 +13,7 @@ export default function Cities() {
     <section className="bg-primary-700 py-6">
       <div className="container mx-auto flex h-full w-full flex-col items-center  justify-center gap-y-6 px-2 text-center text-white tablet:gap-y-12">
         <h1 className="text-center text-xl font-bold text-gray-100 tablet:text-2xl">
-          Επιλέξτε μια πόλη για να δείτε τα εφημερεύοντα φαρμακεία της
+          Επιλέξτε μια από τις κυριότερες πόλεις
         </h1>
         <p className="tablet:text-md text-center text-sm text-gray-200">
           Είτε κατάγεστε από το βόρειο είτε από το νότιο μέρος της Ελλάδος, το
