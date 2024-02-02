@@ -18,13 +18,7 @@ function HowItWorks() {
               key={index}
               className="my-2 flex flex-col items-stretch overflow-hidden tablet:flex-row"
             >
-              <div className=" flex items-center justify-center rounded-tl-lg rounded-tr-lg bg-gray-700 px-2 tablet:rounded-bl-lg tablet:rounded-tl-lg tablet:rounded-tr-none">
-                <div className="h-full w-8 py-2 tablet:w-6 tablet:py-0">
-                  {item.icon}
-                </div>
-              </div>
-
-              <HowItWorksSectionCard>{item.text}</HowItWorksSectionCard>
+              <HowItWorksSectionCard icon={item.icon} text={item.text} />
             </li>
           ))}
         </ul>

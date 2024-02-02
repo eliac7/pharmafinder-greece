@@ -1,8 +1,16 @@
 "use client";
 
+import { MutableRefObject, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
-
+import {
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  useMap,
+  Polygon,
+} from "react-leaflet";
+import L, { LatLngExpression, Polygon as LPolygon } from "leaflet";
 import { topCities } from "@/data/topCities";
 import "leaflet/dist/leaflet.css";
 import { useTheme } from "next-themes";
@@ -10,7 +18,10 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 import { customMarker } from "./PharmacyMarker";
 import { GestureHandling } from "leaflet-gesture-handling";
 import "leaflet-gesture-handling/dist/leaflet-gesture-handling.css";
-import { useEffect } from "react";
+import greeceGeoJSON from "@/data/Greece.json";
+
+type MultiPolygonCoordinates = number[][][][];
+type PolygonRefs = MutableRefObject<(LPolygon<any> | null)[]>;
 
 const MapController = () => {
   const map = useMap();
@@ -24,9 +35,41 @@ const MapController = () => {
   return null;
 };
 
+const convertMultiPolygonToLatLngs = (
+  multiPolygon: MultiPolygonCoordinates,
+): LatLngExpression[][] => {
+  // Iterate over each polygon in the MultiPolygon
+  return multiPolygon.map(
+    (polygon) =>
+      // For each polygon, convert the first array of coordinates (outer boundary) to LatLngs
+      polygon.map((ring) =>
+        ring.map(
+          (coordinatePair) =>
+            new L.LatLng(coordinatePair[1], coordinatePair[0]),
+        ),
+      )[0],
+  );
+};
+
 export default function MapFrontPage() {
   const router = useRouter();
   const { theme } = useTheme();
+  const polyRefs: PolygonRefs = useRef([]);
+
+  useEffect(() => {
+    polyRefs.current.forEach((ref) => {
+      if (ref) {
+        ref.setStyle({
+          color:
+            theme === "dark" ? "rgba(255,255,255,0.30)" : "rgba(0,0,0,0.5)",
+        });
+      }
+    });
+  }, [theme]);
+
+  const greeceBordersLatLngs = convertMultiPolygonToLatLngs(
+    greeceGeoJSON.features[0].geometry.coordinates,
+  );
 
   const getTileLayerUrl = () => {
     switch (theme) {
@@ -44,7 +87,7 @@ export default function MapFrontPage() {
       <MapContainer
         center={[37.98381, 23.727539]}
         zoomControl={false}
-        zoom={5}
+        zoom={6}
         attributionControl={false}
         className="h-full w-full"
       >
@@ -52,6 +95,18 @@ export default function MapFrontPage() {
           url={getTileLayerUrl()}
           subdomains={["mt0", "mt1", "mt2", "mt3"]}
         />
+        {greeceBordersLatLngs.map(
+          (latLngs: LatLngExpression[], index: number) => (
+            <Polygon
+              key={index}
+              positions={latLngs}
+              ref={(el) => (polyRefs.current[index] = el)}
+              color={
+                theme === "dark" ? "rgba(255,255,255,0.30)" : "rgba(0,0,0,0.5)"
+              }
+            />
+          ),
+        )}
         <MarkerClusterGroup chunkedLoading>
           {topCities.map((city) => (
             <Marker

@@ -1,5 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
+import LinkButton from "../LinkButton";
 
 const MapFrontPage = dynamic(() => import("@/components/maps/MapFrontPage"), {
   ssr: false,
@@ -11,7 +12,7 @@ const MapFrontPage = dynamic(() => import("@/components/maps/MapFrontPage"), {
 export default function Cities() {
   return (
     <section className="bg-primary-700 py-6">
-      <div className="container mx-auto flex h-full w-full flex-col items-center  justify-center gap-y-6 px-2 text-center text-white tablet:gap-y-12">
+      <div className="container mx-auto flex h-full w-full flex-col items-center  justify-center gap-y-6 px-2 text-center text-white tablet:gap-y-8">
         <h1 className="text-center text-xl font-bold text-gray-100 tablet:text-2xl">
           Επιλέξτε μια από τις κυριότερες πόλεις
         </h1>
@@ -22,6 +23,18 @@ export default function Cities() {
           ενδιαφέρει με ένα απλό κλικ.
         </p>
         <MapFrontPage />
+        <div className="mt-2">
+          <p className="mb-4 mt-2 text-sm font-light text-gray-200">
+            Δεν βρήκατε την πόλη που σας ενδιαφέρει; Μην ανησυχείτε, μεταβείτε
+            στην Εφαρμογή και αναζητήστε την πόλη σας στο επάνω μέρος
+          </p>
+          <LinkButton
+            href="/app?time=now&layer=dark&searchType=city"
+            className="bg-complementary-400"
+          >
+            Μετάβαση στην Εφαρμογή
+          </LinkButton>
+        </div>
       </div>
     </section>
   );
