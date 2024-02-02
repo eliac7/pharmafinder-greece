@@ -5,7 +5,7 @@ export interface City {
   url_name: string;
 }
 
-export const topCities: City[]  = [
+export const topCities: City[] = [
   {
     name: "Αθήνα",
     latitude: 37.9838,
@@ -90,6 +90,12 @@ export const topCities: City[]  = [
     latitude: 38.3683,
     longitude: 26.1358,
     url_name: "xios",
+  },
+  {
+    name: "Κως",
+    latitude: 36.8932,
+    longitude: 27.2877,
+    url_name: "kos",
   },
   {
     name: "Κέρκυρα",

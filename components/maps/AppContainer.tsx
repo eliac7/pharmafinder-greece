@@ -78,7 +78,7 @@ function MainDataContainer({
           isListVisible
             ? "max-w-[100%] opacity-100 md:max-w-[50%]"
             : "m-0 max-w-0 opacity-0",
-          isListExpandedMobile ? "h-[50vh]" : "h-[20vh]",
+          isListExpandedMobile ? "h-[60vh]" : "h-[10vh]",
         )}
       >
         <PharmacyList

@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { IFiltersMobileProps } from "@/app/(routes)/app/page";
 import clsx from "clsx";
-import { cn } from "@/lib/utils";
 
 const PharmacyToggleButtons = dynamic(
   () => import("../filters/PharmacyToggleButtons"),
@@ -52,9 +51,9 @@ export default function Filters({
 
   return (
     <div
-      className={cn(
-        "z-[1102] w-full flex-col items-center justify-center gap-x-2 gap-y-2 border-y border-gray-200 py-2 shadow-xl marker:z-[500] dark:border-gray-600 tablet:flex-row tablet:gap-y-0",
-        isFilterMobileOpen ? "flex" : "hidden",
+      className={clsx(
+        isFilterMobileOpen ? "flex" : "hidden tablet:flex",
+        "z-[1102] flex w-full flex-col items-center justify-center gap-x-2 gap-y-2 border-y border-gray-200 px-2 py-2 shadow-xl marker:z-[500] dark:border-gray-600 tablet:flex-row tablet:gap-y-0 tablet:px-0",
       )}
     >
       <PharmacyToggleButtons

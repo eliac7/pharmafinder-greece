@@ -196,7 +196,7 @@ const ToggleFilterButton = ({
   return (
     <button
       className={cn(
-        "absolute left-2 top-10 z-[1000] block rounded-lg bg-white p-2 shadow-md transition-all duration-300 hover:bg-complementary-500 md:hidden",
+        "absolute left-2 top-10 z-[1000] block rounded-lg bg-white p-2 shadow-md transition-all duration-300 md:hidden",
         isFilterMobileOpen && "bg-primary-800 hover:bg-complementary-700",
       )}
       onClick={toggleFilter}

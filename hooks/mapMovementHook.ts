@@ -14,7 +14,7 @@ export const useMapMovement = (
         selectedPharmacy.latitude,
         selectedPharmacy.longitude,
       );
-      map.setView(selectedLatLng, 18);
+      map.setView(selectedLatLng, 16);
     }
   }, [map, selectedPharmacy]);
 };

@@ -50,10 +50,10 @@ export default function Select({
         );
 
   return (
-    <div>
+    <div className="w-full tablet:w-fit">
       <Combobox value={selected} onChange={setSelected}>
         <div className="relative">
-          <div className="sm:text-sm relative w-full cursor-default overflow-hidden rounded-lg border border-primary-700 bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 dark:bg-slate-600">
+          <div className="sm:text-sm relative w-full cursor-default overflow-hidden rounded-lg border border-primary-700 bg-white text-center shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 dark:bg-slate-600 tablet:text-left">
             {searchable ? (
               <Combobox.Input
                 className="w-full truncate border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-0 focus:ring-transparent active:bg-transparent dark:text-gray-300
@@ -100,7 +100,7 @@ export default function Select({
                   <Combobox.Option
                     key={option.value}
                     className={({ active }) =>
-                      `relative cursor-default select-none py-2 pl-4 pr-4 ${
+                      `relative cursor-default select-none py-2 pl-4 pr-4 text-center tablet:text-left ${
                         active
                           ? "bg-complementary-400 text-white"
                           : "text-gray-900 dark:bg-gray-800 dark:text-gray-300"
