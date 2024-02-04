@@ -1,3 +1,5 @@
+import { FiltersProvider } from "@/context/FiltersContext";
+
 export default function RoutesLayout({
   children,
 }: {
@@ -5,7 +7,7 @@ export default function RoutesLayout({
 }) {
   return (
     <main className="relative flex h-screen flex-1 flex-grow flex-col items-center justify-center overflow-auto">
-      {children}
+      <FiltersProvider>{children}</FiltersProvider>
     </main>
   );
 }

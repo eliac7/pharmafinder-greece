@@ -13,6 +13,7 @@ import { FaChevronDown, FaChevronUp, FaPhone } from "react-icons/fa";
 import { GiPathDistance } from "react-icons/gi";
 import { MdOutlineSchedule } from "react-icons/md";
 import { IPharmacyListProps } from "./types";
+import { useFilters } from "@/context/FiltersContext";
 
 const getPharmacyCountLabel = (
   count: number,
@@ -36,17 +37,17 @@ const getPharmacyCountLabel = (
   }
 };
 
-function PharmacyList({
-  pharmacies,
-  count,
-  selectedPharmacy,
-  cityLabel,
-  setSelectedPharmacy,
-  isListExpandedMobile,
-  setIsListExpandedMobile,
-  searchType,
-}: IPharmacyListProps) {
+function PharmacyList({ pharmacies, count }: IPharmacyListProps) {
   type Refs = Record<string, HTMLLIElement | null>;
+
+  const {
+    cityLabel,
+    searchType,
+    selectedPharmacy,
+    setSelectedPharmacy,
+    isListExpandedMobile,
+    setIsListExpandedMobile,
+  } = useFilters();
 
   const itemRefs = useRef<Refs>({});
   const listContainerRef = useRef<HTMLUListElement>(null);
@@ -112,7 +113,11 @@ function PharmacyList({
       </span>
 
       <span className=" mx-2 mt-2 rounded-full bg-primary-800 px-4 py-2 text-center font-sans text-sm font-semibold text-white no-underline shadow-md focus:outline-none">
-        {getPharmacyCountLabel(count, searchType, cityLabel)}
+        {getPharmacyCountLabel(
+          count,
+          searchType,
+          cityLabel.split(" ").slice(0, -1).join(" "),
+        )}
       </span>
 
       <ul
@@ -153,60 +158,88 @@ function PharmacyList({
                 >
                   {pharmacy.address.trim().split(",").slice(0, -1).join(",")}
                 </p>
-                {pharmacy.distance_km && (
-                  <p>
-                    <GiPathDistance className="mr-1 inline-block h-8 w-8" />
-                    {formatKM(pharmacy.distance_km)}
-                  </p>
-                )}
-                {selectedPharmacy &&
-                  selectedPharmacy.name === pharmacy.name && (
-                    <div className="mt-2">
-                      {pharmacy.phone && (
-                        <div className="flex items-center justify-start">
-                          <FaPhone className="mr-2" />
-                          <a
-                            href={`tel:${pharmacy.phone}`}
-                            className={cn(
-                              "font-semibold text-gray-500 underline hover:text-gray-900 dark:text-white dark:hover:text-gray-300",
-                              selectedPharmacy &&
-                                selectedPharmacy.name === pharmacy.name &&
-                                "text-gray-200",
-                            )}
-                          >
-                            {formatGreekPhoneNumber(pharmacy.phone)}
-                          </a>
-                        </div>
-                      )}
-                      {pharmacy.data_hours && (
-                        <div className="flex-col items-center justify-start">
-                          {(() => {
-                            const lastIndex = pharmacy.data_hours.length - 1;
-                            return pharmacy.data_hours.map((hours, index) => (
-                              <div
-                                key={index}
-                                className="flex items-center justify-start"
-                              >
-                                <MdOutlineSchedule className="mr-2" />
-                                {hours.open_time} - {hours.close_time} {""}
-                                {index === lastIndex &&
-                                  pharmacy.open_until_tomorrow &&
-                                  (pharmacy.next_day_close_time
-                                    ? new Intl.DateTimeFormat("el-GR", {
-                                        day: "2-digit",
-                                        month: "2-digit",
-                                        year: "2-digit",
-                                      }).format(
-                                        new Date(pharmacy.next_day_close_time),
-                                      )
-                                    : "Αύριο")}
-                              </div>
-                            ));
-                          })()}
-                        </div>
-                      )}
+                <div className="flex w-full flex-col items-start justify-center">
+                  {pharmacy.distance_km && (
+                    <div className="flex w-full gap-1">
+                      <GiPathDistance className="mr-1 inline-block h-8 w-8" />
+                      <p>{formatKM(pharmacy.distance_km)}</p>
                     </div>
                   )}
+                  {selectedPharmacy &&
+                    selectedPharmacy.name === pharmacy.name && (
+                      <>
+                        <div className="flex w-full gap-1">
+                          {pharmacy.phone && (
+                            <div className="flex items-center justify-start">
+                              <FaPhone className="mr-2" />
+                              <a
+                                href={`tel:${pharmacy.phone}`}
+                                className={cn(
+                                  "font-semibold text-gray-500 underline hover:text-gray-900 dark:text-white dark:hover:text-gray-300",
+                                  selectedPharmacy &&
+                                    selectedPharmacy.name === pharmacy.name &&
+                                    "text-gray-200",
+                                )}
+                              >
+                                {formatGreekPhoneNumber(pharmacy.phone)}
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex w-full gap-1">
+                          {pharmacy.data_hours &&
+                            pharmacy.data_hours.length > 0 && (
+                              <div className="flex-col items-center justify-start">
+                                {pharmacy.data_hours.map((hours, index) => (
+                                  <div
+                                    key={index}
+                                    className="flex items-center justify-start"
+                                  >
+                                    <MdOutlineSchedule className="mr-2" />
+                                    {hours.open_time} - {hours.close_time}{" "}
+                                    {pharmacy.data_hours &&
+                                      index ===
+                                        pharmacy.data_hours.length - 1 &&
+                                      pharmacy.open_until_tomorrow &&
+                                      (pharmacy.next_day_close_time
+                                        ? new Intl.DateTimeFormat("el-GR", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "2-digit",
+                                          }).format(
+                                            new Date(
+                                              pharmacy.next_day_close_time,
+                                            ),
+                                          )
+                                        : "Αύριο")}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                        </div>
+                        <div className="flex w-full gap-1">
+                          {pharmacy.open_until_tomorrow && (
+                            <div className="flex items-center justify-start">
+                              <MdOutlineSchedule className="mr-2" />
+                              <p>
+                                Ανοιχτό μέχρι{" "}
+                                {pharmacy.next_day_close_time
+                                  ? new Intl.DateTimeFormat("el-GR", {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "2-digit",
+                                    }).format(
+                                      new Date(pharmacy.next_day_close_time),
+                                    )
+                                  : "Αύριο"}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
+                </div>
+
                 <button
                   onClick={(event) => toggleExpand(event, pharmacy)}
                   className="rounded-lg text-sm font-semibold text-gray-600 underline hover:text-gray-900 focus:outline-none dark:text-white dark:hover:text-gray-300"

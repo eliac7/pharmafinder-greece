@@ -1,7 +1,7 @@
 import PharmacyListSkeleton from "./PharmacyListSkeleton";
 import PharmacyMapSkeleton from "./PharmacyMapSkeleton";
 
-function MainDataContainerSkeleton({ isLoading }: { isLoading?: boolean }) {
+function AppSkeleton({ isLoading }: { isLoading?: boolean }) {
   return (
     <div className="mx-auto flex h-full w-full overflow-hidden rounded-3xl">
       <div className="w-full flex-1 bg-blue-400 dark:bg-primary-900">
@@ -14,4 +14,4 @@ function MainDataContainerSkeleton({ isLoading }: { isLoading?: boolean }) {
   );
 }
 
-export default MainDataContainerSkeleton;
+export default AppSkeleton;

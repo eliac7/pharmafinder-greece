@@ -1,43 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import PharmacyList from "./PharmacyList";
+import { useFilters } from "@/context/FiltersContext";
 import { IPharmacy } from "@/lib/interfaces";
 import clsx from "clsx";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { IFiltersMobileProps } from "@/app/(routes)/app/page";
 import { DynamicPharmacyMap } from "./Index";
+import PharmacyList from "./PharmacyList";
 
-interface IMainDataContainerProps extends IFiltersMobileProps {
+interface IMainDataContainerProps {
   pharmacies: IPharmacy[];
   count?: number;
-  cityLabel?: string;
   isLoading?: boolean;
-  radius?: string;
-  setRadiusQuery?: (radius: string) => void;
   isError: boolean;
   error: Error | null;
-  searchType: "city" | "nearby";
 }
 
 function MainDataContainer({
   pharmacies,
   count,
-  radius,
-  cityLabel,
-  setRadiusQuery,
   isError,
   error,
-  searchType,
-  isFilterMobileOpen,
-  setIsFilterMobileOpen,
 }: IMainDataContainerProps) {
-  const [selectedPharmacy, setSelectedPharmacy] = useState<IPharmacy | null>(
-    null,
-  );
-  const [isListVisible, setIsListVisible] = useState<boolean>(true);
-  const [isListExpandedMobile, setIsListExpandedMobile] =
-    useState<boolean>(false);
+  const {
+    isListExpandedMobile,
+    setIsListExpandedMobile,
+    isListVisible,
+    setIsListVisible,
+    selectedPharmacy,
+    setSelectedPharmacy,
+  } = useFilters();
 
   // if there is an error, show a toast and reset the selected pharmacy
   useEffect(() => {
@@ -49,7 +41,7 @@ function MainDataContainer({
       }
       setSelectedPharmacy(null);
     }
-  }, [isError, error]);
+  }, [isError, error, setSelectedPharmacy]);
 
   // Auto-select the pharmacy if there's only one
   useEffect(() => {
@@ -60,7 +52,7 @@ function MainDataContainer({
     } else if (pharmacies.length > 1) {
       setSelectedPharmacy(null);
     }
-  }, [pharmacies]);
+  }, [pharmacies, setSelectedPharmacy]);
 
   const handelClickToFlyOnMap = (pharmacy: IPharmacy | null) => {
     setSelectedPharmacy(pharmacy);
@@ -84,28 +76,11 @@ function MainDataContainer({
         <PharmacyList
           pharmacies={pharmacies}
           count={count || pharmacies.length}
-          setSelectedPharmacy={handelClickToFlyOnMap}
-          selectedPharmacy={selectedPharmacy}
-          cityLabel={cityLabel}
-          isListExpandedMobile={isListExpandedMobile}
-          setIsListExpandedMobile={setIsListExpandedMobile}
-          searchType={searchType}
         />
       </div>
 
       <div className="relative h-full w-full transition-all duration-500">
-        <DynamicPharmacyMap
-          pharmacies={pharmacies}
-          selectedPharmacy={selectedPharmacy}
-          setSelectedPharmacy={setSelectedPharmacy}
-          toggleListVisibility={toggleListVisibility}
-          isListVisible={isListVisible}
-          radius={radius}
-          setRadiusQuery={setRadiusQuery}
-          searchType={searchType}
-          isFilterMobileOpen={isFilterMobileOpen}
-          setIsFilterMobileOpen={setIsFilterMobileOpen}
-        />
+        <DynamicPharmacyMap pharmacies={pharmacies} />
       </div>
     </div>
   );
