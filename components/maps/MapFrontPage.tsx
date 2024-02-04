@@ -8,7 +8,6 @@ import "leaflet-gesture-handling/dist/leaflet-gesture-handling.css";
 import "leaflet/dist/leaflet.css";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { MutableRefObject, useEffect, useRef } from "react";
 import {
   MapContainer,
@@ -53,7 +52,6 @@ const convertMultiPolygonToLatLngs = (
 };
 
 export default function MapFrontPage() {
-  const router = useRouter();
   const { theme } = useTheme();
   const polyRefs: PolygonRefs = useRef([]);
 
@@ -108,7 +106,7 @@ export default function MapFrontPage() {
             />
           ),
         )}
-        <MarkerClusterGroup chunkedLoading>
+        <MarkerClusterGroup chunkedLoading showCoverageOnHover={false}>
           {topCities.map((city) => (
             <Marker
               key={city.name}

@@ -29,7 +29,7 @@ export default function Hero() {
             ανεξάρτητα από το πού βρίσκεστε στην Ελλάδα, οποιαδήποτε στιγμή.
           </p>
 
-          <div className="flex items-center justify-center gap-x-6 tablet:mt-10">
+          <div className="mt-10 flex items-center justify-center">
             <HeroButton />
           </div>
         </div>

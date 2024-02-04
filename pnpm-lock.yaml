@@ -9,14 +9,14 @@ dependencies:
     specifier: ^1.7.17
     version: 1.7.17(react-dom@18.2.0)(react@18.2.0)
   '@tanstack/react-query':
-    specifier: ^5.17.19
-    version: 5.17.19(react@18.2.0)
+    specifier: ^5.18.1
+    version: 5.18.1(react@18.2.0)
   '@tanstack/react-query-devtools':
     specifier: ^5.17.21
-    version: 5.17.21(@tanstack/react-query@5.17.19)(react@18.2.0)
+    version: 5.17.21(@tanstack/react-query@5.18.1)(react@18.2.0)
   '@tanstack/react-query-next-experimental':
-    specifier: ^5.17.19
-    version: 5.17.19(@tanstack/react-query@5.17.19)(next@14.0.4)(react@18.2.0)
+    specifier: ^5.18.1
+    version: 5.18.1(@tanstack/react-query@5.18.1)(next@14.0.4)(react@18.2.0)
   clsx:
     specifier: ^2.0.0
     version: 2.0.0
@@ -39,8 +39,8 @@ dependencies:
     specifier: ^0.2.1
     version: 0.2.1(next@14.0.4)(react-dom@18.2.0)(react@18.2.0)
   nuqs:
-    specifier: ^1.15.4
-    version: 1.15.4(next@14.0.4)
+    specifier: ^1.16.1
+    version: 1.16.1(next@14.0.4)
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -85,6 +85,9 @@ devDependencies:
   '@types/react-dom':
     specifier: ^18
     version: 18.2.17
+  '@types/react-leaflet-markercluster':
+    specifier: ^3.0.4
+    version: 3.0.4
   autoprefixer:
     specifier: ^10.0.1
     version: 10.4.16(postcss@8.4.32)
@@ -548,43 +551,43 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@tanstack/query-core@5.17.19:
-    resolution: {integrity: sha512-Lzw8FUtnLCc9Jwz0sw9xOjZB+/mCCmJev38v2wHMUl/ioXNIhnNWeMxu0NKUjIhAd62IRB3eAtvxAGDJ55UkyA==}
+  /@tanstack/query-core@5.18.1:
+    resolution: {integrity: sha512-fYhrG7bHgSNbnkIJF2R4VUXb4lF7EBiQjKkDc5wOlB7usdQOIN4LxxHpDxyE3qjqIst1WBGvDtL48T0sHJGKCw==}
     dev: false
 
   /@tanstack/query-devtools@5.17.21:
     resolution: {integrity: sha512-WWfcnNjTEqcuAS5GyKkVGkseuES6yd197MJWGImBu+MoCjWPqxSXKCCfm+utSXJauJUGm7xoMmhqCphiQdjf8w==}
     dev: false
 
-  /@tanstack/react-query-devtools@5.17.21(@tanstack/react-query@5.17.19)(react@18.2.0):
+  /@tanstack/react-query-devtools@5.17.21(@tanstack/react-query@5.18.1)(react@18.2.0):
     resolution: {integrity: sha512-Ri1AuWpN67eyPdMTlPxx1TMGNUaxTHrGv0ll0S20ZObz/Xms5wfANV3c6OX0HZTY0igudP1k5jpRLXNkd249mg==}
     peerDependencies:
       '@tanstack/react-query': ^5.17.19
       react: ^18.0.0
     dependencies:
       '@tanstack/query-devtools': 5.17.21
-      '@tanstack/react-query': 5.17.19(react@18.2.0)
+      '@tanstack/react-query': 5.18.1(react@18.2.0)
       react: 18.2.0
     dev: false
 
-  /@tanstack/react-query-next-experimental@5.17.19(@tanstack/react-query@5.17.19)(next@14.0.4)(react@18.2.0):
-    resolution: {integrity: sha512-JLZWhpVtpUccOZvrWvMeK3fe0Atq6kGNDO6RmhXPfyZ3tzCFfVKhu1ws3fP99HUnLX651uMxeNiz9eBqKqL1OQ==}
+  /@tanstack/react-query-next-experimental@5.18.1(@tanstack/react-query@5.18.1)(next@14.0.4)(react@18.2.0):
+    resolution: {integrity: sha512-vQj0nKwt/3gaCOIgU3Nzo18L5HbvNX3LuNBq8PTwjrwx9wWdCthNZ1TbaB0uQk3lPs/Yt/7TJ8h6EnmZcgeEag==}
     peerDependencies:
-      '@tanstack/react-query': ^5.17.19
+      '@tanstack/react-query': ^5.18.1
       next: ^13 || ^14
       react: ^18.0.0
     dependencies:
-      '@tanstack/react-query': 5.17.19(react@18.2.0)
+      '@tanstack/react-query': 5.18.1(react@18.2.0)
       next: 14.0.4(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
     dev: false
 
-  /@tanstack/react-query@5.17.19(react@18.2.0):
-    resolution: {integrity: sha512-qaQENB6/03Gj3dFZGvdmUoqeUGlGm7P1p0RmaR04Bf1Ib1T9lLGimcC9T3oCFbrx0b2ZF21ngjFZNjj9uPJMcg==}
+  /@tanstack/react-query@5.18.1(react@18.2.0):
+    resolution: {integrity: sha512-PdI07BbsahZ+04PxSuDQsQvBWe008eWFk/YYWzt8fvzt2sALUM0TpAJa/DFpqa7+SSo7j1EQR6Jx6znXNHyaXw==}
     peerDependencies:
       react: ^18.0.0
     dependencies:
-      '@tanstack/query-core': 5.17.19
+      '@tanstack/query-core': 5.18.1
       react: 18.2.0
     dev: false
 
@@ -594,6 +597,12 @@ packages:
 
   /@types/json5@0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+    dev: true
+
+  /@types/leaflet.markercluster@1.5.4:
+    resolution: {integrity: sha512-tfMP8J62+wfsVLDLGh5Zh1JZxijCaBmVsMAX78MkLPwvPitmZZtSin5aWOVRhZrCS+pEOZwNzexbfWXlY+7yjg==}
+    dependencies:
+      '@types/leaflet': 1.9.8
     dev: true
 
   /@types/leaflet@1.9.8:
@@ -615,6 +624,22 @@ packages:
   /@types/react-dom@18.2.17:
     resolution: {integrity: sha512-rvrT/M7Df5eykWFxn6MYt5Pem/Dbyc1N8Y0S9Mrkw2WFCRiqUgw9P7ul2NpwsXCSM1DVdENzdG9J5SreqfAIWg==}
     dependencies:
+      '@types/react': 18.2.45
+    dev: true
+
+  /@types/react-leaflet-markercluster@3.0.4:
+    resolution: {integrity: sha512-YhN2Jts1CI31LXv+defPHvHrbIbp88ZcMwZwUUf4iRnZ/FJ1jDgb41yOuqXrnyAdwfGkm5BU4q6eBUFnh0J4Vw==}
+    dependencies:
+      '@types/leaflet': 1.9.8
+      '@types/leaflet.markercluster': 1.5.4
+      '@types/react': 18.2.45
+      '@types/react-leaflet': 2.8.3
+    dev: true
+
+  /@types/react-leaflet@2.8.3:
+    resolution: {integrity: sha512-MeBQnVQe6ikw8dkuZE4F96PvMdQeilZG6/ekk5XxhkSzU3lofedULn3UR/6G0uIHjbRazi4DA8LnLACX0bPhBg==}
+    dependencies:
+      '@types/leaflet': 1.9.8
       '@types/react': 18.2.45
     dev: true
 
@@ -2202,8 +2227,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /nuqs@1.15.4(next@14.0.4):
-    resolution: {integrity: sha512-D4u2Y/Qe2O1wmHPxK9+/LM3ioToqRaK9mKyZiLc1PRo8JIXmUKTCce9JBg0MHEJHT+huz2h3pSINPQqKOwAD3A==}
+  /nuqs@1.16.1(next@14.0.4):
+    resolution: {integrity: sha512-R3muf8sXJTj/Lu56Cd+qBmzfZUxSiIvpoytf58/0+8xEtCBCENJn3a6aHokHCWop3q3c/DyVx7blDTX5Pu1hyA==}
     peerDependencies:
       next: '>=13.4 <14.0.2 || ^14.0.3'
     dependencies:

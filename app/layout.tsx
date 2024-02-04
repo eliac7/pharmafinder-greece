@@ -11,7 +11,10 @@ const comfortaaFont = Comfortaa({
 });
 
 export const metadata: Metadata = {
-  title: "PharmaFinder - Εφημερεύοντα φαρμακεία στην Ελλάδα",
+  title: {
+    default: "PharmaFinder - Εφημερεύοντα φαρμακεία στην Ελλάδα",
+    template: "%s | PharmaFinder",
+  },
   description:
     "Βρείτε εφημερεύοντα φαρμακεία κοντά σας, οποιαδήποτε στιγμή, οπουδήποτε στην Ελλάδα.",
   icons: {

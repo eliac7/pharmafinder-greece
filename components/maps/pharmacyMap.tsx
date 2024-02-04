@@ -23,7 +23,6 @@ import "react-leaflet-fullscreen/styles.css";
 import PharmacyMarker, { userLocationMarker } from "./PharmacyMarker";
 import { IMapProps, IPharmacyMapProps, IPoint } from "./types";
 
-import { IFiltersMobileProps } from "@/app/(routes)/app/page";
 import { ILocation } from "@/lib/interfaces";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
@@ -33,6 +32,7 @@ import {
   FaFilter,
   FaLocationArrow,
 } from "react-icons/fa";
+import { useFilters } from "@/context/FiltersContext";
 
 const POI: React.FC<IMapProps> = ({ selectedPharmacy }) => {
   const map = useMap();
@@ -57,7 +57,7 @@ const ToggleListButton = ({
   toggleListVisibility,
   isListVisible,
 }: {
-  toggleListVisibility: () => void;
+  toggleListVisibility: (isVisible: boolean) => void;
   isListVisible: boolean;
 }) => {
   const map = useMap();
@@ -79,7 +79,7 @@ const ToggleListButton = ({
   }, [map]);
 
   const handleClick = () => {
-    toggleListVisibility();
+    toggleListVisibility(!isListVisible);
     if (map) {
       setTimeout(() => {
         map.invalidateSize();
@@ -178,11 +178,9 @@ const ReloacateButton = ({
   );
 };
 
-const ToggleFilterButton = ({
-  isFilterMobileOpen,
-  setIsFilterMobileOpen,
-}: IFiltersMobileProps) => {
+const ToggleFilterButton = () => {
   const map = useMap();
+  const { isFilterMobileOpen, setIsFilterMobileOpen } = useFilters();
 
   const toggleFilter = () => {
     setIsFilterMobileOpen(!isFilterMobileOpen);
@@ -208,17 +206,16 @@ const ToggleFilterButton = ({
   );
 };
 
-export default function PharmacyMap({
-  pharmacies,
-  selectedPharmacy,
-  setSelectedPharmacy,
-  toggleListVisibility,
-  isListVisible,
-  radius,
-  searchType,
-  isFilterMobileOpen,
-  setIsFilterMobileOpen,
-}: IPharmacyMapProps) {
+export default function PharmacyMap({ pharmacies }: IPharmacyMapProps) {
+  const {
+    radiusQuery: radius,
+    searchType,
+    selectedPharmacy,
+    setSelectedPharmacy,
+    isListVisible,
+    setIsListVisible,
+  } = useFilters();
+
   const { location, updateLocation, getLocation } = useLocationContext();
   const { theme } = useTheme();
 
@@ -394,7 +391,7 @@ export default function PharmacyMap({
         location.longitude && (
           <Circle
             center={[location.latitude, location.longitude]}
-            radius={parseFloat(radius) * 1000}
+            radius={radius * 1000}
             fillOpacity={0}
             weight={2}
             ref={circleRef}
@@ -412,14 +409,11 @@ export default function PharmacyMap({
       />
 
       <ToggleListButton
-        toggleListVisibility={toggleListVisibility}
+        toggleListVisibility={setIsListVisible}
         isListVisible={isListVisible}
       />
 
-      <ToggleFilterButton
-        isFilterMobileOpen={isFilterMobileOpen}
-        setIsFilterMobileOpen={setIsFilterMobileOpen}
-      />
+      <ToggleFilterButton />
     </MapContainer>
   );
 }

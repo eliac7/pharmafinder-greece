@@ -10,8 +10,8 @@ export default function RadiusSlider({
   radiusQuery: number;
   onRadiusChange: (radius: number) => void;
 }) {
-  const [radiusPopUpSlider, setRadiusPopUpSlider] = useState(false);
-  const [tempRadius, setTempRadius] = useState(radiusQuery);
+  const [radiusPopUpSlider, setRadiusPopUpSlider] = useState<boolean>(false);
+  const [tempRadius, setTempRadius] = useState<number>(radiusQuery);
 
   const handleRadiusChange = (radius: number) => {
     setTempRadius(radius);

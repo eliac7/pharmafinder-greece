@@ -23,8 +23,8 @@ export default function Cities() {
           ενδιαφέρει με ένα απλό κλικ.
         </p>
         <MapFrontPage />
-        <div className="mt-2">
-          <p className="mb-4 mt-2 text-sm font-light text-gray-200">
+        <div>
+          <p className="mb-4 text-sm font-light text-gray-200">
             Δεν βρήκατε την πόλη που σας ενδιαφέρει; Μην ανησυχείτε, μεταβείτε
             στην Εφαρμογή και αναζητήστε την πόλη σας στο επάνω μέρος
           </p>

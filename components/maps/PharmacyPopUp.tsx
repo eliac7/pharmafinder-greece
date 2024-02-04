@@ -68,7 +68,7 @@ function PharmacyPopUpProps({
               >
                 Εφημερεύει: {hour.open_time} - {hour.close_time}
                 {date && (
-                  <span className="italic">
+                  <span className="flex italic">
                     <span className="hidden tablet:block">/</span>
                     {formatDateInGreek(date)}
                   </span>

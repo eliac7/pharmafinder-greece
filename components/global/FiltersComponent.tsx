@@ -1,10 +1,12 @@
+"use client";
+
 import DutyStatus from "../filters/DutyStatus";
 import RadiusSlider from "../filters/RadiusSlider";
 import CitySearch from "../filters/CitySearch";
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
-import { IFiltersMobileProps } from "@/app/(routes)/app/page";
 import clsx from "clsx";
+import { useFilters } from "@/context/FiltersContext";
 
 const PharmacyToggleButtons = dynamic(
   () => import("../filters/PharmacyToggleButtons"),
@@ -13,41 +15,31 @@ const PharmacyToggleButtons = dynamic(
   },
 );
 
-interface IFiltersProps extends IFiltersMobileProps {
-  searchType: "nearby" | "city";
-  onSearchTypeChange: (searchType: "nearby" | "city") => void;
-  radiusQuery: number;
-  onRadiusChange: (radius: number | null) => void;
-  cityQuery: string;
-  cityLabel?: string;
-  onCityChange: (city: string | null) => void;
-  timeQuery: "now" | "today" | "tomorrow" | "all";
-  onTimeChange: (time: "now" | "today" | "tomorrow" | "all") => void;
-}
+export default function Filters() {
+  const {
+    searchType,
+    setSearchType,
+    radiusQuery,
+    setRadiusQuery,
+    cityQuery,
+    cityLabel,
+    setCityQuery,
+    timeQuery,
+    setTimeQuery,
+    isFilterMobileOpen,
+  } = useFilters();
 
-export default function Filters({
-  searchType,
-  onSearchTypeChange,
-  radiusQuery,
-  onRadiusChange,
-  cityQuery,
-  cityLabel,
-  onCityChange,
-  timeQuery,
-  onTimeChange,
-  isFilterMobileOpen,
-}: IFiltersProps) {
   useEffect(() => {
     if (searchType === "nearby") {
-      onCityChange(null);
+      setCityQuery(null);
     }
-  }, [searchType, onCityChange]);
+  }, [searchType, setCityQuery]);
 
   useEffect(() => {
     if (searchType === "city") {
-      onRadiusChange(null);
+      setRadiusQuery(null);
     }
-  }, [searchType, onRadiusChange]);
+  }, [searchType, setRadiusQuery]);
 
   return (
     <div
@@ -58,25 +50,25 @@ export default function Filters({
     >
       <PharmacyToggleButtons
         searchType={searchType}
-        setSearchType={onSearchTypeChange}
+        setSearchType={setSearchType}
       />
       {searchType === "nearby" ? (
         <RadiusSlider
           radiusQuery={radiusQuery}
-          onRadiusChange={onRadiusChange}
+          onRadiusChange={setRadiusQuery}
         />
       ) : (
         <>
           <CitySearch
             cityQuery={cityQuery}
             cityLabel={cityLabel}
-            onCityChange={onCityChange}
+            onCityChange={setCityQuery}
           />
         </>
       )}
       <DutyStatus
         timeQuery={timeQuery}
-        onTimeChange={onTimeChange}
+        onTimeChange={setTimeQuery}
         searchType={searchType}
       />
     </div>
