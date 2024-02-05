@@ -59,8 +59,9 @@ function Header() {
           {
             "container fixed top-0 z-[5000] bg-opacity-30 bg-clip-padding":
               isHomePage,
-            "md:h-26 h-28 md:p-4": !isScrolled,
-            "h-16  md:h-20 md:p-1": isScrolled,
+            "md:h-26 h-28 md:p-4": !isScrolled && isHomePage,
+            "h-16 md:h-20 md:p-1": isScrolled && isHomePage,
+            "h-16 md:h-20 md:p-4": !isHomePage,
           },
         )}
       >
@@ -109,7 +110,7 @@ function Header() {
           <div className="flex items-center justify-center md:hidden">
             <GiHamburgerMenu
               size={20}
-              className="block cursor-pointer text-white"
+              className="block cursor-pointer text-black dark:text-white"
               onClick={() => toggleMobileNav()}
             />
           </div>
