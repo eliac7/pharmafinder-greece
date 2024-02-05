@@ -1,12 +1,14 @@
 "use client";
 import { useState } from "react";
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer } from "react-leaflet";
 import { useRouter } from "next/navigation";
 
 import "leaflet/dist/leaflet.css";
 import { useTheme } from "next-themes";
 import { IThumbnailMapProps } from "./types";
 import Link from "next/link";
+import CustomTileLayer from "./CustomTileLayer";
+import { getTileLayerTheme } from "@/utils/mapUtilts";
 
 export default function ThumbnailMap({
   latitude,
@@ -22,17 +24,6 @@ export default function ThumbnailMap({
   if (!latitude || !longitude) {
     return null;
   }
-
-  const getTileLayerUrl = () => {
-    switch (theme) {
-      case "light":
-        return "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}";
-      case "dark":
-        return "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png";
-      default:
-        return "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}";
-    }
-  };
 
   return (
     <Link
@@ -58,10 +49,7 @@ export default function ThumbnailMap({
         className={`h-full w-full rounded-full ${url ? "cursor-pointer" : ""}`}
         attributionControl={false}
       >
-        <TileLayer
-          url={getTileLayerUrl()}
-          subdomains={["mt0", "mt1", "mt2", "mt3"]}
-        />
+        <CustomTileLayer layerName={getTileLayerTheme(theme)} />
       </MapContainer>
     </Link>
   );

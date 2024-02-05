@@ -18,7 +18,7 @@ function Logo() {
 
   return (
     <Image
-      className="filter:invert h-full items-center object-contain font-medium text-gray-900"
+      className="filter:invert h-full items-center object-contain p-2 font-medium text-gray-900 md:p-0"
       src={imagePath}
       alt="PharmaFinder Logo"
       width={120}

@@ -14,7 +14,6 @@ import {
   MapContainer,
   Marker,
   Popup,
-  TileLayer,
   useMap,
 } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
@@ -33,6 +32,7 @@ import {
   FaLocationArrow,
 } from "react-icons/fa";
 import { useFilters } from "@/context/FiltersContext";
+import TileLayerComponent from "./CustomTileLayer";
 
 const POI: React.FC<IMapProps> = ({ selectedPharmacy }) => {
   const map = useMap();
@@ -270,18 +270,6 @@ export default function PharmacyMap({ pharmacies }: IPharmacyMapProps) {
     mapRef.current = map;
   };
 
-  const getTileLayerUrl = () => {
-    switch (layerName) {
-      case "road":
-        return "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}";
-      case "satellite":
-        return "https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png";
-      case "dark":
-        return "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png";
-      default:
-        return "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}";
-    }
-  };
   return (
     <MapContainer
       center={circleCenter}
@@ -297,9 +285,8 @@ export default function PharmacyMap({ pharmacies }: IPharmacyMapProps) {
           name="Οδικός Χάρτης"
           checked={layerName === "road"}
         >
-          <TileLayer
-            url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
-            subdomains={["mt0", "mt1", "mt2", "mt3"]}
+          <TileLayerComponent
+            layerName={layerName}
             eventHandlers={{
               add: () => {
                 setLayerName("road");
@@ -311,9 +298,8 @@ export default function PharmacyMap({ pharmacies }: IPharmacyMapProps) {
           name="Αεροφωτογραφίες"
           checked={layerName === "satellite"}
         >
-          <TileLayer
-            url="https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png"
-            subdomains={["a", "b", "c"]}
+          <TileLayerComponent
+            layerName={layerName}
             eventHandlers={{
               add: () => {
                 setLayerName("satellite");
@@ -321,14 +307,12 @@ export default function PharmacyMap({ pharmacies }: IPharmacyMapProps) {
             }}
           />
         </LayersControl.BaseLayer>
-
         <LayersControl.BaseLayer
           name="Σκοτεινός Χάρτης"
           checked={layerName === "dark"}
         >
-          <TileLayer
-            url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
-            subdomains={["a", "b", "c"]}
+          <TileLayerComponent
+            layerName={layerName}
             eventHandlers={{
               add: () => {
                 setLayerName("dark");
@@ -338,7 +322,7 @@ export default function PharmacyMap({ pharmacies }: IPharmacyMapProps) {
         </LayersControl.BaseLayer>
       </LayersControl>
 
-      <TileLayer url={getTileLayerUrl()} subdomains={["a", "b", "c"]} />
+      <TileLayerComponent layerName={layerName} />
 
       {pharmacies && (
         <MarkerClusterGroup chunkedLoading>
