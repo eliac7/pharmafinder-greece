@@ -1,9 +1,9 @@
-import Header from "@/components/global/header";
+import Footer from "@/components/global/FooterComponent";
+import Header from "@/components/global/HeaderComponent";
 import Providers from "@/lib/providers";
 import type { Metadata } from "next";
 import { Comfortaa } from "next/font/google";
 import "./globals.css";
-import Footer from "@/components/global/footer";
 
 const comfortaaFont = Comfortaa({
   subsets: ["greek", "latin"],
@@ -11,25 +11,44 @@ const comfortaaFont = Comfortaa({
 });
 
 export const metadata: Metadata = {
-  title: "PharmaFinder Greece",
-  description: "Find on duty pharma cies in Greece",
+  title: {
+    default: "PharmaFinder - Εφημερεύοντα φαρμακεία στην Ελλάδα",
+    template: "%s | PharmaFinder",
+  },
+  description:
+    "Βρείτε εφημερεύοντα φαρμακεία κοντά σας, οποιαδήποτε στιγμή, οπουδήποτε στην Ελλάδα.",
   icons: {
     icon: {
       url: "/favicon.ico",
       type: "image/x-icon",
     },
   },
+  metadataBase: new URL("https://pharmafinder.gr"),
+  openGraph: {
+    type: "website",
+    locale: "el_GR",
+    url: "https://pharmafinder.gr",
+    siteName: "PharmaFinder",
+    description: "Βρείτε εφημερεύοντα φαρμακεία κοντά σας πιο εύκολα από ποτέ!",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 628,
+        alt: "PharmaFinder",
+      },
+    ],
+  },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="h-full transition-colors duration-500">
+    <html
+      lang="en"
+      className="h-full scroll-smooth transition-colors duration-500"
+    >
       <body
-        className={`${comfortaaFont.className} relative m-0 flex h-full min-h-screen w-full flex-col justify-between bg-gradient-to-b from-primary-500 to-accent-light bg-fixed scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-slate-600 dark:from-gray-700 dark:to-gray-900 dark:scrollbar-track-gray-900 dark:scrollbar-thumb-gray-400 md:mx-auto md:max-w-[95vw]
+        className={`${comfortaaFont.className} scrollbar-w-8 relative m-0 flex h-full min-h-screen w-full flex-col justify-between scroll-smooth bg-[#fafafa] scrollbar scrollbar-track-red-400 scrollbar-thumb-slate-700 dark:bg-[#1f1f1f] dark:from-gray-700 dark:to-gray-900 md:mx-auto
         `}
       >
         <Providers>

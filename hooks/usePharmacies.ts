@@ -1,63 +1,63 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import { IPharmacyResponse } from "@/lib/interfaces";
 import { useLocationContext } from "@/context/LocationContext";
-import { decrypt } from "@/app/api/utils/cryptoUtils";
+import { IPharmacyResponse } from "@/lib/interfaces";
+import { fetchPharmacies } from "@/actions/fetch-pharmacies";
+import { useQuery } from "@tanstack/react-query";
 
-const fetchPharmacies = async (
-  endpoint: string,
-  params: { [key: string]: string },
-): Promise<IPharmacyResponse> => {
-  const query = new URLSearchParams(params).toString();
-  const url = `/api/pharmacies/${endpoint}?${query}`;
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    const errorResponse = await response.json();
-    if (errorResponse.message) {
-      throw new Error(errorResponse.message);
-    }
-    throw new Error("Error fetching data");
-  }
-
-  const encryptedData = await response.json();
-
-  const secretKey = process.env.NEXT_PUBLIC_CRYPTO_SECRET!;
-  const decryptedData = decrypt(encryptedData, secretKey);
-
-  return JSON.parse(decryptedData);
-};
 export const usePharmacies = ({
-  endpoint,
-  ...params
+  searchType,
+  radius,
+  citySlug,
+  city,
+  time,
 }: {
-  endpoint: string;
-  [key: string]: string;
+  searchType: "nearby" | "city";
+  radius?: number;
+  citySlug?: string;
+  city?: string;
+  time?: "now" | "today" | "tomorrow" | "all";
 }) => {
   const { location } = useLocationContext();
 
-  let updatedParams: { [key: string]: string } = { ...params };
+  let endpoint = "";
+  let params: { [key: string]: any } = {};
+  let shouldFetch = true;
 
-  if (location.latitude !== null && location.longitude !== null) {
-    updatedParams.latitude = location.latitude.toString();
-    updatedParams.longitude = location.longitude.toString();
+  if (searchType === "nearby") {
+    endpoint =
+      time === "now"
+        ? "nearby_pharmacies_with_hours_now"
+        : time === "today"
+          ? "nearby_pharmacies_with_hours_today"
+          : time === "tomorrow"
+            ? "nearby_pharmacies_with_hours_tomorrow"
+            : "nearby_pharmacies";
+    params = {
+      latitude: location.latitude,
+      longitude: location.longitude,
+      radius,
+    };
+  } else if (searchType === "city") {
+    if (!citySlug && !city) {
+      shouldFetch = false;
+    } else {
+      endpoint = "city";
+      params = {
+        city_slug: citySlug,
+        city_name: city,
+        time,
+        // if location is available, add it to the query
+        ...(location.latitude && { latitude: location.latitude }),
+        ...(location.longitude && { longitude: location.longitude }),
+      };
+    }
   }
 
-  const queryKey = [
-    "pharmacies",
-    endpoint,
-    updatedParams,
-    params.radius,
-    params.time,
-  ];
+  const queryKey = ["pharmacies", endpoint, params];
 
   return useQuery<IPharmacyResponse, Error>({
     queryKey: queryKey,
-    queryFn: () => fetchPharmacies(endpoint, updatedParams),
-    refetchOnWindowFocus: false,
-    // for 10 minutes
-    staleTime: 1000 * 60 * 10,
-    retry: false,
-    refetchInterval: 1000 * 60 * 60,
+    queryFn: () => fetchPharmacies(endpoint, params),
+    enabled: shouldFetch,
   });
 };

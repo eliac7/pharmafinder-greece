@@ -15,15 +15,22 @@ export interface IMapProps {
 
 export interface IPharmacyMapProps {
   pharmacies: IPharmacy[] | null;
-  setSelectedPharmacy: React.Dispatch<React.SetStateAction<IPharmacy | null>>;
-  selectedPharmacy: IPharmacy | null;
-  toggleListVisibility: () => void;
-  isListVisible: boolean;
-  radius?: string;
-  setRadiusQuery?: (radius: string) => void;
 }
 
 export interface ISelectedPharmacy {
   latitude: number;
   longitude: number;
+}
+
+export interface IPharmacyListProps {
+  pharmacies: IPharmacy[];
+  count: number;
+}
+
+export interface IThumbnailMapProps {
+  latitude: number;
+  longitude: number;
+  url: string;
+  hoverText: string;
+  zoom?: number;
 }
