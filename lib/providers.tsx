@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Toaster } from "react-hot-toast";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 

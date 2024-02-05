@@ -23,6 +23,22 @@ export const metadata: Metadata = {
       type: "image/x-icon",
     },
   },
+  metadataBase: new URL("https://pharmafinder.gr"),
+  openGraph: {
+    type: "website",
+    locale: "el_GR",
+    url: "https://pharmafinder.gr",
+    siteName: "PharmaFinder",
+    description: "Βρείτε εφημερεύοντα φαρμακεία κοντά σας πιο εύκολα από ποτέ!",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 628,
+        alt: "PharmaFinder",
+      },
+    ],
+  },
 };
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -32,7 +48,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       className="h-full scroll-smooth transition-colors duration-500"
     >
       <body
-        className={`${comfortaaFont.className} scrollbar-w-8 relative m-0 flex h-full min-h-screen w-full flex-col justify-between scroll-smooth  bg-[#fafafa] scrollbar scrollbar-track-red-400 scrollbar-thumb-slate-700 dark:bg-[#1f1f1f] dark:from-gray-700 dark:to-gray-900 md:mx-auto
+        className={`${comfortaaFont.className} scrollbar-w-8 relative m-0 flex h-full min-h-screen w-full flex-col justify-between scroll-smooth bg-[#fafafa] scrollbar scrollbar-track-red-400 scrollbar-thumb-slate-700 dark:bg-[#1f1f1f] dark:from-gray-700 dark:to-gray-900 md:mx-auto
         `}
       >
         <Providers>
