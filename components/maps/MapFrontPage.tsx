@@ -9,16 +9,11 @@ import "leaflet/dist/leaflet.css";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { MutableRefObject, useEffect, useRef } from "react";
-import {
-  MapContainer,
-  Marker,
-  Polygon,
-  Popup,
-  TileLayer,
-  useMap,
-} from "react-leaflet";
+import { MapContainer, Marker, Polygon, Popup, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
+import CustomTileLayer from "./CustomTileLayer";
 import { customMarker } from "./PharmacyMarker";
+import { getTileLayerTheme } from "@/utils/mapUtilts";
 
 type MultiPolygonCoordinates = number[][][][];
 type PolygonRefs = MutableRefObject<(LPolygon<any> | null)[]>;
@@ -55,6 +50,10 @@ export default function MapFrontPage() {
   const { theme } = useTheme();
   const polyRefs: PolygonRefs = useRef([]);
 
+  const greeceBordersLatLngs = convertMultiPolygonToLatLngs(
+    greeceGeoJSON.features[0].geometry.coordinates,
+  );
+
   useEffect(() => {
     polyRefs.current.forEach((ref) => {
       if (ref) {
@@ -66,21 +65,6 @@ export default function MapFrontPage() {
     });
   }, [theme]);
 
-  const greeceBordersLatLngs = convertMultiPolygonToLatLngs(
-    greeceGeoJSON.features[0].geometry.coordinates,
-  );
-
-  const getTileLayerUrl = () => {
-    switch (theme) {
-      case "light":
-        return "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}";
-      case "dark":
-        return "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png";
-      default:
-        return "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}";
-    }
-  };
-
   return (
     <div className="h-[35rem] w-full overflow-hidden rounded-lg">
       <MapContainer
@@ -90,10 +74,7 @@ export default function MapFrontPage() {
         attributionControl={false}
         className="h-full w-full"
       >
-        <TileLayer
-          url={getTileLayerUrl()}
-          subdomains={["mt0", "mt1", "mt2", "mt3"]}
-        />
+        <CustomTileLayer layerName={getTileLayerTheme(theme)} />
         {greeceBordersLatLngs.map(
           (latLngs: LatLngExpression[], index: number) => (
             <Polygon
