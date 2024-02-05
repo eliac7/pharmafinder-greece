@@ -9,7 +9,6 @@ export async function GET(req: NextRequest) {
   const secret = process.env.API_SECRET || "";
   const remaining = await limiter.removeTokens(1);
   const origin = req.headers.get("origin");
-
   if (remaining < 1) {
     const body = JSON.stringify({
       message: "Υπερβολικός αριθμός αιτημάτων, παρακαλώ δοκίμαστε σε λίγο",
@@ -62,6 +61,7 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await apiRes.json();
+
     const secretKey = process.env.NEXT_PUBLIC_CRYPTO_SECRET!;
     const encryptedData = encrypt(JSON.stringify(data), secretKey);
 
