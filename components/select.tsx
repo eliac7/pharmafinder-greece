@@ -61,7 +61,7 @@ export default function Select({
                 displayValue={(option: Option) => option.label}
                 onChange={(event) => setQuery(event.target.value)}
                 onClick={() => {
-                  setQuery("");
+                  setSelected({ label: "", value: "" });
                   comboboxButtonRef.current?.click();
                 }}
               />
