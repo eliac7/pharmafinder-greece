@@ -196,45 +196,33 @@ function PharmacyList({ pharmacies, count }: IPharmacyListProps) {
                                     className="flex items-center justify-start"
                                   >
                                     <MdOutlineSchedule className="mr-2" />
-                                    {hours.open_time} - {hours.close_time}{" "}
-                                    {pharmacy.data_hours &&
-                                      index ===
-                                        pharmacy.data_hours.length - 1 &&
-                                      pharmacy.open_until_tomorrow &&
-                                      (pharmacy.next_day_close_time
-                                        ? new Intl.DateTimeFormat("el-GR", {
-                                            day: "2-digit",
-                                            month: "2-digit",
-                                            year: "2-digit",
-                                          }).format(
-                                            new Date(
-                                              pharmacy.next_day_close_time,
-                                            ),
-                                          )
-                                        : "Αύριο")}
+                                    <span>
+                                      {hours.open_time} - {hours.close_time}
+                                    </span>
+                                    <span className="ml-1">
+                                      {pharmacy.data_hours &&
+                                        index ===
+                                          pharmacy.data_hours.length - 1 &&
+                                        pharmacy.open_until_tomorrow &&
+                                        (pharmacy.next_day_close_time
+                                          ? `(${new Intl.DateTimeFormat(
+                                              "el-GR",
+                                              {
+                                                day: "2-digit",
+                                                month: "2-digit",
+                                                year: "2-digit",
+                                              },
+                                            ).format(
+                                              new Date(
+                                                pharmacy.next_day_close_time,
+                                              ),
+                                            )})`
+                                          : "(Αύριο)")}
+                                    </span>
                                   </div>
                                 ))}
                               </div>
                             )}
-                        </div>
-                        <div className="flex w-full gap-1">
-                          {pharmacy.open_until_tomorrow && (
-                            <div className="flex items-center justify-start">
-                              <MdOutlineSchedule className="mr-2" />
-                              <p>
-                                Ανοιχτό μέχρι{" "}
-                                {pharmacy.next_day_close_time
-                                  ? new Intl.DateTimeFormat("el-GR", {
-                                      day: "2-digit",
-                                      month: "2-digit",
-                                      year: "2-digit",
-                                    }).format(
-                                      new Date(pharmacy.next_day_close_time),
-                                    )
-                                  : "Αύριο"}
-                              </p>
-                            </div>
-                          )}
                         </div>
                       </>
                     )}
