@@ -50,9 +50,8 @@ function FAQ() {
                     "h-auto p-4 opacity-100": selected === index,
                   },
                 )}
-              >
-                {item.answer}
-              </p>
+                dangerouslySetInnerHTML={{ __html: item.answer }}
+              />
             </div>
           ))}
         </div>
