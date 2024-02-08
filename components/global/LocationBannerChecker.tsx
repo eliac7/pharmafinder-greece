@@ -14,10 +14,13 @@ async function LocationBannerChecker({ ip }: ILocationBannerCheckerProps) {
   const { countryCode, countryName } =
     typeof country === "object"
       ? country
-      : { countryCode: country, countryName: "" };
+      : { countryCode: "", countryName: "" };
+
+  const isGreece = countryCode === "GR";
 
   return (
-    countryCode && (
+    countryCode &&
+    !isGreece && (
       <BannerComponent>
         <div className="text-md">
           We detect you are from {countryName}{" "}
