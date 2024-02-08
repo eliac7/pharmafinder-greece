@@ -65,8 +65,8 @@ export async function getCountryByIP(ip: string): Promise<ICountryByIP> {
     const response = await fetch(`https://freeipapi.com/api/json/${ip}`);
     const data = await response.json();
     return {
-      countryCode: data.country_code,
-      countryName: data.country_name,
+      countryCode: data.countryCode,
+      countryName: data.countryName,
     };
   } catch (error) {
     console.error(error);
