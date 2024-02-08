@@ -1,21 +1,13 @@
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export function middleware(request: Request) {
-  const url = new URL(request.url);
-
-  if (!url.searchParams.has("radius")) {
-    url.searchParams.set("radius", "3");
-    return NextResponse.redirect(url);
-  } else {
-    if (isNaN(Number(url.searchParams.get("radius")))) {
-      url.searchParams.set("radius", "3");
-      return NextResponse.redirect(url);
-    }
-  }
-
-  return NextResponse.next();
+export function middleware(request: NextRequest) {
+  const requestHeaders = new Headers(request.headers);
+  const ip = request.ip || "";
+  requestHeaders.set("x-forwarded-for", ip);
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
-
-export const config = {
-  matcher: ["/now", "/today", "/tomorrow", "/nearby"],
-};

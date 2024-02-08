@@ -4,6 +4,7 @@ import Providers from "@/lib/providers";
 import type { Metadata } from "next";
 import { Comfortaa } from "next/font/google";
 import "./globals.css";
+import { headers } from "next/headers";
 
 const comfortaaFont = Comfortaa({
   subsets: ["greek", "latin"],
@@ -41,7 +42,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default async function AppLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const ip = headers().get("x-forwarded-for");
+
   return (
     <html
       lang="en"
@@ -52,6 +59,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         `}
       >
         <Providers>
+          <div className="bg-red-500">
+            <p className="text-center text-white">
+              Your IP is: {ip || "unknown"}
+            </p>
+          </div>
           <Header />
           {children}
           <Footer />
