@@ -9,6 +9,7 @@ import {
 } from "nuqs";
 import { CitiesData } from "@/data/CitiesData";
 import { IPharmacy } from "@/lib/interfaces";
+import { useLocationContext } from "./LocationContext";
 
 interface FiltersContextType {
   searchType: "nearby" | "city";
@@ -56,10 +57,13 @@ const FiltersContext = createContext<FiltersContextType>(defaultContextValue);
 export const FiltersProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { location } = useLocationContext();
+  const { latitude, longitude } = location;
+
   const [searchType, setSearchType] = useQueryState(
     "searchType",
     parseAsStringEnum<"nearby" | "city">(["nearby", "city"]).withDefault(
-      "nearby",
+      latitude && longitude ? "nearby" : "city",
     ),
   );
   const [radiusQuery, setRadiusQuery] = useQueryState<number>(
