@@ -58,3 +58,13 @@ export function formatDateInGreek(date: string): string {
 
   return formattedDate;
 }
+
+export async function getCountryByIP(ip: string) {
+  try {
+    const response = await fetch(`https://freeipapi.com/api/json/${ip}`);
+    const data = await response.json();
+    return data.countryCode;
+  } catch (error) {
+    console.error(error);
+  }
+}

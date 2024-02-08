@@ -5,6 +5,8 @@ import type { Metadata } from "next";
 import { Comfortaa } from "next/font/google";
 import "./globals.css";
 import { headers } from "next/headers";
+import { getCountryByIP } from "@/lib/utils";
+import BannerComponent from "@/components/global/BannerComponent";
 
 const comfortaaFont = Comfortaa({
   subsets: ["greek", "latin"],
@@ -48,6 +50,7 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   const ip = headers().get("x-forwarded-for");
+  const countryCode = ip ? await getCountryByIP(ip) : null;
 
   return (
     <html
@@ -59,14 +62,13 @@ export default async function AppLayout({
         `}
       >
         <Providers>
-          <div className="bg-red-500">
-            <p className="text-center text-white">
-              Your IP is: {ip || "unknown"}
-            </p>
-          </div>
           <Header />
           {children}
           <Footer />
+          <BannerComponent
+            text="Αυτή είναι μια δοκιμαστική ειδοποίηση"
+            country={countryCode}
+          />
         </Providers>
       </body>
     </html>
