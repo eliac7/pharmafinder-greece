@@ -1,11 +1,12 @@
-"use client";
 import { useLocationContext } from "@/context/LocationContext";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 
+type SearchType = "nearby" | "city";
+
 interface IPharmacyToggleButtonsProps {
-  searchType: "nearby" | "city";
-  setSearchType: (searchType: "nearby" | "city") => void;
+  searchType: SearchType;
+  setSearchType: (searchType: SearchType) => void;
 }
 
 function PharmacyToggleButtons({
@@ -13,15 +14,11 @@ function PharmacyToggleButtons({
   setSearchType,
 }: IPharmacyToggleButtonsProps) {
   const { location } = useLocationContext();
-
-  // Initialize isNearbyButtonDisabled based on the current location
-  const initialButtonState =
-    location?.latitude === null || location?.longitude === null;
-  const [isNearbyButtonDisabled, setIsNearbyButtonDisabled] =
-    useState(initialButtonState);
+  const [isNearbyButtonDisabled, setIsNearbyButtonDisabled] = useState(
+    location?.latitude === null || location?.longitude === null,
+  );
 
   useEffect(() => {
-    // Update isNearbyButtonDisabled when location changes
     const isDisabled =
       location?.latitude === null || location?.longitude === null;
     setIsNearbyButtonDisabled(isDisabled);
@@ -37,10 +34,25 @@ function PharmacyToggleButtons({
   };
 
   const commonButtonClasses =
-    "relative flex-1 flex items-center justify-center cursor-pointer text-md text-center text-gray-900 dark:text-gray-400 py-[0.2rem]";
-
+    "relative flex-1 flex items-center justify-center cursor-pointer text-md text-center text-gray-900 dark:text-gray-400 py-[0.2rem] transition-colors duration-200 ease-in-out";
   const activeButtonClasses =
     "border-primary-700 bg-primary-400 text-white dark:text-white";
+  const hoverButtonClasses =
+    "hover:bg-primary-100 dark:hover:bg-gray-700 hover:text-white hover:dark:text-gray-200 ";
+
+  const getButtonClasses = (buttonType: SearchType) => {
+    const isDisabled = buttonType === "nearby" && isNearbyButtonDisabled;
+    const hoverClasses = isDisabled ? "" : hoverButtonClasses;
+    return clsx(
+      commonButtonClasses,
+      searchType === buttonType ? activeButtonClasses : hoverClasses,
+      searchType === buttonType &&
+        (buttonType === "nearby"
+          ? "rounded-bl-lg rounded-tl-lg"
+          : "rounded-br-lg rounded-tr-lg"),
+      isDisabled && "!cursor-not-allowed bg-gray-500 opacity-50",
+    );
+  };
 
   return (
     <div
@@ -51,14 +63,7 @@ function PharmacyToggleButtons({
         role="tab"
         aria-selected={searchType === "nearby"}
         aria-disabled={isNearbyButtonDisabled}
-        className={clsx(
-          commonButtonClasses,
-          searchType === "nearby" && activeButtonClasses,
-          searchType === "nearby" && "rounded-bl-lg rounded-tl-lg",
-          isNearbyButtonDisabled
-            ? "cursor-not-allowed bg-gray-500 opacity-50"
-            : "",
-        )}
+        className={getButtonClasses("nearby")}
         onClick={toggleNearbyView}
       >
         Κοντά μου
@@ -66,11 +71,7 @@ function PharmacyToggleButtons({
       <div
         role="tab"
         aria-selected={searchType === "city"}
-        className={clsx(
-          commonButtonClasses,
-          searchType === "city" && activeButtonClasses,
-          searchType === "city" && "rounded-br-lg rounded-tr-lg",
-        )}
+        className={getButtonClasses("city")}
         onClick={toggleCityView}
       >
         Ανά πόλη

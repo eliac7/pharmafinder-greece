@@ -217,9 +217,9 @@ export default function PharmacyMap({ pharmacies }: IPharmacyMapProps) {
   } = useFilters();
 
   const { location, updateLocation, getLocation } = useLocationContext();
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
-  const defaultLayer = theme === "dark" ? "dark" : "road";
+  const defaultLayer = resolvedTheme === "dark" ? "dark" : "road";
 
   const [layerName, setLayerName] = useQueryState(
     "layer",

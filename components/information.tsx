@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 
 function Information() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   function closeModal() {
     setIsModalOpen(false);
@@ -20,7 +20,7 @@ function Information() {
       >
         <IoIosInformationCircle
           size={22}
-          color={theme === "dark" ? "#fff" : "#3F4045"}
+          color={resolvedTheme === "dark" ? "#fff" : "#3F4045"}
         />
       </div>
 

@@ -11,5 +11,5 @@ export const getTileLayerUrl = (layerName: string) => {
   }
 };
 
-export const getTileLayerTheme = (theme: string | undefined) =>
-  theme === "dark" ? "dark" : "road";
+export const getTileLayerTheme = (resolvedTheme: string | undefined) =>
+  resolvedTheme === "dark" ? "dark" : "road";

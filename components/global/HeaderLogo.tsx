@@ -7,12 +7,12 @@ import { usePathname } from "next/navigation";
 function Logo() {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   // Determine imagePath based on whether it's the homepage or the theme type
   const imagePath = isHomePage
     ? "/logo.png"
-    : theme === "dark"
+    : resolvedTheme === "dark"
       ? "/logo.png"
       : "/logo-dark.png";
 

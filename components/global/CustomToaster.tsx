@@ -8,7 +8,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import { FaCircleXmark } from "react-icons/fa6";
 
 export const CustomToaster: React.FC<ToasterProps> = (props) => {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   return (
     <Toaster {...props}>
       {(t) => (
@@ -27,7 +27,7 @@ export const CustomToaster: React.FC<ToasterProps> = (props) => {
             className={cn(
               "pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5",
               {
-                "dark:bg-gray-800": theme === "dark",
+                "dark:bg-gray-800": resolvedTheme === "dark",
               },
             )}
           >
@@ -49,7 +49,7 @@ export const CustomToaster: React.FC<ToasterProps> = (props) => {
                 <div className="ml-3 w-0 flex-1 pt-0.5">
                   <p
                     className={cn("text-sm font-bold text-gray-900", {
-                      "dark:text-gray-100": theme === "dark",
+                      "dark:text-gray-100": resolvedTheme === "dark",
                     })}
                   >
                     {t.type === "success" ? "Επιτυχία!" : "Σφάλμα!"}
@@ -57,7 +57,7 @@ export const CustomToaster: React.FC<ToasterProps> = (props) => {
 
                   <p
                     className={cn("mt-1 text-sm text-gray-500", {
-                      "dark:text-gray-300": theme === "dark",
+                      "dark:text-gray-300": resolvedTheme === "dark",
                     })}
                   >
                     {t.message as string}
@@ -70,7 +70,7 @@ export const CustomToaster: React.FC<ToasterProps> = (props) => {
                       "inline-flex rounded-full bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2",
                       {
                         "text-white dark:bg-gray-800 dark:hover:text-gray-300":
-                          theme === "dark",
+                          resolvedTheme === "dark",
                       },
                     )}
                     onClick={() => toast.dismiss(t.id)}
