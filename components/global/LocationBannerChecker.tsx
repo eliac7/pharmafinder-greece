@@ -10,13 +10,21 @@ interface ILocationBannerCheckerProps {
 async function LocationBannerChecker({ ip }: ILocationBannerCheckerProps) {
   let country: ICountryByIP | string;
 
+  console.log("ip", ip);
+
   country = ip ? await getCountryByIP(ip) : "";
+  console.log("country", country);
   const { countryCode, countryName } =
     typeof country === "object"
       ? country
       : { countryCode: "", countryName: "" };
 
+  console.log("countryCode", countryCode);
+  console.log("countryName", countryName);
+
   const isGreece = countryCode === "GR";
+
+  console.log("isGreece", isGreece);
 
   return (
     countryCode &&
