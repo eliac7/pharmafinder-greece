@@ -47,7 +47,7 @@ const convertMultiPolygonToLatLngs = (
 };
 
 export default function MapFrontPage() {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const polyRefs: PolygonRefs = useRef([]);
 
   const greeceBordersLatLngs = convertMultiPolygonToLatLngs(
@@ -59,11 +59,13 @@ export default function MapFrontPage() {
       if (ref) {
         ref.setStyle({
           color:
-            theme === "dark" ? "rgba(255,255,255,0.30)" : "rgba(0,0,0,0.5)",
+            resolvedTheme === "dark"
+              ? "rgba(255,255,255,0.30)"
+              : "rgba(0,0,0,0.5)",
         });
       }
     });
-  }, [theme]);
+  }, [resolvedTheme]);
 
   return (
     <div className="h-[35rem] w-full overflow-hidden rounded-lg">
@@ -74,7 +76,7 @@ export default function MapFrontPage() {
         attributionControl={false}
         className="h-full w-full"
       >
-        <CustomTileLayer layerName={getTileLayerTheme(theme)} />
+        <CustomTileLayer layerName={getTileLayerTheme(resolvedTheme)} />
         {greeceBordersLatLngs.map(
           (latLngs: LatLngExpression[], index: number) => (
             <Polygon
@@ -82,7 +84,9 @@ export default function MapFrontPage() {
               positions={latLngs}
               ref={(el) => (polyRefs.current[index] = el)}
               color={
-                theme === "dark" ? "rgba(255,255,255,0.30)" : "rgba(0,0,0,0.5)"
+                resolvedTheme === "dark"
+                  ? "rgba(255,255,255,0.30)"
+                  : "rgba(0,0,0,0.5)"
               }
             />
           ),

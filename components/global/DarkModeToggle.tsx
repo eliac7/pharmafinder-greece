@@ -8,10 +8,10 @@ import clsx from "clsx";
 const DarkModeToggle = () => {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
-  const { theme, setTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
   return (
     <div
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       className={clsx(
         "cursor-pointer rounded-full p-2 transition-colors duration-200 hover:bg-gray-200  dark:text-gray-400 dark:hover:bg-gray-800",
         {
@@ -19,7 +19,7 @@ const DarkModeToggle = () => {
         },
       )}
     >
-      {theme === "dark" ? <CiSun size={24} /> : <CiDark size={24} />}
+      {resolvedTheme === "dark" ? <CiSun size={24} /> : <CiDark size={24} />}
     </div>
   );
 };
