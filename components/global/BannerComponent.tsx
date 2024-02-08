@@ -1,41 +1,34 @@
 "use client";
 
+import useLocalStorage from "@/hooks/useLocalStorage";
 import { useState } from "react";
-import ReactCountryFlag from "react-country-flag";
+import { FaTimesCircle } from "react-icons/fa";
 
 interface IBannerComponentProps {
-  text: string;
-  country?: string;
+  children: React.ReactNode;
 }
 
-export default function BannerComponent({
-  text,
-  country,
-}: IBannerComponentProps) {
-  const [isBannerVisible, setIsBannerVisible] = useState<boolean>(true);
+export default function BannerComponent({ children }: IBannerComponentProps) {
+  const [hasClosedBanner, setHasClosedBanner] = useLocalStorage<boolean>(
+    "PHARMAFINDER_HAS_CLOSED_BANNER",
+    false,
+  );
+  const handleCloseBanner = () => {
+    setHasClosedBanner(true);
+  };
 
   return (
-    <div className="fixed bottom-0 z-[9999] w-full">
-      {isBannerVisible && (
-        <div className="bg-red-500 p-4 text-white">
-          {text}
-          {country && (
-            <ReactCountryFlag
-              className="mx-2"
-              countryCode={country}
-              svg
-              title={country}
-            />
-          )}
-
-          <button
-            onClick={() => setIsBannerVisible(false)}
-            className="float-right"
-          >
-            X
-          </button>
+    <>
+      {!hasClosedBanner && (
+        <div className="fixed bottom-0 z-[9999] w-full">
+          <div className="flex items-center justify-between space-x-2 bg-complementary-600 p-4 text-white">
+            {children}
+            <button onClick={handleCloseBanner} className="float-right">
+              <FaTimesCircle />
+            </button>
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

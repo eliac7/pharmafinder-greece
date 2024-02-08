@@ -25,24 +25,30 @@ function Header() {
   const pathname = usePathname();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const [lastScrollY, setLastScrollY] = useState<number>(0);
+  const [headerVisible, setHeaderVisible] = useState<boolean>(true);
   const mobileNavRef = useRef<HTMLDivElement>(null);
   const isHomePage = pathname === "/";
+
   const toggleMobileNav = () => {
-    setIsMobileNavOpen((prevState) => !prevState);
+    setIsMobileNavOpen(!isMobileNavOpen);
   };
 
-  const handleScroll = () => {
-    const offset = window.scrollY;
-    setIsScrolled(offset > 0);
-  };
-
+  // Handle scroll event
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setIsScrolled(currentScrollY > 200);
+      setHeaderVisible(lastScrollY > currentScrollY || currentScrollY < 200);
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [lastScrollY]);
 
   useEffect(() => {
     setIsMobileNavOpen(false);
@@ -50,23 +56,22 @@ function Header() {
 
   return (
     <header
-      className="flex w-full items-center justify-center bg-transparent"
+      className={clsx(
+        `duration-600 flex w-full flex-col items-center justify-center bg-transparent transition-transform ease-in-out`,
+        {
+          "fixed top-0 z-[5000] bg-opacity-30 bg-clip-padding": isHomePage,
+          "md:h-32 md:p-4": !isScrolled && isHomePage,
+          "h-16 md:h-20 md:p-1": isScrolled && isHomePage,
+          "h-16 md:h-20 md:p-2": !isHomePage,
+          "translate-y-0": headerVisible,
+          "-translate-y-full": !headerVisible,
+        },
+      )}
       aria-label="Header"
     >
-      <div
-        className={clsx(
-          "flex w-full items-center justify-center rounded-bl-lg rounded-br-lg bg-transparent backdrop-blur-xl backdrop-filter duration-200 ease-in-out",
-          {
-            "container fixed top-0 z-[5000] bg-opacity-30 bg-clip-padding":
-              isHomePage,
-            "md:h-26 h-28 md:p-4": !isScrolled && isHomePage,
-            "h-16 md:h-20 md:p-1": isScrolled && isHomePage,
-            "h-16 md:h-20 md:p-4": !isHomePage,
-          },
-        )}
-      >
+      <div className="container flex h-full w-full items-center justify-center rounded-lg bg-transparent px-3 backdrop-blur-xl backdrop-filter tablet:p-1">
         <div className="flex h-full w-1/2 place-items-center">
-          <Link href="/" className="h-full">
+          <Link href="/" className="h-full w-fit">
             <Logo />
           </Link>
         </div>
