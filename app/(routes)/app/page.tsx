@@ -2,7 +2,7 @@
 
 import Filters from "@/components/global/FiltersComponent";
 import AppContainer from "@/components/maps/AppContainer";
-import LoadingAnimation from "@/components/maps/LoadingAnimation";
+import LoadingAnimation from "@/components/global/LoadingAnimation";
 import { useFilters } from "@/context/FiltersContext";
 import { usePharmacies } from "@/hooks/usePharmacies";
 

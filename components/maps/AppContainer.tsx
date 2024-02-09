@@ -22,14 +22,8 @@ function MainDataContainer({
   isError,
   error,
 }: IMainDataContainerProps) {
-  const {
-    isListExpandedMobile,
-    setIsListExpandedMobile,
-    isListVisible,
-    setIsListVisible,
-    selectedPharmacy,
-    setSelectedPharmacy,
-  } = useFilters();
+  const { isListExpandedMobile, isListVisible, setSelectedPharmacy } =
+    useFilters();
 
   // if there is an error, show a toast and reset the selected pharmacy
   useEffect(() => {
@@ -54,23 +48,18 @@ function MainDataContainer({
     }
   }, [pharmacies, setSelectedPharmacy]);
 
-  const handelClickToFlyOnMap = (pharmacy: IPharmacy | null) => {
-    setSelectedPharmacy(pharmacy);
-  };
-
-  const toggleListVisibility = () => {
-    setIsListVisible(!isListVisible);
-  };
+  const [isHoveringHideButton, setIsHoveringHideButton] = useState(false);
 
   return (
     <div className="relative mx-auto flex h-full w-full flex-col overflow-hidden transition-all duration-500 md:flex-row">
       <div
         className={clsx(
-          "sm:rounded-t-xl absolute bottom-0 left-0 right-0 z-[1100] transform bg-white transition-all duration-500 ease-in-out dark:bg-gray-800 dark:text-white md:static md:z-0 md:h-full md:w-1/3 md:rounded-none",
+          "absolute bottom-0 left-0 right-0 z-[1100] transform rounded-t-xl bg-white opacity-100 transition-all duration-100 ease-in-out dark:bg-gray-800 dark:text-white md:static md:z-0 md:h-full md:w-1/3 md:rounded-t-none",
           isListVisible
             ? "max-w-[100%] opacity-100 md:max-w-[50%]"
             : "m-0 max-w-0 opacity-0",
           isListExpandedMobile ? "h-[60vh]" : "h-[10vh]",
+          isHoveringHideButton && "opacity-50",
         )}
       >
         <PharmacyList
@@ -80,7 +69,11 @@ function MainDataContainer({
       </div>
 
       <div className="relative h-full w-full transition-all duration-500">
-        <DynamicPharmacyMap pharmacies={pharmacies} />
+        <DynamicPharmacyMap
+          pharmacies={pharmacies}
+          isHoveringHideButton={isHoveringHideButton}
+          setIsHoveringHideButton={setIsHoveringHideButton}
+        />
       </div>
     </div>
   );

@@ -22,16 +22,12 @@ import "react-leaflet-fullscreen/styles.css";
 import PharmacyMarker, { userLocationMarker } from "./PharmacyMarker";
 import { IMapProps, IPharmacyMapProps, IPoint } from "./types";
 
+import { useFilters } from "@/context/FiltersContext";
 import { ILocation } from "@/lib/interfaces";
 import { cn } from "@/lib/utils";
+import clsx from "clsx";
 import { useTheme } from "next-themes";
-import {
-  FaChevronLeft,
-  FaChevronRight,
-  FaFilter,
-  FaLocationArrow,
-} from "react-icons/fa";
-import { useFilters } from "@/context/FiltersContext";
+import { FaFilter, FaLocationArrow } from "react-icons/fa";
 import TileLayerComponent from "./CustomTileLayer";
 
 const POI: React.FC<IMapProps> = ({ selectedPharmacy }) => {
@@ -56,9 +52,13 @@ const MapBoundsAdjuster = ({ points }: { points: IPoint[] }) => {
 const ToggleListButton = ({
   toggleListVisibility,
   isListVisible,
+  isHoveringHideButton,
+  setIsHoveringHideButton,
 }: {
   toggleListVisibility: (isVisible: boolean) => void;
   isListVisible: boolean;
+  isHoveringHideButton: boolean;
+  setIsHoveringHideButton: (value: boolean) => void;
 }) => {
   const map = useMap();
 
@@ -91,29 +91,59 @@ const ToggleListButton = ({
     return null;
   }
 
+  const handleMouseEnter = () => {
+    setIsHoveringHideButton(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHoveringHideButton(false);
+  };
+
+  const label = isListVisible ? "Απόκρυψη λίστας" : "Εμφάνιση λίστας";
+
   return (
     <button
       className={cn(
-        "absolute left-2 top-10 z-[1000] hidden rounded-lg bg-white p-2 shadow-md transition-all duration-300 hover:bg-complementary-500 md:block",
-        isListVisible && "bg-complementary-500 hover:bg-complementary-700",
+        "absolute left-2 top-1/2  z-[1000] hidden rounded-lg transition-all duration-500 md:block",
       )}
       onClick={handleClick}
-      aria-label={
-        isListVisible
-          ? "Απόκρυψη λίστας φαρμακείων"
-          : "Εμφάνιση λίστας φαρμακείων"
-      }
-      title={
-        isListVisible
-          ? "Απόκρυψη λίστας φαρμακείων"
-          : "Εμφάνιση λίστας φαρμακείων"
-      }
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      aria-label={label}
+      title={label}
     >
-      {isListVisible ? (
-        <FaChevronLeft size={24} color={"white"} />
-      ) : (
-        <FaChevronRight size={24} color={"black"} />
-      )}
+      <div className="relative flex h-[72px] w-8 items-center justify-center transition-opacity duration-100">
+        <div className="flex h-8 w-8 flex-col items-center justify-center rounded-full bg-complementary-400 text-center">
+          <div
+            className={clsx(
+              "translate-z-0 h-3 w-1 translate-y-[0.15rem] transform rounded-full bg-white transition-transform duration-300 dark:bg-white",
+              {
+                "!rotate-0": isHoveringHideButton && isListVisible,
+                "rotate-45": isListVisible,
+                "-rotate-45": !isListVisible,
+              },
+            )}
+          />
+          <div
+            className={clsx(
+              "translate-z-0 h-3 w-1 -translate-y-[0.15rem] transform rounded-full bg-white transition-transform duration-300 dark:bg-white",
+              {
+                "-rotate-45 ": isListVisible,
+                "rotate-0": isHoveringHideButton && isListVisible,
+                "rotate-45": !isListVisible,
+              },
+            )}
+          />
+        </div>
+        {isHoveringHideButton && (
+          <div className="shadow-xs absolute left-10 rounded-lg bg-gray-950 p-1 px-3 text-white">
+            <span className="flex items-center whitespace-pre-wrap px-2 py-1 text-center text-sm font-medium normal-case">
+              {label}
+            </span>
+            <span className="absolute -left-1 top-1/2 h-4 w-4 -translate-y-1/2 rotate-45 transform bg-gray-950"></span>
+          </div>
+        )}
+      </div>
     </button>
   );
 };
@@ -180,10 +210,13 @@ const ReloacateButton = ({
 
 const ToggleFilterButton = () => {
   const map = useMap();
-  const { isFilterMobileOpen, setIsFilterMobileOpen } = useFilters();
+  const { isFilterOpen, setIsFilterOpen } = useFilters();
 
   const toggleFilter = () => {
-    setIsFilterMobileOpen(!isFilterMobileOpen);
+    setIsFilterOpen(!isFilterOpen);
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
   };
 
   let label = {
@@ -192,21 +225,37 @@ const ToggleFilterButton = () => {
   };
 
   return (
-    <button
-      className={cn(
-        "absolute left-2 top-10 z-[1000] block rounded-lg bg-white p-2 shadow-md transition-all duration-300 md:hidden",
-        isFilterMobileOpen && "bg-primary-800 hover:bg-complementary-700",
-      )}
+    <div
       onClick={toggleFilter}
-      aria-label={isFilterMobileOpen ? label.close : label.open}
-      title={isFilterMobileOpen ? label.close : label.open}
+      className={clsx(
+        "group absolute left-2 top-7 z-[1000] cursor-pointer rounded-lg bg-white p-2 shadow-md transition-all duration-300 hover:bg-complementary-400",
+        {
+          "!bg-complementary-400": isFilterOpen,
+        },
+      )}
     >
-      <FaFilter size={24} color={isFilterMobileOpen ? "white" : "black"} />
-    </button>
+      <button
+        className="block md:block"
+        aria-label={isFilterOpen ? label.close : label.open}
+        title={isFilterOpen ? label.close : label.open}
+      >
+        <FaFilter size={20} color={isFilterOpen ? "white" : "black"} />
+      </button>
+      <div className="shadow-xs invisible absolute -top-2.5 left-12 rounded-lg bg-gray-950 p-1 px-3 text-white group-hover:visible">
+        <span className="flex items-center whitespace-pre-wrap px-2 py-1 text-center text-sm font-medium normal-case">
+          {label[isFilterOpen ? "close" : "open"]}
+        </span>
+        <span className="absolute -left-1 top-1/2 h-4 w-4 -translate-y-1/2 rotate-45 transform bg-gray-950"></span>
+      </div>
+    </div>
   );
 };
 
-export default function PharmacyMap({ pharmacies }: IPharmacyMapProps) {
+export default function PharmacyMap({
+  pharmacies,
+  isHoveringHideButton,
+  setIsHoveringHideButton,
+}: IPharmacyMapProps) {
   const {
     radiusQuery: radius,
     searchType,
@@ -395,6 +444,8 @@ export default function PharmacyMap({ pharmacies }: IPharmacyMapProps) {
       <ToggleListButton
         toggleListVisibility={setIsListVisible}
         isListVisible={isListVisible}
+        isHoveringHideButton={isHoveringHideButton}
+        setIsHoveringHideButton={setIsHoveringHideButton}
       />
 
       <ToggleFilterButton />

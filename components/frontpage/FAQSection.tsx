@@ -5,7 +5,7 @@ import { useState } from "react";
 import { CiCircleMinus, CiCirclePlus } from "react-icons/ci";
 
 function FAQ() {
-  const [selected, setSelected] = useState(-1);
+  const [selected, setSelected] = useState(0);
 
   const handleSelect = (index: number) => {
     if (selected === index) {

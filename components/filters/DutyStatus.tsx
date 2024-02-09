@@ -24,7 +24,7 @@ const Time = {
     month: "2-digit",
     year: "numeric",
   })})`,
-  all: "Όλα",
+  all: "Όλα τα Φαρμακεία",
 };
 
 export default function DutyStatus({
@@ -57,7 +57,7 @@ export default function DutyStatus({
         { label: Time.now, value: "now" },
         { label: Time.today, value: "today" },
         { label: Time.tomorrow, value: "tomorrow" },
-        ...(isNearby ? [{ label: "Όλα", value: "all" }] : []),
+        ...(isNearby ? [{ label: "Όλα τα Φαρμακεία", value: "all" }] : []),
       ]}
       initialSelection={initialSelection}
       searchable={false}

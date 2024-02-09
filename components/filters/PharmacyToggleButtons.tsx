@@ -34,7 +34,7 @@ function PharmacyToggleButtons({
   };
 
   const commonButtonClasses =
-    "relative flex-1 flex items-center justify-center cursor-pointer text-md text-center text-gray-900 dark:text-gray-400 py-[0.2rem] transition-colors duration-200 ease-in-out";
+    "relative flex-1 flex items-center justify-center cursor-pointer text-md text-center text-gray-900 dark:text-gray-400 py-[0.2rem]";
   const activeButtonClasses =
     "border-primary-700 bg-primary-400 text-white dark:text-white";
   const hoverButtonClasses =

@@ -13,7 +13,7 @@ const DarkModeToggle = () => {
     <div
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       className={clsx(
-        "cursor-pointer rounded-full p-2 transition-colors duration-200 hover:bg-gray-200  dark:text-gray-400 dark:hover:bg-gray-800",
+        "cursor-pointer rounded-full p-2 text-black hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800",
         {
           "!text-white hover:!bg-primary-700": isHomePage,
         },

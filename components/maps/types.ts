@@ -15,6 +15,8 @@ export interface IMapProps {
 
 export interface IPharmacyMapProps {
   pharmacies: IPharmacy[] | null;
+  isHoveringHideButton: boolean;
+  setIsHoveringHideButton: (value: boolean) => void;
 }
 
 export interface ISelectedPharmacy {
