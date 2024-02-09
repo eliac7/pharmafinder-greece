@@ -28,7 +28,7 @@ const PharmacyListIsClosingSoon: React.FC<IPharmacyListIsClosingSoon> = ({
           minutesUntilClosing <= closingSoonThreshold
         ) {
           isClosingSoon = true;
-          message = `Κλείνει σε λίγο στις ${session.close_time}`;
+          message = `Κλείνει σύντομα (${session.close_time})`;
         }
       });
     } else {

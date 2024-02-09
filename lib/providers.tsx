@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { LocationProvider } from "@/context/LocationContext";
 import { ThemeProvider } from "next-themes";
@@ -31,7 +30,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           {children}
         </LocationProvider>
       </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-left" />
     </QueryClientProvider>
   );
 }

@@ -26,7 +26,7 @@ export default function Filters() {
     setCityQuery,
     timeQuery,
     setTimeQuery,
-    isFilterMobileOpen,
+    isFilterOpen,
   } = useFilters();
 
   useEffect(() => {
@@ -44,8 +44,8 @@ export default function Filters() {
   return (
     <div
       className={clsx(
-        isFilterMobileOpen ? "flex" : "hidden tablet:flex",
-        "z-[1102] flex w-full flex-col items-center justify-center gap-x-2 gap-y-2 border-y border-gray-200 px-2 py-2 shadow-xl marker:z-[500] dark:border-gray-600 tablet:flex-row tablet:gap-y-0 tablet:px-0",
+        isFilterOpen ? "flex" : "hidden",
+        "z-[1100] flex w-full flex-col items-center justify-center gap-x-2 gap-y-2 border-y border-gray-200 px-2 py-2 shadow-xl marker:z-[500] dark:border-gray-600 tablet:flex-row tablet:gap-y-0 tablet:px-0",
       )}
     >
       <PharmacyToggleButtons

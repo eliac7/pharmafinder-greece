@@ -57,7 +57,7 @@ function Header() {
   return (
     <header
       className={clsx(
-        `duration-600 flex w-full flex-col items-center justify-center bg-transparent transition-transform ease-in-out`,
+        `duration-600 z-[1102] flex w-full flex-col items-center justify-center bg-transparent transition-transform ease-in-out`,
         {
           "fixed top-0 z-[5000] bg-opacity-30 bg-clip-padding": isHomePage,
           "md:h-32 md:p-4": !isScrolled && isHomePage,
@@ -69,10 +69,12 @@ function Header() {
       )}
       aria-label="Header"
     >
-      <div className="container flex h-full w-full items-center justify-center rounded-lg bg-transparent px-3 backdrop-blur-xl backdrop-filter tablet:p-1">
-        <div className="flex h-full w-1/2 place-items-center">
-          <Link href="/" className="h-full w-fit">
-            <Logo />
+      <div className="container flex h-full w-full items-center justify-center rounded-lg bg-transparent px-3 backdrop-blur-xl backdrop-filter">
+        <div className="flex h-full w-full place-items-center">
+          <Link href="/" className="block h-full">
+            <div className="h-full w-full">
+              <Logo />
+            </div>
           </Link>
         </div>
         <div className="relative w-full">
@@ -92,7 +94,7 @@ function Header() {
                     <li className="relative flex items-center justify-center text-center">
                       <Link
                         className={clsx(
-                          "text-md flex w-full items-center justify-center rounded-lg px-3 py-3 font-bold transition hover:text-gray-200",
+                          "text-md flex w-full items-center justify-center rounded-lg px-3 py-2 font-bold hover:text-gray-200",
                           {
                             "bg-complementary-400 text-white": activeLink,
                             "hover:bg-slate-500 dark:hover:text-white":

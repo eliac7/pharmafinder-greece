@@ -21,8 +21,8 @@ interface FiltersContextType {
   cityLabel: string;
   timeQuery: "now" | "today" | "tomorrow" | "all";
   setTimeQuery: (value: "now" | "today" | "tomorrow" | "all") => void;
-  isFilterMobileOpen: boolean;
-  setIsFilterMobileOpen: (isOpen: boolean) => void;
+  isFilterOpen: boolean;
+  setIsFilterOpen: (isOpen: boolean) => void;
   selectedPharmacy: IPharmacy | null;
   setSelectedPharmacy: React.Dispatch<React.SetStateAction<IPharmacy | null>>;
   isListVisible: boolean;
@@ -42,8 +42,8 @@ const defaultContextValue: FiltersContextType = {
   cityLabel: "",
   timeQuery: "now",
   setTimeQuery: () => {},
-  isFilterMobileOpen: false,
-  setIsFilterMobileOpen: () => {},
+  isFilterOpen: false,
+  setIsFilterOpen: () => {},
   selectedPharmacy: null,
   setSelectedPharmacy: () => {},
   isListVisible: true,
@@ -85,7 +85,7 @@ export const FiltersProvider: React.FC<{ children: React.ReactNode }> = ({
     ]).withDefault("now"),
   );
 
-  const [isFilterMobileOpen, setIsFilterMobileOpen] = useState<boolean>(false);
+  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(true);
   const [selectedPharmacy, setSelectedPharmacy] = useState<IPharmacy | null>(
     null,
   );
@@ -109,8 +109,8 @@ export const FiltersProvider: React.FC<{ children: React.ReactNode }> = ({
       cityLabel,
       timeQuery,
       setTimeQuery,
-      isFilterMobileOpen,
-      setIsFilterMobileOpen,
+      isFilterOpen,
+      setIsFilterOpen,
       selectedPharmacy,
       setSelectedPharmacy,
       isListVisible,
@@ -124,7 +124,7 @@ export const FiltersProvider: React.FC<{ children: React.ReactNode }> = ({
       cityQuery,
       cityLabel,
       timeQuery,
-      isFilterMobileOpen,
+      isFilterOpen,
       setCityQuery,
       setRadiusQuery,
       setSearchType,
