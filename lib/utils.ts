@@ -41,9 +41,21 @@ export function calculateTimeUntilMidnight() {
 export function capitalizeFirstLetterOfEachWord(phrase: string): string {
   return phrase
     .split(" ")
-    .map(
-      (word) => word.charAt(0).toUpperCase() + word.substring(1).toLowerCase(),
-    )
+    .map((word) => {
+      // Capitalize the first letter of each word
+      let result = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+
+      // Additional logic to capitalize letters following a parenthesis
+      const parenthesisIndex = result.indexOf("(");
+      if (parenthesisIndex !== -1 && parenthesisIndex + 1 < result.length) {
+        result =
+          result.substring(0, parenthesisIndex + 1) +
+          result.charAt(parenthesisIndex + 1).toUpperCase() +
+          result.substring(parenthesisIndex + 2);
+      }
+
+      return result;
+    })
     .join(" ");
 }
 
