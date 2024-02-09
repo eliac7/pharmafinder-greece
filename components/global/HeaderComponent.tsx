@@ -70,14 +70,14 @@ function Header() {
       aria-label="Header"
     >
       <div className="container flex h-full w-full items-center justify-center rounded-lg bg-transparent px-3 backdrop-blur-xl backdrop-filter">
-        <div className="flex h-full w-full place-items-center">
+        <div className="flex h-full w-full flex-1 place-items-center">
           <Link href="/" className="block h-full">
             <div className="h-full w-full">
               <Logo />
             </div>
           </Link>
         </div>
-        <div className="relative w-full">
+        <div className="relative w-full flex-1">
           {/* Default Header */}
           <nav>
             <ul className="text-text sm:w-[initial] sm:flex-nowrap sm:gap-5 hidden w-full flex-wrap items-center justify-center gap-1 text-[0.9rem] font-medium md:flex">
@@ -158,7 +158,7 @@ function Header() {
             </div>
           )}
         </div>
-        <div className="flex h-full w-1/2 items-center justify-end gap-2">
+        <div className="flex h-full w-1/2 flex-1 items-center justify-end gap-2">
           <DarkModeToggle />
           <CurrentTime />
         </div>
