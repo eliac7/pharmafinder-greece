@@ -5,7 +5,6 @@ import * as L from "leaflet";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet/dist/leaflet.css";
-import { usePathname } from "next/navigation";
 import { parseAsString, useQueryState } from "nuqs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -275,9 +274,6 @@ export default function PharmacyMap({
     parseAsString.withDefault(defaultLayer),
   );
 
-  const pathname = usePathname().split("/")[1];
-  const is_by_city = pathname === "city";
-
   const markerRefs = useRef(new Map());
   const circleRef = useRef<L.Circle | null>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -322,7 +318,7 @@ export default function PharmacyMap({
   return (
     <MapContainer
       center={circleCenter}
-      zoom={is_by_city ? 14 : 16}
+      zoom={16}
       scrollWheelZoom={true}
       attributionControl={false}
       className="h-full w-full"
