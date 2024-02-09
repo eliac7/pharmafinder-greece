@@ -14,6 +14,7 @@ import { GiPathDistance } from "react-icons/gi";
 import { MdOutlineSchedule } from "react-icons/md";
 import { IPharmacyListProps } from "./types";
 import { useFilters } from "@/context/FiltersContext";
+import PharmacyListIsClosingSoon from "./PharmacyListIsClosingSoon";
 
 const getPharmacyCountLabel = (
   count: number,
@@ -166,6 +167,7 @@ function PharmacyList({ pharmacies, count }: IPharmacyListProps) {
                       <p>{formatKM(pharmacy.distance_km)}</p>
                     </div>
                   )}
+                  <PharmacyListIsClosingSoon pharmacy={pharmacy} />
                   {selectedPharmacy &&
                     selectedPharmacy.name === pharmacy.name && (
                       <>
