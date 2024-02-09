@@ -2,6 +2,11 @@
   "name": "pharmafinder-greece",
   "version": "1.0.0",
   "private": true,
+  "author": {
+    "name": "Ilias Nikolaos Thalassochoritis",
+    "email": "iliascodes@gmail.com",
+    "url": "https://iliasdev.com"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
