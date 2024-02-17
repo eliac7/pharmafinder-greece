@@ -9,7 +9,7 @@
     <i>Welcome to PharmaFinder, your go-to application for finding pharmacies in your area, whether they are on-duty or not. Leveraging the power of your device's location services or your IP address, PharmaFinder makes locating nearby pharmacies a breeze. Additionally, it offers the capability to search for on-duty pharmacies in a city or area of your choice. </i>     
     <br/>
     <br/>
-  Built with <b>Next.js</b>, <b>React</b>, <b>Tantack React Query</b>, <b>Tailwind CSS</b>, <b>Nuqs</b> and <b>Leaflet</b> to create a dynamic frontend. For the backend, powered by <b>Python</b> with <b>FastAPI</b> to handle API interactions. For getting the data, let's keep it hidden for now 🫢
+  Built with <b>Next.js</b>, <b>Tantack React Query</b>, <b>Tailwind CSS</b>, <b>Nuqs</b> and <b>Leaflet</b> to create a dynamic frontend. For the backend, powered by <b>Python</b> with <b>FastAPI</b> to handle API interactions. For getting the data, let's keep it hidden for now 🫢
 
   </p>
 </div>
