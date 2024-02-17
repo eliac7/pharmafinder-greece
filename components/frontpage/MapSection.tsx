@@ -30,7 +30,7 @@ export default function Cities() {
           </p>
           <LinkButton
             href="/app?time=now&layer=dark&searchType=city"
-            className="bg-complementary-400"
+            className="!p-4"
           >
             Μετάβαση στην Εφαρμογή
           </LinkButton>
