@@ -33,7 +33,7 @@ function Page() {
 
   return (
     <>
-      {isPending && <LoadingAnimation />}
+      {isPending && isLoading && <LoadingAnimation />}
       <FiltersNOSSR />
       <AppContainer
         pharmacies={pharmacyResponse?.data || []}
