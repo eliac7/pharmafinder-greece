@@ -3,15 +3,12 @@ import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   let countryCode = request.geo?.country ?? "";
-  let countryName = request.geo?.region ?? "";
-
-  console.log("Country code:", countryCode);
-  console.log("Country name:", countryName);
+  let cityName = request.geo?.city ?? "";
 
   return NextResponse.next({
     headers: {
       "x-country-code": countryCode,
-      "x-country-name": countryName,
+      "x-city-name": cityName,
     },
   });
 }

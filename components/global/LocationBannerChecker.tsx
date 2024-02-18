@@ -3,12 +3,12 @@ import BannerComponent from "./BannerComponent";
 
 interface ILocationBannerCheckerProps {
   countryCode: string;
-  countryName: string;
+  cityName: string;
 }
 
 async function LocationBannerChecker({
   countryCode,
-  countryName,
+  cityName,
 }: ILocationBannerCheckerProps) {
   const isGreece = countryCode === "GR";
 
@@ -17,7 +17,7 @@ async function LocationBannerChecker({
     !isGreece && (
       <BannerComponent>
         <div className="text-md">
-          We detect you are from {countryName}{" "}
+          We detect you are from {cityName}{" "}
           <span>
             <ReactCountryFlag countryCode={countryCode} svg />
           </span>
