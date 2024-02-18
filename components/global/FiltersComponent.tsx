@@ -1,7 +1,6 @@
 "use client";
 
 import DutyStatus from "../filters/DutyStatus";
-import RadiusSlider from "../filters/RadiusSlider";
 import CitySearch from "../filters/CitySearch";
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
@@ -14,6 +13,10 @@ const PharmacyToggleButtons = dynamic(
     ssr: false,
   },
 );
+
+const RadiusSliderNOSSR = dynamic(() => import("../filters/RadiusSlider"), {
+  ssr: false,
+});
 
 export default function Filters() {
   const {
@@ -53,7 +56,7 @@ export default function Filters() {
         setSearchType={setSearchType}
       />
       {searchType === "nearby" ? (
-        <RadiusSlider
+        <RadiusSliderNOSSR
           radiusQuery={radiusQuery}
           onRadiusChange={setRadiusQuery}
         />
