@@ -42,8 +42,3 @@ export interface IOption {
   label: string;
   value: string;
 }
-
-export interface ICountryByIP {
-  countryCode: string;
-  countryName: string;
-}

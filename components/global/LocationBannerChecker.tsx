@@ -1,21 +1,15 @@
 import ReactCountryFlag from "react-country-flag";
 import BannerComponent from "./BannerComponent";
-import { getCountryByIP } from "@/lib/utils";
-import { ICountryByIP } from "@/lib/interfaces";
 
 interface ILocationBannerCheckerProps {
-  ip: string | null;
+  countryCode: string;
+  countryName: string;
 }
 
-async function LocationBannerChecker({ ip }: ILocationBannerCheckerProps) {
-  let country: ICountryByIP | string;
-
-  country = ip ? await getCountryByIP(ip) : "";
-  const { countryCode, countryName } =
-    typeof country === "object"
-      ? country
-      : { countryCode: "", countryName: "" };
-
+async function LocationBannerChecker({
+  countryCode,
+  countryName,
+}: ILocationBannerCheckerProps) {
   const isGreece = countryCode === "GR";
 
   return (
