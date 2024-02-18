@@ -82,7 +82,7 @@ const ToggleListButton = ({
     if (map) {
       setTimeout(() => {
         map.invalidateSize();
-      }, 300);
+      }, 100);
     }
   };
 
@@ -273,14 +273,12 @@ export default function PharmacyMap({
   );
 
   useEffect(() => {
-    setLayerName(resolvedTheme === "dark" ? "dark" : "road");
-
     if (circleRef.current) {
       circleRef.current.setStyle({
-        color: resolvedTheme === "dark" ? "#6c8e8c" : "#d9534f ",
+        color: layerName === "dark" ? "#6c8e8c" : "#d9534f ",
       });
     }
-  }, [resolvedTheme, setLayerName]);
+  }, [resolvedTheme, layerName]);
 
   const markerRefs = useRef(new Map());
   const circleRef = useRef<L.Circle | null>(null);

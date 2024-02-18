@@ -1,10 +1,17 @@
 "use client";
 
-import Filters from "@/components/global/FiltersComponent";
 import AppContainer from "@/components/maps/AppContainer";
 import LoadingAnimation from "@/components/global/LoadingAnimation";
 import { useFilters } from "@/context/FiltersContext";
 import { usePharmacies } from "@/hooks/usePharmacies";
+import dynamic from "next/dynamic";
+
+const FiltersNOSSR = dynamic(
+  () => import("@/components/global/FiltersComponent"),
+  {
+    ssr: false,
+  },
+);
 
 function Page() {
   const { searchType, radiusQuery, cityQuery, cityLabel, timeQuery } =
@@ -14,6 +21,7 @@ function Page() {
     data: pharmacyResponse,
     isError,
     isLoading,
+    isPending,
     error,
   } = usePharmacies({
     searchType,
@@ -25,8 +33,8 @@ function Page() {
 
   return (
     <>
-      {isLoading && <LoadingAnimation />}
-      <Filters />
+      {isPending && <LoadingAnimation />}
+      <FiltersNOSSR />
       <AppContainer
         pharmacies={pharmacyResponse?.data || []}
         count={pharmacyResponse?.count || 0}
