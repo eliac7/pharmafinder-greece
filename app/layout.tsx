@@ -72,7 +72,7 @@ export default async function AppLayout({
           <Header />
           {children}
           <Footer />
-          <LocationBannerChecker ip={ip} />
+          {/* <LocationBannerChecker ip={ip} /> */}
         </Providers>
       </body>
     </html>
