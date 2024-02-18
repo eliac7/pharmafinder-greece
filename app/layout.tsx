@@ -54,7 +54,8 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const ip = headers().get("x-forwarded-for");
+  const countryCode = headers().get("x-country-code");
+  const countryName = headers().get("x-country-name");
 
   return (
     <html
@@ -72,7 +73,10 @@ export default async function AppLayout({
           <Header />
           {children}
           <Footer />
-          {/* <LocationBannerChecker ip={ip} /> */}
+          <LocationBannerChecker
+            countryCode={countryCode ?? ""}
+            countryName={countryName ?? ""}
+          />
         </Providers>
       </body>
     </html>

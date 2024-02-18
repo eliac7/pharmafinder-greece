@@ -1,6 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { ICountryByIP } from "./interfaces";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -70,18 +69,4 @@ export function formatDateInGreek(date: string): string {
   const formattedDate = dateObj.toLocaleDateString("el-GR", options);
 
   return formattedDate;
-}
-
-export async function getCountryByIP(ip: string): Promise<ICountryByIP> {
-  try {
-    const response = await fetch(`https://freeipapi.com/api/json/${ip}`);
-    const data = await response.json();
-    return {
-      countryCode: data.countryCode,
-      countryName: data.countryName,
-    };
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
 }
