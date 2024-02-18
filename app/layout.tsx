@@ -5,13 +5,8 @@ import type { Metadata } from "next";
 import { Comfortaa } from "next/font/google";
 import "./globals.css";
 import { headers } from "next/headers";
-import dynamic from "next/dynamic";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
-
-const LocationBannerChecker = dynamic(
-  () => import("@/components/global/LocationBannerChecker"),
-  { ssr: false },
-);
+import LocationBannerChecker from "@/components/global/LocationBannerChecker";
 
 const comfortaaFont = Comfortaa({
   subsets: ["greek", "latin"],
@@ -55,7 +50,7 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   const countryCode = headers().get("x-country-code");
-  const countryName = headers().get("x-country-name");
+  const cityName = headers().get("x-city-name");
 
   return (
     <html
@@ -75,7 +70,7 @@ export default async function AppLayout({
           <Footer />
           <LocationBannerChecker
             countryCode={countryCode ?? ""}
-            countryName={countryName ?? ""}
+            cityName={cityName ?? ""}
           />
         </Providers>
       </body>
