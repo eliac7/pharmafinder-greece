@@ -267,28 +267,23 @@ export default function PharmacyMap({
   const { location, updateLocation, getLocation } = useLocationContext();
   const { resolvedTheme } = useTheme();
 
-  const defaultLayer = resolvedTheme === "dark" ? "dark" : "road";
-
-  const [layerName, setLayerName] = useQueryState(
+  const [layerName, setLayerName] = useQueryState<string>(
     "layer",
-    parseAsString.withDefault(defaultLayer),
+    parseAsString.withDefault(resolvedTheme === "dark" ? "dark" : "road"),
   );
+
+  useEffect(() => {
+    setLayerName(resolvedTheme === "dark" ? "dark" : "road");
+
+    if (circleRef.current) {
+      circleRef.current.setStyle({
+        color: resolvedTheme === "dark" ? "#6c8e8c" : "#d9534f ",
+      });
+    }
+  }, [resolvedTheme, setLayerName]);
 
   const markerRefs = useRef(new Map());
   const circleRef = useRef<L.Circle | null>(null);
-  const mapRef = useRef<L.Map | null>(null);
-
-  useEffect(() => {
-    if (circleRef.current) {
-      circleRef.current.setStyle({
-        color: layerName === "dark" ? "#6c8e8c" : "#d9534f",
-      });
-    }
-  }, [layerName]);
-
-  useEffect(() => {
-    setLayerName(defaultLayer);
-  }, [defaultLayer, setLayerName]);
 
   useEffect(() => {
     if (selectedPharmacy) {
@@ -311,10 +306,6 @@ export default function PharmacyMap({
     circleCenter = { lat: location.latitude, lng: location.longitude };
   }
 
-  const setMap = (map: L.Map) => {
-    mapRef.current = map;
-  };
-
   return (
     <MapContainer
       center={circleCenter}
@@ -322,7 +313,6 @@ export default function PharmacyMap({
       scrollWheelZoom={true}
       attributionControl={false}
       className="h-full w-full"
-      ref={setMap}
       maxZoom={18}
     >
       <LayersControl position="bottomright">
