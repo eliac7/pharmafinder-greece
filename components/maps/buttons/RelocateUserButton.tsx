@@ -24,10 +24,10 @@ const RelocateUserButton = ({ getLocation, location }: IRelocateUserButton) => {
   };
 
   return (
-    <div className="absolute right-3 top-28 z-[400] transition-all duration-300">
+    <div className="absolute right-3 top-44 z-[400] transition-all duration-300">
       <button
         className={cn(
-          "rounded-full bg-white p-2 shadow-md hover:bg-gray-100",
+          "rounded-lg bg-white p-2 shadow-md hover:bg-gray-100",
           isPopupOpen && "bg-slate-500 hover:bg-slate-600",
         )}
         onClick={() => setIsPopupOpen(!isPopupOpen)}

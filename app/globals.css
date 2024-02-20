@@ -60,4 +60,8 @@
   mix-blend-mode: plus-lighter;
 }
 
+.leaflet-control-layers-toggle {
+  width: 33px !important;
+  height: 33px !important;
+}
 /* End of Leaflet */
