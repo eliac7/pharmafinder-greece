@@ -117,7 +117,12 @@ function Header() {
           <div className="flex items-center justify-center md:hidden">
             <GiHamburgerMenu
               size={20}
-              className="block cursor-pointer text-black dark:text-white"
+              className={clsx(
+                "block cursor-pointer text-black dark:text-white",
+                {
+                  "text-white": isHomePage,
+                },
+              )}
               onClick={() => toggleMobileNav()}
             />
           </div>

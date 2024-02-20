@@ -110,7 +110,7 @@ export default function PharmacyMap({
       className="h-full w-full"
       maxZoom={18}
     >
-      <LayersControl position="bottomright">
+      <LayersControl position="topright">
         <LayersControl.BaseLayer
           name="Οδικός Χάρτης"
           checked={layerName === "road"}
