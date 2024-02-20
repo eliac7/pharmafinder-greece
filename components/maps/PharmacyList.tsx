@@ -114,12 +114,11 @@ function PharmacyList({ pharmacies, count }: IPharmacyListProps) {
       </span>
 
       <span className=" mx-2 mt-2 rounded-full bg-primary-800 px-4 py-2 text-center font-sans text-sm font-semibold text-white no-underline shadow-md focus:outline-none">
-        {count &&
-          getPharmacyCountLabel(
-            count,
-            searchType,
-            cityLabel.split(" ").slice(0, -1).join(" "),
-          )}
+        {getPharmacyCountLabel(
+          count,
+          searchType,
+          cityLabel.split(" ").slice(0, -1).join(" "),
+        )}
       </span>
 
       <ul
