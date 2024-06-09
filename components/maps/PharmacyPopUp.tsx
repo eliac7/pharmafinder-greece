@@ -66,18 +66,16 @@ function PharmacyPopUpProps({
             {data_hours.map((hour, index) => (
               <div
                 key={index}
-                className="flex w-full flex-col items-start gap-2 tablet:flex-row tablet:items-center"
+                className="flex w-full flex-col items-start gap-2"
               >
                 <span className="font-bold">
                   Εφημερεύει: {hour.open_time} - {hour.close_time}
                 </span>
                 {date && (
-                  <span className="flex italic">
-                    <span className="ml-1">
-                      {open_until_tomorrow && index === data_hours.length - 1
-                        ? `${formatDateInGreek(next_day_close_time ?? "")}`
-                        : `${formatDateInGreek(date)}`}
-                    </span>
+                  <span className="flex italic text-gray-500">
+                    {open_until_tomorrow && index === data_hours.length - 1
+                      ? `${formatDateInGreek(next_day_close_time ?? "")}`
+                      : `${formatDateInGreek(date)}`}
                   </span>
                 )}
               </div>
@@ -85,7 +83,7 @@ function PharmacyPopUpProps({
           </div>
         )}
 
-        <div className="mt-2 flex h-full w-full items-center justify-center gap-4">
+        <div className="mt-2 flex h-full w-full items-start gap-4">
           {/* street view */}
 
           <a

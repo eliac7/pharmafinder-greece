@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
   }
 
   const query = new URLSearchParams(params).toString();
-  const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/${endpoint}?${query}`;
+  const apiUrl = `${process.env.NEXT_PUBLIC_API_BA2SE_URL}/${endpoint}?${query}`;
 
   try {
     const apiRes = await fetch(apiUrl, {
