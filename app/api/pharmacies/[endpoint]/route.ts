@@ -28,23 +28,6 @@ export async function GET(req: NextRequest) {
   const query = new URLSearchParams(params).toString();
   const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/${endpoint}?${query}`;
 
-  // if there is not the env variable, return 404
-  if (!process.env.NEXT_PUBLIC_API_BASE_URL) {
-    console.log(
-      "API_BASE_URL is not set",
-      process.env.NEXT_PUBLIC_API_BASE_URL,
-    );
-    return new NextResponse(
-      JSON.stringify({ message: "Η υπηρεσία δεν είναι διαθέσιμη" }),
-      {
-        status: 404,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-  }
-
   try {
     const apiRes = await fetch(apiUrl, {
       method: "GET",
