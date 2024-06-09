@@ -15,6 +15,8 @@ function PharmacyPopUpProps({
   longitude,
   data_hours,
   date,
+  open_until_tomorrow,
+  next_day_close_time,
 }: Partial<IPharmacy>) {
   const [layerName] = useQueryState("layer", parseAsString.withDefault("road"));
   const isDarkMode = layerName === "dark";
@@ -29,7 +31,7 @@ function PharmacyPopUpProps({
           width={0}
           height={0}
           sizes="100vw"
-          className="h-auto w-1/4 object-contain md:w-full"
+          className="h-auto w-1/6 object-contain md:w-full"
         />
       </div>
       {/* Right Column */}
@@ -60,17 +62,20 @@ function PharmacyPopUpProps({
         />
         {/* on duty hours*/}
         {data_hours && (
-          <div className="flex flex-col gap-2">
+          <div className="flex w-full flex-col gap-2">
             {data_hours.map((hour, index) => (
               <div
                 key={index}
-                className="flex flex-col items-start gap-2 tablet:flex-row tablet:items-center"
+                className="flex w-full flex-col items-start gap-2"
               >
-                Εφημερεύει: {hour.open_time} - {hour.close_time}
+                <span className="font-bold">
+                  Εφημερεύει: {hour.open_time} - {hour.close_time}
+                </span>
                 {date && (
-                  <span className="flex italic">
-                    <span className="hidden tablet:block">/</span>
-                    {formatDateInGreek(date)}
+                  <span className="flex italic text-gray-500">
+                    {open_until_tomorrow && index === data_hours.length - 1
+                      ? `${formatDateInGreek(next_day_close_time ?? "")}`
+                      : `${formatDateInGreek(date)}`}
                   </span>
                 )}
               </div>
@@ -78,7 +83,7 @@ function PharmacyPopUpProps({
           </div>
         )}
 
-        <div className="mt-2 flex h-full w-full items-center justify-center gap-4">
+        <div className="mt-2 flex h-full w-full items-start gap-4">
           {/* street view */}
 
           <a
