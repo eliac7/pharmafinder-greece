@@ -556,6 +556,10 @@ export const CitiesData = [
     value: "nea-artaki",
   },
   {
+    label: "Χαλκίδα (Ευβοίας)",
+    value: "xalkida",
+  },
+  {
     label: "Ψαχνά (Ευβοίας)",
     value: "psaxna",
   },
@@ -1052,10 +1056,6 @@ export const CitiesData = [
     value: "tyrnabos",
   },
   {
-    label: "Φαλάνη (Λάρισας)",
-    value: "falani",
-  },
-  {
     label: "Φάρσαλα (Λάρισας)",
     value: "farsala",
   },
@@ -1460,10 +1460,6 @@ export const CitiesData = [
     value: "drama",
   },
   {
-    label: "Χαλκίδα (Ευβοίας)",
-    value: "xalkida",
-  },
-  {
     label: "Λευκάδα (Λευκάδας)",
     value: "leykada",
   },
@@ -1714,5 +1710,105 @@ export const CitiesData = [
   {
     label: "Καρδάμυλα (Χίου)",
     value: "kardamyla",
+  },
+  {
+    label: "Πέτα (Άρτας)",
+    value: "peta",
+  },
+  {
+    label: "Αυλώνα (Αττικής)",
+    value: "aylona",
+  },
+  {
+    label: "Καπανδρίτι (Αττικής)",
+    value: "kapandriti",
+  },
+  {
+    label: "Νέος Βουτζάς (Αττικής)",
+    value: "neos-boytzas",
+  },
+  {
+    label: "Παλούκια (Αττικής)",
+    value: "paloykia",
+  },
+  {
+    label: "Αιγείρα (Αχαΐας)",
+    value: "aigeira",
+  },
+  {
+    label: "Δεμένικα Σαραβάλιου (Αχαΐας)",
+    value: "demenika-sarabalioy",
+  },
+  {
+    label: "Αντιμάχεια (Δωδεκανήσων)",
+    value: "antimaxeia",
+  },
+  {
+    label: "Κολύμπια (Δωδεκανήσων)",
+    value: "kolympia",
+  },
+  {
+    label: "Κρεμαστή (Δωδεκανήσων)",
+    value: "kremasti",
+  },
+  {
+    label: "Λίνδος (Δωδεκανήσων)",
+    value: "lindos",
+  },
+  {
+    label: "Φαληράκι (Δωδεκανήσων)",
+    value: "faliraki",
+  },
+  {
+    label: "Αρκαλοχώρι (Ηρακλείου)",
+    value: "arkaloxori",
+  },
+  {
+    label: "Γούρνες Πεδιάδος (Ηρακλείου)",
+    value: "goyrnes-pediados",
+  },
+  {
+    label: "Λιμένας Χερσονήσου (Ηρακλείου)",
+    value: "limenas-xersonisoy",
+  },
+  {
+    label: "Μάλια (Ηρακλείου)",
+    value: "malia",
+  },
+  {
+    label: "Νέα Αλικαρνασσός (Ηρακλείου)",
+    value: "nea-alikarnassos",
+  },
+  {
+    label: "Σταλίδα (Ηρακλείου)",
+    value: "stalida",
+  },
+  {
+    label: "Λητή (Θεσσαλονίκης)",
+    value: "liti",
+  },
+  {
+    label: "Καστόρειο (Λακωνίας)",
+    value: "kastoreio",
+  },
+  {
+    label: "Καλλιθέα Πιερίας (Πιερίας)",
+    value: "kallithea-pierias",
+  },
+  {
+    label: "Ροδίτσα (Φθιώτιδας)",
+    value: "roditsa",
+  },
+  {
+    label: "Αρναία (Χαλκιδικής)",
+    value: "arnaia",
+  },
+  {
+    label: "Πευκοχώρι (Χαλκιδικής)",
+    value: "peykoxori",
+  },
+  {
+    label: "Συκιά (Χαλκιδικής)",
+    value: "sykia",
   },
 ] as const;
