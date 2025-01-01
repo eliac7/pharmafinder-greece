@@ -1811,4 +1811,132 @@ export const CitiesData = [
     label: "Συκιά (Χαλκιδικής)",
     value: "sykia",
   },
-] as const;
+  {
+    label: "Κομπότι (Άρτας)",
+    value: "kompoti",
+  },
+  {
+    label: "Αθήνα - Αμπελόκηποι (Αττικής)",
+    value: "ampelokipi-athina",
+  },
+  {
+    label: "Αθήνα - Γκύζη (Αττικής)",
+    value: "gyzi-athina",
+  },
+  {
+    label: "Αθήνα - Εξάρχεια (Αττικής)",
+    value: "exarchia-athina",
+  },
+  {
+    label: "Αθήνα - Ιλίσια (Αττικής)",
+    value: "ilissia-athina",
+  },
+  {
+    label: "Αθήνα - Κάτω Πατήσια (Αττικής)",
+    value: "kato-patissia-athina",
+  },
+  {
+    label: "Αθήνα - Κολωνάκι (Αττικής)",
+    value: "kolonaki-athina",
+  },
+  {
+    label: "Αθήνα - Κολωνός (Αττικής)",
+    value: "kolonos-athina",
+  },
+  {
+    label: "Αθήνα - Κουκάκι (Αττικής)",
+    value: "koukaki-athina",
+  },
+  {
+    label: "Αθήνα - Κυψέλη (Αττικής)",
+    value: "kypseli-athina",
+  },
+  {
+    label: "Αθήνα - Νέος Κόσμος (Αττικής)",
+    value: "neos-kosmos-athina",
+  },
+  {
+    label: "Αθήνα - Ομόνοια (Αττικής)",
+    value: "omonia-athina",
+  },
+  {
+    label: "Αθήνα - Παγκράτι (Αττικής)",
+    value: "pagrati-athina",
+  },
+  {
+    label: "Αθήνα - Σεπόλια (Αττικής)",
+    value: "sepolia-athina",
+  },
+  {
+    label: "Αθήνα - Σύνταγμα (Αττικής)",
+    value: "syntagma-athina",
+  },
+  {
+    label: "Ωρωπός (Αττικής)",
+    value: "oropos",
+  },
+  {
+    label: "Άγιος Βασίλειος (Αχαΐας)",
+    value: "agios-basileios",
+  },
+  {
+    label: "Μαριτσά (Δωδεκανήσων)",
+    value: "maritsa",
+  },
+  {
+    label: "Σορωνή (Δωδεκανήσων)",
+    value: "soroni",
+  },
+  {
+    label: "Επισκοπή Ηρακλείου (Ηρακλείου)",
+    value: "episkopi-irakleioy",
+  },
+  {
+    label: "Μοχός (Ηρακλείου)",
+    value: "moxos",
+  },
+  {
+    label: "Δρυμός (Θεσσαλονίκης)",
+    value: "drymos",
+  },
+  {
+    label: "Θεσσαλονίκη - Ανάληψη (Θεσσαλονίκης)",
+    value: "analipsi-thessaloniki",
+  },
+  {
+    label: "Θεσσαλονίκη - Κέντρο (Θεσσαλονίκης)",
+    value: "kentro-thessaloniki",
+  },
+  {
+    label: "Θεσσαλονίκη - Πλατεία Δημοκρατίας (Θεσσαλονίκης)",
+    value: "platia-dimokratias-thessaloniki",
+  },
+  {
+    label: "Θεσσαλονίκη - Τούμπα (Θεσσαλονίκης)",
+    value: "toumpa-thessaloniki",
+  },
+  {
+    label: "Θεσσαλονίκη - Χαριλάου (Θεσσαλονίκης)",
+    value: "charilaou-thessaloniki",
+  },
+  {
+    label: "Πλαγιάρι (Θεσσαλονίκης)",
+    value: "plagiari",
+  },
+  {
+    label: "Τριάδι Θέρμης (Θεσσαλονίκης)",
+    value: "triadi-thermis",
+  },
+  {
+    label: "Πρίνος (Καβάλας)",
+    value: "prinos",
+  },
+  {
+    label: "Γάιος (Κέρκυρας)",
+    value: "gaios",
+  },
+  {
+    label: "Φαλάνη (Λάρισας)",
+    value: "falani",
+  },
+];
