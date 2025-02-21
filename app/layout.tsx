@@ -70,7 +70,7 @@ export default async function AppLayout({
           <Footer />
           <LocationBannerChecker
             countryCode={countryCode ?? ""}
-            cityName={cityName ?? ""}
+            cityName={cityName ? decodeURIComponent(cityName) : ""}
           />
         </Providers>
       </body>

@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
   return NextResponse.next({
     headers: {
       "x-country-code": countryCode,
-      "x-city-name": cityName,
+      "x-city-name": encodeURIComponent(cityName),
     },
   });
 }
