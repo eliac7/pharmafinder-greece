@@ -7,7 +7,7 @@ import {
   formatGreekPhoneNumber,
   formatKM,
 } from "@/lib/utils";
-import { useEffect, useRef } from "react";
+import { LegacyRef, useEffect, useRef } from "react";
 
 import { FaChevronDown, FaChevronUp, FaPhone } from "react-icons/fa";
 import { GiPathDistance } from "react-icons/gi";
@@ -128,13 +128,17 @@ function PharmacyList({ pharmacies, count }: IPharmacyListProps) {
       >
         {pharmacies.map((pharmacy) => (
           <li
-            ref={(el) => (itemRefs.current[pharmacy.name] = el)}
+            ref={(el: HTMLLIElement | null) => {
+              if (el) {
+                itemRefs.current[pharmacy.name] = el;
+              }
+            }}
             key={`${pharmacy.name}-${pharmacy.address}`}
             className={cn(
               "mb-1 cursor-pointer rounded-lg border-2 border-gray-400 border-opacity-40 py-2 hover:bg-primary-100 dark:hover:bg-slate-900",
               selectedPharmacy &&
-                selectedPharmacy.name === pharmacy.name &&
-                "bg-primary-400 hover:bg-opacity-100 dark:bg-gray-700",
+              selectedPharmacy.name === pharmacy.name &&
+              "bg-primary-400 hover:bg-opacity-100 dark:bg-gray-700",
             )}
             onClick={() => {
               {
@@ -154,8 +158,8 @@ function PharmacyList({ pharmacies, count }: IPharmacyListProps) {
                   className={cn(
                     "text-sm text-gray-500",
                     selectedPharmacy &&
-                      selectedPharmacy.name === pharmacy.name &&
-                      "text-white",
+                    selectedPharmacy.name === pharmacy.name &&
+                    "text-white",
                   )}
                 >
                   {pharmacy.address.trim().split(",").slice(0, -1).join(",")}
@@ -180,8 +184,8 @@ function PharmacyList({ pharmacies, count }: IPharmacyListProps) {
                                 className={cn(
                                   "font-semibold text-gray-500 underline hover:text-gray-900 dark:text-white dark:hover:text-gray-300",
                                   selectedPharmacy &&
-                                    selectedPharmacy.name === pharmacy.name &&
-                                    "text-gray-200",
+                                  selectedPharmacy.name === pharmacy.name &&
+                                  "text-gray-200",
                                 )}
                               >
                                 {formatGreekPhoneNumber(pharmacy.phone)}
@@ -205,21 +209,21 @@ function PharmacyList({ pharmacies, count }: IPharmacyListProps) {
                                     <span className="ml-1">
                                       {pharmacy.data_hours &&
                                         index ===
-                                          pharmacy.data_hours.length - 1 &&
+                                        pharmacy.data_hours.length - 1 &&
                                         pharmacy.open_until_tomorrow &&
                                         (pharmacy.next_day_close_time
                                           ? `(${new Intl.DateTimeFormat(
-                                              "el-GR",
-                                              {
-                                                day: "2-digit",
-                                                month: "2-digit",
-                                                year: "2-digit",
-                                              },
-                                            ).format(
-                                              new Date(
-                                                pharmacy.next_day_close_time,
-                                              ),
-                                            )})`
+                                            "el-GR",
+                                            {
+                                              day: "2-digit",
+                                              month: "2-digit",
+                                              year: "2-digit",
+                                            },
+                                          ).format(
+                                            new Date(
+                                              pharmacy.next_day_close_time,
+                                            ),
+                                          )})`
                                           : "(Αύριο)")}
                                     </span>
                                   </div>

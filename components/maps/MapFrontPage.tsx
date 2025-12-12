@@ -82,7 +82,11 @@ export default function MapFrontPage() {
             <Polygon
               key={index}
               positions={latLngs}
-              ref={(el) => (polyRefs.current[index] = el)}
+              ref={(el: LPolygon<any> | null) => {
+                if (el) {
+                  polyRefs.current[index] = el;
+                }
+              }}
               color={
                 resolvedTheme === "dark"
                   ? "rgba(255,255,255,0.30)"
