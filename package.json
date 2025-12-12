@@ -23,7 +23,7 @@
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "leaflet-gesture-handling": "^1.2.2",
     "limiter": "^2.1.0",
-    "next": "14.0.4",
+    "next": "14.2.35",
     "next-themes": "^0.2.1",
     "nuqs": "^1.16.1",
     "react": "^18.2.0",
