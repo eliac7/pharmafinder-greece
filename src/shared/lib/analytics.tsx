@@ -45,7 +45,11 @@ export interface GAEvent {
 export function reportWebVitals(metric: WebVitalsMetric): void {
   if (!isAnalyticsEnabled()) {
     if (process.env.NODE_ENV === "development") {
-      console.info("Web Vitals (dev):", metric);
+      console.info("[Analytics] Web Vitals:", {
+        name: metric.name,
+        value: metric.value,
+        rating: metric.rating,
+      });
     }
     return;
   }
