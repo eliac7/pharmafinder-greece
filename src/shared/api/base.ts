@@ -1,4 +1,5 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_SECRET_KEY = process.env.NEXT_PUBLIC_API_SECRET_KEY || "";
 
 export async function fetchAPI<T>(
   endpoint: string,
@@ -6,11 +7,15 @@ export async function fetchAPI<T>(
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
 
+  const headers = {
+    "Content-Type": "application/json",
+    "x-secret-key": API_SECRET_KEY,
+    ...(options?.headers || {}),
+  };
+
   const res = await fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-    },
     ...options,
+    headers,
   });
 
   if (!res.ok) {

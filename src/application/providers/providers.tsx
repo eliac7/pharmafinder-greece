@@ -13,7 +13,6 @@ import {
 } from "@/shared/lib/analytics";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
-// Export analytics functions
 export {
   reportWebVitals,
   analytics,
