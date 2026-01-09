@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import GoogleAnalytics from "@/providers/GoogleAnalytics";
-import { WebVitals } from "@/providers/WebVitals";
-import { ThemeProvider } from "@/providers/ThemeProvider";
-import { Toaster } from "@/components/ui/sonner";
+import { Providers } from "@/application/providers/providers";
+import { Toaster } from "@/shared/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -47,16 +45,7 @@ export default function RootLayout({
   return (
     <html lang="el" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
-        <GoogleAnalytics />
-        <WebVitals />
+        <Providers>{children}</Providers>
         <Toaster richColors />
       </body>
     </html>
