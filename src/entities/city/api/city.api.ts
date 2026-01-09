@@ -16,7 +16,7 @@ export const cityApi = {
    */
   getCityBySlug: async (slug: string) => {
     return fetchAPI<{ data: City }>(`/locations/cities/${slug}`, {
-      next: { revalidate: 86400 },
+      next: { revalidate: 3600 },
     });
   },
 };

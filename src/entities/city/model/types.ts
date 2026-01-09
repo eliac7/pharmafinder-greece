@@ -3,4 +3,6 @@ export interface City {
   name: string;
   slug: string;
   prefecture_id: number;
+  latitude: number;
+  longitude: number;
 }
