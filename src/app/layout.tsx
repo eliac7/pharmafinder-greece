@@ -4,6 +4,7 @@ import "./globals.css";
 import GoogleAnalytics from "@/providers/GoogleAnalytics";
 import { WebVitals } from "@/providers/WebVitals";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -44,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="el" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
         <ThemeProvider
           attribute="class"
@@ -56,6 +57,7 @@ export default function RootLayout({
         </ThemeProvider>
         <GoogleAnalytics />
         <WebVitals />
+        <Toaster richColors />
       </body>
     </html>
   );
