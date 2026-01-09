@@ -4,7 +4,7 @@ import {
   MarkerContent,
   MarkerPopup,
   MarkerTooltip,
-} from "@/components/ui/map";
+} from "@/shared/ui/map";
 
 export default async function Page() {
   return (
