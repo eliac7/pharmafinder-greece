@@ -1,30 +1,24 @@
-import {
-  Map,
-  MapMarker,
-  MarkerContent,
-  MarkerPopup,
-  MarkerTooltip,
-} from "@/shared/ui/map";
+import { Map } from "@/shared/ui/map";
+import { SidebarProvider, SidebarTrigger } from "@/shared/ui/sidebar";
+import { AppSidebar } from "@/widgets/sidebar/ui/app-sidebar";
+import { MapUpdater } from "@/widgets/map-view/ui/map-updater";
+import { UserLocationMarker } from "@/widgets/map-view/ui/user-location-marker";
+import { PharmacyMarkers } from "@/widgets/map-view/ui/pharmacy-markers";
 
-export default async function Page() {
+export default function Page() {
   return (
-    <div className="w-full h-screen">
-      <Map center={[23.630208, 37.945028]} zoom={12}>
-        <MapMarker longitude={23.630208} latitude={37.945028}>
-          <MarkerContent>
-            <div className="size-4 rounded-full bg-primary border-2 border-white shadow-lg" />
-          </MarkerContent>
-          <MarkerTooltip>Piraeus</MarkerTooltip>
-          <MarkerPopup>
-            <div className="space-y-1">
-              <p className="font-medium text-foreground">Piraeus</p>
-              <p className="text-xs text-muted-foreground">
-                23.630208, 37.945028
-              </p>
-            </div>
-          </MarkerPopup>
-        </MapMarker>
-      </Map>
-    </div>
+    <SidebarProvider>
+      <AppSidebar />
+      <main className="relative w-full h-screen overflow-hidden">
+        <div className="absolute top-4 left-4 z-400">
+          <SidebarTrigger className="bg-background/80 backdrop-blur-sm shadow-md border border-border/50 rounded-lg hover:bg-background/90" />
+        </div>
+        <Map center={[23.7275, 37.9838]} zoom={13}>
+          <MapUpdater />
+          <UserLocationMarker />
+          <PharmacyMarkers />
+        </Map>
+      </main>
+    </SidebarProvider>
   );
 }
