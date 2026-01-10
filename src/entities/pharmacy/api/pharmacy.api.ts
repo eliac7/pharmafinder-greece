@@ -28,7 +28,7 @@ export const pharmacyApi = {
     const res = await fetchAPI<{ data: Pharmacy[] }>(
       `/city?city_slug=${citySlug}&city_name=${citySlug}&time=${time}`,
       {
-        next: { revalidate: 3600 },
+        next: { revalidate: 600 },
       }
     );
     return res.data;
