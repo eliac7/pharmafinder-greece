@@ -7,7 +7,7 @@ import {
   MarkerPopup,
   MarkerTooltip,
 } from "@/shared/ui/map";
-import { Phone, MapPin, Navigation, Cross, Clock } from "lucide-react";
+import { Phone, MapPin, Navigation, Cross, Clock, Eye } from "lucide-react";
 import { cn } from "@/shared/lib/hooks/utils";
 import {
   getPharmacyStatus,
@@ -85,7 +85,7 @@ export function PharmacyMarkers() {
             </MarkerTooltip>
 
             <MarkerPopup>
-              <div className="flex flex-col gap-2 min-w-[220px] bg-card p-3 rounded-xl border border-border shadow-xl">
+              <div className="flex flex-col gap-2 min-w-[220px] p-1">
                 <div className="flex items-center gap-3">
                   <div
                     className={cn(
@@ -132,7 +132,9 @@ export function PharmacyMarkers() {
                 {pharmacy.data_hours && pharmacy.data_hours.length > 0 && (
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Clock className="size-3.5 shrink-0" />
-                    <span>{formatPharmacyHours(pharmacy.data_hours)}</span>
+                    <span>
+                      Εφημερεύει: {formatPharmacyHours(pharmacy.data_hours)}
+                    </span>
                   </div>
                 )}
 
@@ -150,15 +152,26 @@ export function PharmacyMarkers() {
                   <span className="text-xs text-muted-foreground">
                     {pharmacy.distance_km?.toFixed(1)} km
                   </span>
-                  <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-                  >
-                    <Navigation className="size-3" />
-                    Οδηγίες
-                  </a>
+                  <div className="flex items-center gap-3">
+                    <a
+                      href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${pharmacy.latitude},${pharmacy.longitude}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <Eye className="size-3" />
+                      Street View
+                    </a>
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                    >
+                      <Navigation className="size-3" />
+                      Οδηγίες
+                    </a>
+                  </div>
                 </div>
               </div>
             </MarkerPopup>

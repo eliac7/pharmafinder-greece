@@ -131,7 +131,7 @@ export function PharmacyList() {
                     {pharmacy.data_hours && pharmacy.data_hours.length > 0 && (
                       <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                         <Clock className="size-3" />
-                        {formatPharmacyHours(pharmacy.data_hours)}
+                        Εφημερεύει: {formatPharmacyHours(pharmacy.data_hours)}
                       </span>
                     )}
                   </div>
