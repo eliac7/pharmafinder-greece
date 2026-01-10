@@ -7,9 +7,12 @@ import {
   MarkerPopup,
   MarkerTooltip,
 } from "@/shared/ui/map";
-import { Phone, MapPin, Navigation, Cross } from "lucide-react";
+import { Phone, MapPin, Navigation, Cross, Clock } from "lucide-react";
 import { cn } from "@/shared/lib/hooks/utils";
-import { getPharmacyStatus } from "@/shared/lib/pharmacy-status";
+import {
+  getPharmacyStatus,
+  formatPharmacyHours,
+} from "@/shared/lib/pharmacy-status";
 
 export function PharmacyMarkers() {
   const { data } = useNearbyPharmacies();
@@ -125,6 +128,13 @@ export function PharmacyMarkers() {
                     {pharmacy.address}, {pharmacy.city}
                   </span>
                 </div>
+
+                {pharmacy.data_hours && pharmacy.data_hours.length > 0 && (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Clock className="size-3.5 shrink-0" />
+                    <span>{formatPharmacyHours(pharmacy.data_hours)}</span>
+                  </div>
+                )}
 
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Phone className="size-3.5 shrink-0" />

@@ -1,13 +1,16 @@
 "use client";
 
-import { Navigation, Cross } from "lucide-react";
+import { Navigation, Cross, Clock } from "lucide-react";
 import { useNearbyPharmacies } from "@/features/find-pharmacies/model/use-nearby-pharmacies";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { cn } from "@/shared/lib/hooks/utils";
 import { useMapStore } from "@/shared/model/use-map-store";
 import { Button } from "@/shared/ui/button";
-import { getPharmacyStatus } from "@/shared/lib/pharmacy-status";
+import {
+  getPharmacyStatus,
+  formatPharmacyHours,
+} from "@/shared/lib/pharmacy-status";
 
 export function PharmacyList() {
   const { data, isLoading, error } = useNearbyPharmacies();
@@ -125,6 +128,12 @@ export function PharmacyList() {
                         ? "Ανοιχτό"
                         : "Κλειστό"}
                     </span>
+                    {pharmacy.data_hours && pharmacy.data_hours.length > 0 && (
+                      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                        <Clock className="size-3" />
+                        {formatPharmacyHours(pharmacy.data_hours)}
+                      </span>
+                    )}
                   </div>
 
                   <p className="text-xs text-muted-foreground leading-snug">
@@ -136,7 +145,7 @@ export function PharmacyList() {
                   variant="outline"
                   size="icon"
                   className={cn(
-                    "size-9 rounded-full border-border shrink-0 self-center hover:bg-primary hover:text-primary-foreground hover:border-transparent",
+                    "size-9 rounded-full border-border shrink-0 self-center hover:bg-primary/20 hover:text-primary hover:border-primary",
                     "transition-all"
                   )}
                   onClick={(e) => {

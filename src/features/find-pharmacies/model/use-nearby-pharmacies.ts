@@ -15,7 +15,7 @@ export function useNearbyPharmacies() {
         latitude: lat!,
         longitude: lng!,
         radius: 5,
-        time: "today",
+        time: "now",
       }),
     enabled: isEnabled,
     staleTime: 1000 * 60 * 5,
