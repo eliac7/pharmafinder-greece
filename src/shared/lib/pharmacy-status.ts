@@ -20,6 +20,26 @@ export interface PharmacyHours {
  * @param nextDayCloseTime - The closing time on the next day if open overnight
  * @returns Status information including whether it's open, closing soon, or closed
  */
+/**
+ * Format pharmacy hours for display
+ * @param hours - Array of operating hour slots
+ * @returns Formatted string like "00:00 - 08:00" or null if no hours
+ */
+export function formatPharmacyHours(hours: PharmacyHours[]): string | null {
+  if (!hours || hours.length === 0) return null;
+
+  return hours
+    .map((slot) => {
+      if (!slot.open_time || !slot.close_time) return null;
+      // Remove seconds from time format (HH:MM:SS -> HH:MM)
+      const openTime = slot.open_time.slice(0, 5);
+      const closeTime = slot.close_time.slice(0, 5);
+      return `${openTime} - ${closeTime}`;
+    })
+    .filter(Boolean)
+    .join(", ");
+}
+
 export function getPharmacyStatus(
   hours: PharmacyHours[],
   openUntilTomorrow: boolean | null,
