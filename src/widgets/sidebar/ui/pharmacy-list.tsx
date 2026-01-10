@@ -1,11 +1,13 @@
 "use client";
 
-import { MapPin, Phone, Clock } from "lucide-react";
+import { Navigation, Cross } from "lucide-react";
 import { useNearbyPharmacies } from "@/features/find-pharmacies/model/use-nearby-pharmacies";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { cn } from "@/shared/lib/hooks/utils";
 import { useMapStore } from "@/shared/model/use-map-store";
+import { Button } from "@/shared/ui/button";
+import { getPharmacyStatus } from "@/shared/lib/pharmacy-status";
 
 export function PharmacyList() {
   const { data, isLoading, error } = useNearbyPharmacies();
@@ -13,12 +15,14 @@ export function PharmacyList() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-4 p-4">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="flex flex-col gap-2">
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-3 w-1/2" />
-            <Skeleton className="h-10 w-full" />
+      <div className="flex flex-col gap-3 py-2">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="flex p-4 rounded-2xl bg-card gap-4">
+            <Skeleton className="size-12 rounded-xl shrink-0" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-3 w-1/2" />
+            </div>
           </div>
         ))}
       </div>
@@ -36,58 +40,121 @@ export function PharmacyList() {
   if (!data?.data || data.data.length === 0) {
     return (
       <div className="p-4 text-center text-sm text-muted-foreground">
-        Δεν βρέθηκαν φαρμακεία κοντά σας.
+        Πατήστε Εντόπισέ Με για να βρείτε κοντινά φαρμακεία.
       </div>
     );
   }
 
   return (
     <ScrollArea className="flex-1">
-      <div className="flex flex-col gap-2 p-2">
-        {data.data.map((pharmacy) => (
-          <div
-            key={pharmacy.id}
-            onClick={() => {
-              if (pharmacy.latitude && pharmacy.longitude) {
-                flyTo([pharmacy.longitude, pharmacy.latitude], 16);
-              }
-            }}
-            className={cn(
-              "flex flex-col gap-2 rounded-lg border bg-card p-3 text-card-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground cursor-pointer"
-            )}
-          >
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="font-semibold line-clamp-2 leading-tight break-words">
-                {pharmacy.name}
-              </h3>
-              {pharmacy.distance_km && (
-                <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0 bg-secondary/50 px-1.5 py-0.5 rounded-full">
-                  {pharmacy.distance_km.toFixed(1)} χλμ
-                </span>
+      <div className="flex flex-col gap-3 py-2">
+        {data.data.map((pharmacy) => {
+          const { status, minutesUntilClose } = getPharmacyStatus(
+            pharmacy.data_hours,
+            pharmacy.open_until_tomorrow ?? null,
+            pharmacy.next_day_close_time ?? null
+          );
+
+          if (status === "closed") return null;
+
+          const isOpen = true;
+          const isClosingSoon = status === "closing-soon";
+
+          return (
+            <div
+              key={pharmacy.id}
+              onClick={() => {
+                if (pharmacy.latitude && pharmacy.longitude) {
+                  flyTo([pharmacy.longitude, pharmacy.latitude], 16);
+                }
+              }}
+              className={cn(
+                "group flex p-4 rounded-2xl bg-card border border-border",
+                "hover:border-primary/40 hover:bg-accent/50",
+                "transition-all duration-200 cursor-pointer shadow-sm",
+                isClosingSoon && "border-amber-500/40"
               )}
-            </div>
+            >
+              <div className="flex items-start gap-3 w-full">
+                <div
+                  className={cn(
+                    "flex items-center justify-center rounded-xl shrink-0 size-11 transition-colors",
+                    isClosingSoon
+                      ? "bg-amber-500/10 text-amber-600"
+                      : isOpen
+                      ? "bg-primary/10 text-primary"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  <Cross className="size-6" />
+                </div>
 
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <MapPin className="size-3.5 shrink-0" />
-              <span className="line-clamp-1 break-all">{pharmacy.address}</span>
-            </div>
+                <div className="flex flex-col flex-1 min-w-0 gap-1.5">
+                  <div className="flex justify-between items-start gap-2">
+                    <h3
+                      className={cn(
+                        "text-sm font-bold leading-tight",
+                        isOpen
+                          ? "text-card-foreground"
+                          : "text-muted-foreground"
+                      )}
+                    >
+                      {pharmacy.name}
+                    </h3>
+                    {pharmacy.distance_km && (
+                      <span className="text-xs font-medium text-muted-foreground whitespace-nowrap shrink-0">
+                        {pharmacy.distance_km.toFixed(1)}km
+                      </span>
+                    )}
+                  </div>
 
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Phone className="size-3.5 shrink-0" />
-              <span>{pharmacy.phone}</span>
-            </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={cn(
+                        "inline-flex items-center text-xs px-2 py-0.5 rounded-md font-semibold shrink-0",
+                        isClosingSoon
+                          ? "bg-amber-500/15 text-amber-600"
+                          : isOpen
+                          ? "bg-primary/15 text-primary"
+                          : "bg-muted text-muted-foreground border border-border"
+                      )}
+                    >
+                      {isClosingSoon
+                        ? `Κλείνει σε ${minutesUntilClose} λεπτά`
+                        : isOpen
+                        ? "Ανοιχτό"
+                        : "Κλειστό"}
+                    </span>
+                  </div>
 
-            {pharmacy.data_hours.length > 0 && (
-              <div className="flex items-center gap-2 text-xs font-medium text-primary bg-primary/10 p-1.5 rounded-md w-fit max-w-full">
-                <Clock className="size-3.5 shrink-0" />
-                <span className="truncate">
-                  {pharmacy.data_hours[0].open_time} -{" "}
-                  {pharmacy.data_hours[0].close_time}
-                </span>
+                  <p className="text-xs text-muted-foreground leading-snug">
+                    {pharmacy.address}
+                  </p>
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className={cn(
+                    "size-9 rounded-full border-border shrink-0 self-center hover:bg-primary hover:text-primary-foreground hover:border-transparent",
+                    "transition-all"
+                  )}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (pharmacy.latitude && pharmacy.longitude) {
+                      window.open(
+                        `https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`,
+                        "_blank"
+                      );
+                    }
+                  }}
+                >
+                  <Navigation className="size-4" />
+                </Button>
               </div>
-            )}
-          </div>
-        ))}
+            </div>
+          );
+        })}
       </div>
     </ScrollArea>
   );

@@ -1,6 +1,7 @@
 "use client";
 
-import MapLibreGL, { type PopupOptions, type MarkerOptions } from "maplibre-gl";
+import { Cross, Loader2, Locate, Maximize, Minus, X } from "lucide-react";
+import MapLibreGL, { type MarkerOptions, type PopupOptions } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useTheme } from "next-themes";
 import {
@@ -17,7 +18,6 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
-import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
 
 import { cn } from "@/shared/lib/hooks/utils";
 import React from "react";
@@ -646,7 +646,7 @@ function MapControls({
       {showZoom && (
         <ControlGroup>
           <ControlButton onClick={handleZoomIn} label="Zoom in">
-            <Plus className="size-4" />
+            <Cross className="size-4" />
           </ControlButton>
           <ControlButton onClick={handleZoomOut} label="Zoom out">
             <Minus className="size-4" />
@@ -1273,16 +1273,16 @@ function MapClusterLayer<
 
 export {
   Map,
-  useMap,
+  MapClusterLayer,
+  MapControls,
   MapMarker,
+  MapPopup,
+  MapRoute,
   MarkerContent,
+  MarkerLabel,
   MarkerPopup,
   MarkerTooltip,
-  MarkerLabel,
-  MapPopup,
-  MapControls,
-  MapRoute,
-  MapClusterLayer,
+  useMap,
 };
 
 export type { MapRef };

@@ -28,7 +28,7 @@ export const pharmacyApi = {
     const res = await fetchAPI<{ data: Pharmacy[] }>(
       `/city?city_slug=${citySlug}&city_name=${citySlug}&time=${time}`,
       {
-        next: { revalidate: 600 },
+        // next: { revalidate: 600 },
       }
     );
     return res.data;
@@ -52,7 +52,7 @@ export const pharmacyApi = {
    */
   getPharmacyDetails: async (id: number) => {
     return fetchAPI<Pharmacy>(`/pharmacies/${id}`, {
-      next: { revalidate: 300 },
+      next: { revalidate: 86400 }, //24 hour
     });
   },
 };

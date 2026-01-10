@@ -13,7 +13,7 @@ interface UseLocateMeReturn {
   coordinates: Coordinates | null;
   isLoading: boolean;
   error: string | null;
-  locate: () => void;
+  locate: (onSuccess?: (coords: Coordinates) => void) => void;
 }
 
 export function useLocateMe(): UseLocateMeReturn {
@@ -23,7 +23,7 @@ export function useLocateMe(): UseLocateMeReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const locate = () => {
+  const locate = (onSuccess?: (coords: Coordinates) => void) => {
     setIsLoading(true);
     setError(null);
 
@@ -37,10 +37,15 @@ export function useLocateMe(): UseLocateMeReturn {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setLat(position.coords.latitude);
-        setLng(position.coords.longitude);
+        const coords = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+        setLat(coords.latitude);
+        setLng(coords.longitude);
         setIsLoading(false);
         toast.success("Η τοποθεσία σας βρέθηκε!");
+        onSuccess?.(coords);
       },
       (err) => {
         let msg = "Σφάλμα κατά τον εντοπισμό τοποθεσίας.";
