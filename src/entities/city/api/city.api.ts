@@ -7,7 +7,7 @@ export const cityApi = {
    */
   getCities: async () => {
     return fetchAPI<CitySummary[]>("/locations/cities", {
-      next: { revalidate: 86400 },
+      next: { revalidate: 86400 }, //24 hours
     });
   },
 
@@ -16,7 +16,7 @@ export const cityApi = {
    */
   getCityBySlug: async (slug: string) => {
     return fetchAPI<{ data: City }>(`/locations/cities/${slug}`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 604800 }, //7 days
     });
   },
 };

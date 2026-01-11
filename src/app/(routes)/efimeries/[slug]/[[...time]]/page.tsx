@@ -1,7 +1,7 @@
 import { cityApi } from "@/entities/city/api/city.api";
 import { pharmacyApi } from "@/entities/pharmacy/api/pharmacy.api";
 import { TimeFilter } from "@/entities/pharmacy/model/types";
-import { getDateForTime, TIME_TRANSLATIONS } from "@/shared/lib/date";
+import { getDateForTime } from "@/shared/lib/date";
 import {
   buildCanonicalUrl,
   buildSeoDescription,

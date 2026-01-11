@@ -32,6 +32,14 @@ export function formatPharmacyHours(hours: PharmacyHour[]): string | null {
  * @param timeFilter - The currently selected time filter ("now", "today", "tomorrow")
  * @returns Status information including whether it's open, closing soon, scheduled, or closed
  */
+/**
+ * Calculate the current status of a pharmacy based on its operating hours
+ * @param hours - Array of operating hour slots
+ * @param openUntilTomorrow - Whether the pharmacy stays open past midnight
+ * @param nextDayCloseTime - The closing time on the next day if open overnight
+ * @param timeFilter - The currently selected time filter ("now", "today", "tomorrow")
+ * @returns Status information including whether it's open, closing soon, scheduled, or closed
+ */
 export function getPharmacyStatus(
   hours: PharmacyHour[],
   openUntilTomorrow: boolean | null,
@@ -62,43 +70,58 @@ export function getPharmacyStatus(
     const [closeHour, closeMinute] = slot.close_time.split(":").map(Number);
 
     const openTotalMinutes = openHour * 60 + openMinute;
-    let closeTotalMinutes = closeHour * 60 + closeMinute;
+    const closeTotalMinutes = closeHour * 60 + closeMinute;
 
-    // Handle pharmacies open until tomorrow
-    if (openUntilTomorrow && nextDayCloseTime) {
-      const [nextCloseHour, nextCloseMinute] = nextDayCloseTime
-        .split(":")
-        .map(Number);
-      closeTotalMinutes = 24 * 60 + nextCloseHour * 60 + nextCloseMinute;
-    }
+    // Detect overnight shift (crosses midnight)
+    // E.g. Open 17:00, Close 08:00
+    let isOvernight = closeTotalMinutes < openTotalMinutes;
 
-    // If close time is 23:59, treat as midnight
-    if (closeHour === 23 && closeMinute === 59) {
-      closeTotalMinutes = 24 * 60;
-    }
+    if (isOvernight) {
+      // Overnight Logic: Open [17:00] -- Midnight -- Close [08:00]
 
-    // Check if we're currently within this time slot
-    if (
-      currentTotalMinutes >= openTotalMinutes &&
-      currentTotalMinutes < closeTotalMinutes
-    ) {
-      const minutesUntilClose = closeTotalMinutes - currentTotalMinutes;
+      if (
+        currentTotalMinutes >= openTotalMinutes ||
+        currentTotalMinutes < closeTotalMinutes
+      ) {
+        let minutesUntilClose = 0;
+        if (currentTotalMinutes >= openTotalMinutes) {
+          minutesUntilClose = closeTotalMinutes + 24 * 60 - currentTotalMinutes;
+        } else {
+          minutesUntilClose = closeTotalMinutes - currentTotalMinutes;
+        }
 
-      // Closing soon if within 30 minutes
-      if (minutesUntilClose <= 30) {
+        if (minutesUntilClose <= 30) {
+          return {
+            status: "closing-soon",
+            closingTime: slot.close_time,
+            minutesUntilClose,
+          };
+        }
         return {
-          status: "closing-soon",
+          status: "open",
           closingTime: slot.close_time,
           minutesUntilClose,
         };
       }
-
-      // Otherwise open
-      return {
-        status: "open",
-        closingTime: slot.close_time,
-        minutesUntilClose,
-      };
+    } else {
+      if (
+        currentTotalMinutes >= openTotalMinutes &&
+        currentTotalMinutes < closeTotalMinutes
+      ) {
+        const minutesUntilClose = closeTotalMinutes - currentTotalMinutes;
+        if (minutesUntilClose <= 30) {
+          return {
+            status: "closing-soon",
+            closingTime: slot.close_time,
+            minutesUntilClose,
+          };
+        }
+        return {
+          status: "open",
+          closingTime: slot.close_time,
+          minutesUntilClose,
+        };
+      }
     }
   }
 
