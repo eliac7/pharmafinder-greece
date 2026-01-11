@@ -3,8 +3,8 @@ import { SidebarProvider, SidebarTrigger } from "@/shared/ui/sidebar";
 import { AppSidebar } from "@/widgets/sidebar/ui/app-sidebar";
 import { MapUpdater } from "@/widgets/map-view/ui/map-updater";
 import { UserLocationMarker } from "@/widgets/map-view/ui/user-location-marker";
-import { PharmacyMarkers } from "@/widgets/map-view/ui/pharmacy-markers";
 import { MapControls } from "@/widgets/map-view/ui/map-controls";
+import { PharmacyMarkers } from "@/widgets/map-view/ui/pharmacy-markers";
 
 export default function Page() {
   return (

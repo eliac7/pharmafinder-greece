@@ -19,11 +19,11 @@ export const metadata: Metadata = {
       type: "image/x-icon",
     },
   },
-  metadataBase: new URL("https://pharmafinder.gr"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
   openGraph: {
     type: "website",
     locale: "el_GR",
-    url: "https://pharmafinder.gr",
+    url: process.env.NEXT_PUBLIC_APP_URL!,
     siteName: "PharmaFinder",
     description: "Βρείτε εφημερεύοντα φαρμακεία κοντά σας πιο εύκολα από ποτέ!",
     images: [

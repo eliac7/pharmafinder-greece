@@ -1,3 +1,18 @@
+export const TIME_OPTIONS = ["now", "today", "tomorrow"] as const;
+export type TimeFilter = (typeof TIME_OPTIONS)[number];
+
+export const RADIUS_OPTIONS = [2, 5, 10, 20] as const;
+export type RadiusOption = (typeof RADIUS_OPTIONS)[number];
+export const DEFAULT_RADIUS: RadiusOption = 5;
+
+export type PharmacyStatus = "open" | "closing-soon" | "closed" | "scheduled";
+
+export interface PharmacyStatusResult {
+  status: PharmacyStatus;
+  closingTime: string | null;
+  minutesUntilClose: number | null;
+}
+
 export interface PharmacyHour {
   open_time: string | null;
   close_time: string | null;
