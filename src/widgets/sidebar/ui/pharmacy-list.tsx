@@ -1,6 +1,6 @@
 "use client";
 
-import { Navigation, Cross, Clock } from "lucide-react";
+import { Navigation, Cross, Clock, RefreshCw } from "lucide-react";
 import { useNearbyPharmacies } from "@/features/find-pharmacies/model/use-nearby-pharmacies";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Skeleton } from "@/shared/ui/skeleton";
@@ -13,7 +13,7 @@ import {
 } from "@/shared/lib/pharmacy-status";
 
 export function PharmacyList() {
-  const { data, isLoading, error } = useNearbyPharmacies();
+  const { data, isLoading, error, refetch, isFetching } = useNearbyPharmacies();
   const flyTo = useMapStore((state) => state.flyTo);
 
   if (isLoading) {
@@ -34,8 +34,20 @@ export function PharmacyList() {
 
   if (error) {
     return (
-      <div className="p-4 text-center text-sm text-destructive">
-        Σφάλμα κατά τη φόρτωση των φαρμακείων.
+      <div className="flex flex-col items-center gap-3 p-4 text-center">
+        <p className="text-sm text-destructive">
+          Σφάλμα κατά τη φόρτωση των φαρμακείων.
+        </p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => refetch()}
+          disabled={isFetching}
+          className="gap-2"
+        >
+          <RefreshCw className={cn("size-4", isFetching && "animate-spin")} />
+          {isFetching ? "Φόρτωση..." : "Δοκιμάστε Ξανά"}
+        </Button>
       </div>
     );
   }
