@@ -13,9 +13,15 @@ import {
   getPharmacyStatus,
   formatPharmacyHours,
 } from "@/entities/pharmacy/lib/status";
+import { useQueryState, parseAsStringLiteral } from "nuqs";
+import { TIME_OPTIONS, type TimeFilter } from "@/entities/pharmacy/model/types";
 
 export function PharmacyMarkers() {
   const { data } = useNearbyPharmacies();
+  const [timeFilter] = useQueryState<TimeFilter>(
+    "time",
+    parseAsStringLiteral(TIME_OPTIONS).withDefault("now")
+  );
 
   if (!data?.data) return null;
 
@@ -27,12 +33,14 @@ export function PharmacyMarkers() {
         const { status, minutesUntilClose } = getPharmacyStatus(
           pharmacy.data_hours,
           pharmacy.open_until_tomorrow ?? null,
-          pharmacy.next_day_close_time ?? null
+          pharmacy.next_day_close_time ?? null,
+          timeFilter
         );
 
         if (status === "closed") return null;
 
-        const isOpen = true;
+        const isScheduled = status === "scheduled";
+        const isOpen = status === "open" || isScheduled;
         const isClosingSoon = status === "closing-soon";
 
         return (
@@ -101,22 +109,24 @@ export function PharmacyMarkers() {
                     <h4 className="font-bold text-sm text-card-foreground line-clamp-2 leading-tight">
                       {pharmacy.name}
                     </h4>
-                    <span
-                      className={cn(
-                        "text-xs px-2 py-0.5 rounded font-semibold",
-                        isClosingSoon
-                          ? "bg-amber-500/15 text-amber-600"
+                    {!isScheduled && (
+                      <span
+                        className={cn(
+                          "text-xs px-2 py-0.5 rounded font-semibold",
+                          isClosingSoon
+                            ? "bg-amber-500/15 text-amber-600"
+                            : isOpen
+                            ? "bg-primary/15 text-primary"
+                            : "bg-muted text-muted-foreground"
+                        )}
+                      >
+                        {isClosingSoon
+                          ? `Κλείνει σε ${minutesUntilClose} λεπτά`
                           : isOpen
-                          ? "bg-primary/15 text-primary"
-                          : "bg-muted text-muted-foreground"
-                      )}
-                    >
-                      {isClosingSoon
-                        ? `Κλείνει σε ${minutesUntilClose} λεπτά`
-                        : isOpen
-                        ? "Ανοιχτό"
-                        : "Κλειστό"}
-                    </span>
+                          ? "Ανοιχτό"
+                          : "Κλειστό"}
+                      </span>
+                    )}
                   </div>
                 </div>
 
