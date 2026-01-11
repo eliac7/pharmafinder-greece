@@ -19,17 +19,13 @@ export const pharmacyApi = {
 
   /**
    * For SSR City Pages
-   * Cached for 1 hour
    */
   getCityPharmacies: async (
     citySlug: string,
     time: "now" | "today" | "tomorrow" = "now"
   ) => {
     const res = await fetchAPI<{ data: Pharmacy[] }>(
-      `/city?city_slug=${citySlug}&city_name=${citySlug}&time=${time}`,
-      {
-        // next: { revalidate: 600 },
-      }
+      `/city?city_slug=${citySlug}&city_name=${citySlug}&time=${time}`
     );
     return res.data;
   },
