@@ -66,11 +66,12 @@ export function PharmacyCard({ pharmacy, timeFilter }: PharmacyCardProps) {
             >
               {pharmacy.name}
             </h3>
-            {pharmacy.distance_km && (
-              <span className="text-xs font-medium text-muted-foreground whitespace-nowrap shrink-0">
-                {pharmacy.distance_km.toFixed(1)}km
-              </span>
-            )}
+            {typeof pharmacy.distance_km === "number" &&
+              pharmacy.distance_km > 0 && (
+                <span className="text-xs font-medium text-muted-foreground whitespace-nowrap shrink-0">
+                  {pharmacy.distance_km.toFixed(1)}km
+                </span>
+              )}
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
