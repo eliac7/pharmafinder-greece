@@ -1271,12 +1271,291 @@ function MapClusterLayer<
   return null;
 }
 
+type MapHybridClusterLayerProps<
+  P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties
+> = {
+  /** GeoJSON FeatureCollection data */
+  data: GeoJSON.FeatureCollection<GeoJSON.Point, P>;
+  /** Maximum zoom level to cluster points on (default: 14) */
+  clusterMaxZoom?: number;
+  /** Radius of each cluster when clustering points in pixels (default: 50) */
+  clusterRadius?: number;
+  /** Colors for cluster circles: [small, medium, large] based on point count (default: ["#51bbd6", "#f1f075", "#f28cb1"]) */
+  clusterColors?: [string, string, string];
+  /** Point count thresholds for color/size steps: [medium, large] (default: [100, 750]) */
+  clusterThresholds?: [number, number];
+  /** Color of the cluster count text (default: "#ffffff") */
+  clusterTextColor?: string;
+  /** Render prop for unclustered points */
+  children: (features: GeoJSON.Feature<GeoJSON.Point, P>[]) => ReactNode;
+  /** Callback when a cluster is clicked */
+  onClusterClick?: (
+    clusterId: number,
+    coordinates: [number, number],
+    pointCount: number
+  ) => void;
+};
+
+function MapHybridClusterLayer<
+  P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties
+>({
+  data,
+  clusterMaxZoom = 14,
+  clusterRadius = 50,
+  clusterColors = ["#51bbd6", "#f1f075", "#f28cb1"],
+  clusterThresholds = [100, 750],
+  clusterTextColor = "#ffffff",
+  children,
+  onClusterClick,
+}: MapHybridClusterLayerProps<P>) {
+  const { map, isLoaded } = useMap();
+  const id = useId();
+  const sourceId = `hybrid-cluster-source-${id}`;
+  const clusterLayerId = `hybrid-clusters-${id}`;
+  const clusterCountLayerId = `hybrid-cluster-count-${id}`;
+
+  const [unclusteredFeatures, setUnclusteredFeatures] = useState<
+    GeoJSON.Feature<GeoJSON.Point, P>[]
+  >([]);
+
+  // Add source and cluster layers
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+
+    map.addSource(sourceId, {
+      type: "geojson",
+      data,
+      cluster: true,
+      clusterMaxZoom,
+      clusterRadius,
+    });
+
+    // Add cluster circles layer
+    map.addLayer({
+      id: clusterLayerId,
+      type: "circle",
+      source: sourceId,
+      filter: ["has", "point_count"],
+      paint: {
+        "circle-color": [
+          "step",
+          ["get", "point_count"],
+          clusterColors[0],
+          clusterThresholds[0],
+          clusterColors[1],
+          clusterThresholds[1],
+          clusterColors[2],
+        ],
+        "circle-radius": [
+          "step",
+          ["get", "point_count"],
+          20,
+          clusterThresholds[0],
+          30,
+          clusterThresholds[1],
+          40,
+        ],
+      },
+    });
+
+    // Add cluster count text layer
+    map.addLayer({
+      id: clusterCountLayerId,
+      type: "symbol",
+      source: sourceId,
+      filter: ["has", "point_count"],
+      layout: {
+        "text-field": "{point_count_abbreviated}",
+        "text-size": 12,
+      },
+      paint: {
+        "text-color": clusterTextColor,
+      },
+    });
+
+    // Hidden transparent layer for unclustered points to enable queryRenderedFeatures
+    map.addLayer({
+      id: `${sourceId}-hidden-points`,
+      type: "circle",
+      source: sourceId,
+      filter: ["!", ["has", "point_count"]],
+      paint: {
+        "circle-color": "transparent",
+        "circle-radius": 1,
+        "circle-opacity": 0,
+      },
+    });
+
+    return () => {
+      try {
+        if (map.getLayer(clusterCountLayerId))
+          map.removeLayer(clusterCountLayerId);
+        if (map.getLayer(clusterLayerId)) map.removeLayer(clusterLayerId);
+        if (map.getLayer(`${sourceId}-hidden-points`))
+          map.removeLayer(`${sourceId}-hidden-points`);
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+      } catch {
+        // ignore
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, map, sourceId]);
+
+  // Update data
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+    const source = map.getSource(sourceId) as MapLibreGL.GeoJSONSource;
+    if (source) {
+      source.setData(data);
+    }
+  }, [isLoaded, map, data, sourceId]);
+
+  // Update layer styles
+  useEffect(() => {
+    if (!isLoaded || !map || !map.getLayer(clusterLayerId)) return;
+
+    map.setPaintProperty(clusterLayerId, "circle-color", [
+      "step",
+      ["get", "point_count"],
+      clusterColors[0],
+      clusterThresholds[0],
+      clusterColors[1],
+      clusterThresholds[1],
+      clusterColors[2],
+    ]);
+
+    map.setPaintProperty(clusterLayerId, "circle-radius", [
+      "step",
+      ["get", "point_count"],
+      20,
+      clusterThresholds[0],
+      30,
+      clusterThresholds[1],
+      40,
+    ]);
+  }, [isLoaded, map, clusterLayerId, clusterColors, clusterThresholds]);
+
+  // Update text color
+  useEffect(() => {
+    if (!isLoaded || !map || !map.getLayer(clusterCountLayerId)) return;
+    map.setPaintProperty(clusterCountLayerId, "text-color", clusterTextColor);
+  }, [isLoaded, map, clusterCountLayerId, clusterTextColor]);
+
+  // Handle updates to visible unclustered points
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const updateUnclusteredPoints = () => {
+      // Query the hidden layer for visible unclustered points
+      const features = map.queryRenderedFeatures({
+        layers: [`${sourceId}-hidden-points`],
+      }) as unknown as GeoJSON.Feature<GeoJSON.Point, P>[];
+
+      // Remove duplicates
+      const uniqueFeatures = new globalThis.Map<
+        string | number,
+        GeoJSON.Feature<GeoJSON.Point, P>
+      >();
+      features.forEach((f) => {
+        if (f.id !== undefined) uniqueFeatures.set(f.id, f);
+      });
+
+      setUnclusteredFeatures(Array.from(uniqueFeatures.values()));
+    };
+
+    const onMove = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(updateUnclusteredPoints, 100);
+    };
+
+    // Initial update
+    updateUnclusteredPoints();
+
+    map.on("move", onMove);
+    map.on("moveend", onMove);
+    map.on("zoomend", onMove);
+
+    // Also listen for source data changes (important for theme switches/initial load)
+    const onSourceData = (e: MapLibreGL.MapSourceDataEvent) => {
+      if (e.sourceId === sourceId && e.isSourceLoaded) {
+        onMove();
+      }
+    };
+    map.on("sourcedata", onSourceData);
+
+    return () => {
+      map.off("move", onMove);
+      map.off("moveend", onMove);
+      map.off("zoomend", onMove);
+      map.off("sourcedata", onSourceData);
+      clearTimeout(timeoutId);
+    };
+  }, [isLoaded, map, sourceId]);
+
+  // Cluster click handler
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+
+    const handleClusterClick = async (
+      e: MapLibreGL.MapMouseEvent & {
+        features?: MapLibreGL.MapGeoJSONFeature[];
+      }
+    ) => {
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: [clusterLayerId],
+      });
+      if (!features.length) return;
+
+      const feature = features[0];
+      const clusterId = feature.properties?.cluster_id as number;
+      const pointCount = feature.properties?.point_count as number;
+      const coordinates = (feature.geometry as GeoJSON.Point).coordinates as [
+        number,
+        number
+      ];
+
+      if (onClusterClick) {
+        onClusterClick(clusterId, coordinates, pointCount);
+      } else {
+        const source = map.getSource(sourceId) as MapLibreGL.GeoJSONSource;
+        const zoom = await source.getClusterExpansionZoom(clusterId);
+        map.easeTo({
+          center: coordinates,
+          zoom: zoom + 1,
+        });
+      }
+    };
+
+    const handleMouseEnter = () => {
+      map.getCanvas().style.cursor = "pointer";
+    };
+    const handleMouseLeave = () => {
+      map.getCanvas().style.cursor = "";
+    };
+
+    map.on("click", clusterLayerId, handleClusterClick);
+    map.on("mouseenter", clusterLayerId, handleMouseEnter);
+    map.on("mouseleave", clusterLayerId, handleMouseLeave);
+
+    return () => {
+      map.off("click", clusterLayerId, handleClusterClick);
+      map.off("mouseenter", clusterLayerId, handleMouseEnter);
+      map.off("mouseleave", clusterLayerId, handleMouseLeave);
+    };
+  }, [isLoaded, map, clusterLayerId, sourceId, onClusterClick]);
+
+  return <>{children(unclusteredFeatures)}</>;
+}
+
 export {
   Map,
   MapClusterLayer,
   MapControls,
   MapMarker,
   MapPopup,
+  MapHybridClusterLayer,
   MapRoute,
   MarkerContent,
   MarkerLabel,
