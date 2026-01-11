@@ -1,24 +1,45 @@
-/**
- * Build SEO description for pharmacy shifts (efimeries) pages
- * @param opts - Options for building the description
- * @returns Formatted SEO description string
- */
-export function buildSeoDescription(opts: {
+import { TimeFilter } from "@/entities/pharmacy/model/types";
+import { TIME_TRANSLATIONS } from "./date";
+
+interface SeoOptions {
   cityName: string;
-  time?: "now" | "today" | "tomorrow";
-  dateString: string | null;
-}): string {
-  const { cityName, time, dateString } = opts;
+  time: TimeFilter;
+  dateString?: string;
+  slug: string;
+}
 
-  if (!time || time === "now") {
-    return `Βρείτε άμεσα εφημερεύοντα και ανοιχτά φαρμακεία στην πόλη ${cityName} κοντά σας, με τοποθεσία σε χάρτη και στοιχεία επικοινωνίας.`;
+export function buildSeoTitle({
+  cityName,
+  time,
+}: {
+  cityName: string;
+  time: TimeFilter;
+}) {
+  const timeText = TIME_TRANSLATIONS[time];
+  return time === "now"
+    ? `Εφημερεύοντα Φαρμακεία ${cityName} – Ανοιχτά Τώρα`
+    : `Εφημερεύοντα Φαρμακεία ${cityName} – ${timeText}`;
+}
+
+export function buildSeoDescription({
+  cityName,
+  time,
+  dateString,
+}: SeoOptions) {
+  const timeText = TIME_TRANSLATIONS[time];
+
+  if (time === "now") {
+    return `Βρείτε όλα τα εφημερεύοντα φαρμακεία σε ${cityName} που είναι ανοιχτά τώρα. Δείτε χάρτη, τηλέφωνα και οδηγίες πλοήγησης.`;
   }
 
-  if (time === "today") {
-    const dateText = dateString ? ` (${dateString})` : "";
-    return `Δείτε ποια φαρμακεία εφημερεύουν σήμερα${dateText} στην πόλη ${cityName} και βρείτε το πιο κοντινό σας στον χάρτη.`;
-  }
+  return `Δείτε τη λίστα με τα εφημερεύοντα φαρμακεία σε ${cityName} για ${timeText}${
+    dateString ? ` (${dateString})` : ""
+  }. Άμεση ενημέρωση και χάρτης.`;
+}
 
-  const dateText = dateString ? ` (${dateString})` : "";
-  return `Εφημερεύοντα φαρμακεία για αύριο${dateText} στην πόλη ${cityName}, με χάρτη και ενημερωμένες πληροφορίες.`;
+export function buildCanonicalUrl(slug: string, time: TimeFilter) {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL!;
+  const path =
+    time === "now" ? `/efimeries/${slug}` : `/efimeries/${slug}/${time}`;
+  return `${baseUrl}${path}`;
 }

@@ -22,15 +22,28 @@ import {
 } from "@/entities/pharmacy/model/types";
 import { useMemo } from "react";
 
-export function PharmacyMarkers() {
+interface PharmacyMarkersProps {
+  pharmacies?: Pharmacy[];
+  timeFilter?: TimeFilter;
+}
+
+export function PharmacyMarkers({
+  pharmacies: propPharmacies,
+  timeFilter: propTimeFilter,
+}: PharmacyMarkersProps) {
   const { data } = useNearbyPharmacies();
-  const [timeFilter] = useQueryState<TimeFilter>(
+  const [queryTime] = useQueryState<TimeFilter>(
     "time",
     parseAsStringLiteral(TIME_OPTIONS).withDefault("now")
   );
 
+  const effectiveTimeFilter = propTimeFilter ?? queryTime;
+
+  // Use prop data if available, otherwise use hook data
+  const pharmaciesToRender = propPharmacies ?? (data?.data || []);
+
   const points = useMemo(() => {
-    if (!data?.data)
+    if (pharmaciesToRender.length === 0)
       return {
         type: "FeatureCollection",
         features: [],
@@ -41,7 +54,7 @@ export function PharmacyMarkers() {
 
     return {
       type: "FeatureCollection",
-      features: data.data
+      features: pharmaciesToRender
         .filter((p) => p.latitude && p.longitude)
         .map((pharmacy) => ({
           type: "Feature",
@@ -56,9 +69,9 @@ export function PharmacyMarkers() {
       GeoJSON.Point,
       Pharmacy & GeoJSON.GeoJsonProperties
     >;
-  }, [data]);
+  }, [pharmaciesToRender]);
 
-  if (!data?.data) return null;
+  if (pharmaciesToRender.length === 0) return null;
 
   return (
     <MapHybridClusterLayer
@@ -94,7 +107,7 @@ export function PharmacyMarkers() {
               dataHours,
               openUntilTomorrow,
               pharmacy.next_day_close_time ?? null,
-              timeFilter
+              effectiveTimeFilter
             );
 
             if (status === "closed") return null;
