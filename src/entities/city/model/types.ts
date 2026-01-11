@@ -6,3 +6,9 @@ export interface City {
   latitude: number;
   longitude: number;
 }
+
+export interface CitySummary {
+  city: string;
+  slug: string;
+  prefecture: string;
+}

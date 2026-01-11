@@ -13,7 +13,6 @@ import {
   SidebarHeader,
   SidebarSeparator,
 } from "@/shared/ui/sidebar";
-import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
 import { ThemeToggle } from "@/shared/ui/theme-toggle";
 import { PharmacyList } from "@/widgets/sidebar/ui/pharmacy-list";
@@ -21,6 +20,7 @@ import { useLocateMe } from "@/features/locate-user/model/use-locate-me";
 import { useMapStore } from "@/shared/model/use-map-store";
 import { TimeFilterChips } from "@/features/find-pharmacies/ui/time-filter-chips";
 import { RadiusChips } from "@/features/find-pharmacies/ui/radius-chips";
+import { SearchCity } from "@/features/search-city/ui/search-city";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { locate, isLoading } = useLocateMe();
@@ -44,15 +44,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
 
         <div className="relative">
-          <div className="flex w-full items-center rounded-full h-12 bg-sidebar-accent border border-sidebar-border focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all duration-200 overflow-hidden">
-            <div className="flex items-center justify-center pl-4 pr-2 text-muted-foreground">
-              <Search className="size-5" />
-            </div>
-            <Input
-              placeholder="Αναζήτηση πόλης ή περιοχής..."
-              className="w-full bg-transparent border-none text-sidebar-foreground placeholder:text-muted-foreground focus-visible:ring-0 h-full text-base shadow-none"
-            />
-          </div>
+          <SearchCity />
         </div>
 
         <div className="mt-4">
