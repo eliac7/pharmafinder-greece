@@ -19,6 +19,8 @@ import { ThemeToggle } from "@/shared/ui/theme-toggle";
 import { PharmacyList } from "@/widgets/sidebar/ui/pharmacy-list";
 import { useLocateMe } from "@/features/locate-user/model/use-locate-me";
 import { useMapStore } from "@/shared/model/use-map-store";
+import { TimeFilterChips } from "@/features/find-pharmacies/ui/time-filter-chips";
+import { RadiusChips } from "@/features/find-pharmacies/ui/radius-chips";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { locate, isLoading } = useLocateMe();
@@ -72,6 +74,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
 
         <SidebarSeparator className="mt-4" />
+
+        <div className="mt-4 px-1 space-y-3">
+          <div>
+            <span className="text-xs font-medium text-muted-foreground mb-1.5 block">
+              Χρόνος
+            </span>
+            <TimeFilterChips />
+          </div>
+          <div>
+            <span className="text-xs font-medium text-muted-foreground mb-1.5 block">
+              Ακτίνα Αναζήτησης
+            </span>
+            <RadiusChips />
+          </div>
+        </div>
       </SidebarHeader>
 
       <SidebarContent className="px-4">

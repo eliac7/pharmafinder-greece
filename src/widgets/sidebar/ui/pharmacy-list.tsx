@@ -1,6 +1,7 @@
 "use client";
 
-import { Navigation, Cross, Clock, RefreshCw } from "lucide-react";
+import { Navigation, Cross, Clock, RefreshCw, MapPin } from "lucide-react";
+import { useQueryState, parseAsStringLiteral, parseAsInteger } from "nuqs";
 import { useNearbyPharmacies } from "@/features/find-pharmacies/model/use-nearby-pharmacies";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Skeleton } from "@/shared/ui/skeleton";
@@ -8,13 +9,26 @@ import { cn } from "@/shared/lib/hooks/utils";
 import { useMapStore } from "@/shared/model/use-map-store";
 import { Button } from "@/shared/ui/button";
 import {
+  TIME_OPTIONS,
+  DEFAULT_RADIUS,
+  type TimeFilter,
+} from "@/entities/pharmacy/model/types";
+import {
   getPharmacyStatus,
   formatPharmacyHours,
-} from "@/shared/lib/pharmacy-status";
+} from "@/entities/pharmacy/lib/status";
 
 export function PharmacyList() {
   const { data, isLoading, error, refetch, isFetching } = useNearbyPharmacies();
   const flyTo = useMapStore((state) => state.flyTo);
+  const [timeFilter] = useQueryState<TimeFilter>(
+    "time",
+    parseAsStringLiteral(TIME_OPTIONS).withDefault("now")
+  );
+  const [radius] = useQueryState(
+    "radius",
+    parseAsInteger.withDefault(DEFAULT_RADIUS)
+  );
 
   if (isLoading) {
     return (
@@ -60,20 +74,45 @@ export function PharmacyList() {
     );
   }
 
+  const count = data.count;
+
   return (
     <ScrollArea className="flex-1">
-      <div className="flex flex-col gap-3 py-2">
+      {/* Pharmacy count header */}
+      <div className="flex items-center justify-between py-3 px-1">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center size-8 rounded-lg bg-primary/10">
+            <MapPin className="size-4 text-primary" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold text-foreground">
+              {count} {count === 1 ? "φαρμακείο" : "φαρμακεία"}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              σε ακτίνα {radius}km
+            </span>
+          </div>
+        </div>
+        {isFetching && (
+          <RefreshCw className="size-4 text-muted-foreground animate-spin" />
+        )}
+      </div>
+
+      <div className="flex flex-col gap-3 pb-2">
         {data.data.map((pharmacy) => {
           const { status, minutesUntilClose } = getPharmacyStatus(
             pharmacy.data_hours,
             pharmacy.open_until_tomorrow ?? null,
-            pharmacy.next_day_close_time ?? null
+            pharmacy.next_day_close_time ?? null,
+            timeFilter
           );
 
-          if (status === "closed") return null;
+          // Only filter out closed pharmacies when viewing "now"
+          if (status === "closed" && timeFilter === "now") return null;
 
-          const isOpen = true;
+          const isOpen = status === "open" || status === "scheduled";
           const isClosingSoon = status === "closing-soon";
+          const isScheduled = status === "scheduled";
 
           return (
             <div
@@ -123,23 +162,25 @@ export function PharmacyList() {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={cn(
-                        "inline-flex items-center text-xs px-2 py-0.5 rounded-md font-semibold shrink-0",
-                        isClosingSoon
-                          ? "bg-amber-500/15 text-amber-600"
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {!isScheduled && (
+                      <span
+                        className={cn(
+                          "inline-flex items-center text-xs px-2 py-0.5 rounded-md font-semibold shrink-0",
+                          isClosingSoon
+                            ? "bg-amber-500/15 text-amber-600"
+                            : isOpen
+                            ? "bg-primary/15 text-primary"
+                            : "bg-muted text-muted-foreground border border-border"
+                        )}
+                      >
+                        {isClosingSoon
+                          ? `Κλείνει σε ${minutesUntilClose} λεπτά`
                           : isOpen
-                          ? "bg-primary/15 text-primary"
-                          : "bg-muted text-muted-foreground border border-border"
-                      )}
-                    >
-                      {isClosingSoon
-                        ? `Κλείνει σε ${minutesUntilClose} λεπτά`
-                        : isOpen
-                        ? "Ανοιχτό"
-                        : "Κλειστό"}
-                    </span>
+                          ? "Ανοιχτό"
+                          : "Κλειστό"}
+                      </span>
+                    )}
                     {pharmacy.data_hours && pharmacy.data_hours.length > 0 && (
                       <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                         <Clock className="size-3" />

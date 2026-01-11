@@ -12,7 +12,7 @@ import { cn } from "@/shared/lib/hooks/utils";
 import {
   getPharmacyStatus,
   formatPharmacyHours,
-} from "@/shared/lib/pharmacy-status";
+} from "@/entities/pharmacy/lib/status";
 
 export function PharmacyMarkers() {
   const { data } = useNearbyPharmacies();

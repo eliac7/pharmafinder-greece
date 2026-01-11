@@ -19,8 +19,8 @@ export function UserLocationMarker() {
     <MapMarker longitude={lng} latitude={lat}>
       <MarkerContent>
         <div className="relative flex items-center justify-center size-8">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-          <div className="relative flex items-center justify-center size-6 rounded-full bg-primary text-primary-foreground shadow-lg border-2 border-background">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-500 opacity-75" />
+          <div className="relative flex items-center justify-center size-6 rounded-full bg-blue-500 text-white shadow-lg border-2 border-background">
             <User className="size-3.5" />
           </div>
         </div>
