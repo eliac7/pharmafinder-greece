@@ -69,27 +69,25 @@ export function PharmacyMarkers() {
               </div>
             </MarkerContent>
 
-            <MarkerTooltip>
-              <div
-                className={cn(
-                  "px-3 py-1 rounded-xl text-xs font-bold shadow-lg",
-                  isClosingSoon
-                    ? "bg-amber-500 text-white"
-                    : isOpen
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
-                )}
-              >
-                {pharmacy.name}
-              </div>
+            <MarkerTooltip
+              className={cn(
+                "px-3 py-1.5 rounded-xl text-xs font-bold shadow-lg",
+                isClosingSoon
+                  ? "bg-amber-500 text-white"
+                  : isOpen
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground"
+              )}
+            >
+              {pharmacy.name}
             </MarkerTooltip>
 
             <MarkerPopup>
-              <div className="flex flex-col gap-2 min-w-[220px] p-1">
+              <div className="flex flex-col gap-2 min-w-[220px] max-w-[280px] p-1">
                 <div className="flex items-center gap-3">
                   <div
                     className={cn(
-                      "flex items-center justify-center size-10 rounded-lg",
+                      "flex items-center justify-center size-10 rounded-lg shrink-0",
                       isClosingSoon
                         ? "bg-amber-500/10 text-amber-600"
                         : isOpen
@@ -100,7 +98,7 @@ export function PharmacyMarkers() {
                     <Cross className="size-6" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-sm text-card-foreground truncate">
+                    <h4 className="font-bold text-sm text-card-foreground line-clamp-2 leading-tight">
                       {pharmacy.name}
                     </h4>
                     <span
@@ -152,7 +150,7 @@ export function PharmacyMarkers() {
                   <span className="text-xs text-muted-foreground">
                     {pharmacy.distance_km?.toFixed(1)} km
                   </span>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <a
                       href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${pharmacy.latitude},${pharmacy.longitude}`}
                       target="_blank"
@@ -166,9 +164,9 @@ export function PharmacyMarkers() {
                       href={`https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm"
                     >
-                      <Navigation className="size-3" />
+                      <Navigation className="size-3.5" />
                       Οδηγίες
                     </a>
                   </div>
