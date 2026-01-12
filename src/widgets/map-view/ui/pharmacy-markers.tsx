@@ -164,11 +164,11 @@ export function PharmacyMarkers({
                 </MarkerTooltip>
 
                 <MarkerPopup>
-                  <div className="flex flex-col gap-2 min-w-[220px] max-w-[280px] p-1">
+                  <div className="flex flex-col gap-3 min-w-[260px] max-w-[320px] p-0.5">
                     <div className="flex items-center gap-3">
                       <div
                         className={cn(
-                          "flex items-center justify-center size-10 rounded-lg shrink-0",
+                          "flex items-center justify-center size-11 rounded-full shrink-0",
                           isClosingSoon
                             ? "bg-amber-500/10 text-amber-600"
                             : isOpen
@@ -179,13 +179,13 @@ export function PharmacyMarkers({
                         <Cross className="size-6" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-sm text-card-foreground line-clamp-2 leading-tight">
+                        <h4 className="font-bold text-base text-card-foreground line-clamp-2 leading-snug">
                           {pharmacy.name}
                         </h4>
                         {!isScheduled && (
                           <span
                             className={cn(
-                              "text-xs px-2 py-0.5 rounded font-semibold",
+                              "text-sm inline-block mt-1 px-2.5 py-0.5 rounded-full font-semibold",
                               isClosingSoon
                                 ? "bg-amber-500/15 text-amber-600"
                                 : isOpen
@@ -203,51 +203,49 @@ export function PharmacyMarkers({
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-2 text-xs text-muted-foreground">
-                      <MapPin className="size-3.5 mt-0.5 shrink-0" />
-                      <span>
+                    <div className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                      <MapPin className="size-4 mt-0.5 shrink-0" />
+                      <span className="leading-tight">
                         {pharmacy.address}, {pharmacy.city}
                       </span>
                     </div>
 
                     {dataHours && dataHours.length > 0 && (
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Clock className="size-3.5 shrink-0" />
-                        <span>
-                          Εφημερεύει: {formatPharmacyHours(dataHours)}
-                        </span>
+                      <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                        <Clock className="size-4 shrink-0" />
+                        <span>{formatPharmacyHours(dataHours)}</span>
                       </div>
                     )}
 
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Phone className="size-3.5 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                      <Phone className="size-4 shrink-0" />
                       <a
                         href={`tel:${pharmacy.phone}`}
-                        className="hover:text-primary transition-colors"
+                        className="hover:text-primary transition-colors font-medium"
                       >
                         {pharmacy.phone}
                       </a>
                     </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-border">
-                      <span className="text-xs text-muted-foreground">
+                    <div className="flex items-center justify-between pt-3 border-t border-border mt-1">
+                      <span className="text-sm font-medium text-muted-foreground">
                         {pharmacy.distance_km?.toFixed(1)} km
                       </span>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3">
                         <a
                           href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
+                          className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
                         >
-                          <Eye className="size-3" />
+                          <Eye className="size-3.5" />
                           Street View
                         </a>
                         <a
                           href={`https://www.google.com/maps/dir/?api=1&destination=${coordinates[1]},${coordinates[0]}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm"
+                          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors shadow-sm"
                         >
                           <Navigation className="size-3.5" />
                           Οδηγίες

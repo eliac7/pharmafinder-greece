@@ -1,20 +1,23 @@
 import Image from "next/image";
 import { ThemeToggle } from "@/shared/ui/theme-toggle";
+import Link from "next/link";
 
 export function SidebarBranding() {
   return (
     <div className="flex items-center gap-3 mb-6">
-      <div className="relative size-10 shrink-0">
-        <Image
-          src="/pharmacy.png"
-          alt="Pharmafinder"
-          fill
-          className="object-contain"
-        />
-      </div>
-      <h1 className="text-xl font-bold tracking-tight text-sidebar-foreground">
-        Pharmafinder
-      </h1>
+      <Link href="/" className="flex items-center gap-3">
+        <div className="relative size-10 shrink-0">
+          <Image
+            src="/pharmacy.png"
+            alt="Pharmafinder"
+            fill
+            className="object-contain"
+          />
+        </div>
+        <h1 className="text-xl font-bold tracking-tight text-sidebar-foreground">
+          Pharmafinder
+        </h1>
+      </Link>
     </div>
   );
 }

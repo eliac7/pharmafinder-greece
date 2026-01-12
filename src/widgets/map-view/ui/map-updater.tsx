@@ -2,8 +2,8 @@
 
 import { useQueryState, parseAsFloat } from "nuqs";
 import { useEffect } from "react";
-import { useMap } from "@/shared/ui/map";
 import { useMapStore } from "@/shared/model/use-map-store";
+import { useMap } from "@/shared/ui/map";
 
 export function MapUpdater() {
   const { map } = useMap();

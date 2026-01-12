@@ -96,7 +96,6 @@ export function PharmacyCard({ pharmacy, timeFilter }: PharmacyCardProps) {
             {pharmacy.data_hours && pharmacy.data_hours.length > 0 && (
               <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                 <Clock className="size-3" />
-                {/* Standardizing on the "Εφημερεύει" prefix as it adds clarity */}
                 Εφημερεύει: {formatPharmacyHours(pharmacy.data_hours)}
               </span>
             )}
