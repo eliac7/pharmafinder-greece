@@ -7,13 +7,8 @@ import {
   buildSeoDescription,
   buildSeoTitle,
 } from "@/shared/lib/seo";
-import { Map } from "@/shared/ui/map";
-import { SidebarProvider, SidebarTrigger } from "@/shared/ui/sidebar";
-import { MapControls } from "@/widgets/map-view/ui/map-controls";
-import { MapUpdater } from "@/widgets/map-view/ui/map-updater";
-import { PharmacyMarkers } from "@/widgets/map-view/ui/pharmacy-markers";
-import { UserLocationMarker } from "@/widgets/map-view/ui/user-location-marker";
 import { CitySidebar } from "@/widgets/sidebar/ui/city-sidebar";
+import { MapPageLayout } from "@/widgets/map-view/ui/map-page-layout";
 import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
@@ -151,35 +146,26 @@ export default async function EfimeriesPage({ params }: Props) {
   };
 
   return (
-    <SidebarProvider>
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <CitySidebar
-        cityName={cityRes.data.name}
-        citySlug={slug}
-        activeTime={timeFilter}
+      <MapPageLayout
+        sidebar={
+          <CitySidebar
+            cityName={cityRes.data.name}
+            citySlug={slug}
+            activeTime={timeFilter}
+            pharmacies={pharmacies}
+          />
+        }
+        center={[Number(cityRes.data.longitude), Number(cityRes.data.latitude)]}
+        zoom={14}
+        minZoom={10}
         pharmacies={pharmacies}
+        timeFilter={timeFilter}
       />
-      <main className="relative w-full h-screen overflow-hidden">
-        <div className="absolute top-4 left-4 z-10">
-          <SidebarTrigger className="bg-card/80 backdrop-blur-sm shadow-md border border-border rounded-full hover:bg-card/90 size-10" />
-        </div>
-        <Map
-          center={[
-            Number(cityRes.data.longitude),
-            Number(cityRes.data.latitude),
-          ]}
-          zoom={14}
-          attributionControl={false}
-        >
-          <MapUpdater />
-          <UserLocationMarker />
-          <PharmacyMarkers pharmacies={pharmacies} timeFilter={timeFilter} />
-        </Map>
-        <MapControls />
-      </main>
-    </SidebarProvider>
+    </>
   );
 }
