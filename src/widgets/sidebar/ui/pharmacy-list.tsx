@@ -13,6 +13,8 @@ import {
   type TimeFilter,
 } from "@/entities/pharmacy/model/types";
 import { PharmacyCard } from "@/entities/pharmacy/ui/pharmacy-card";
+import { SystemStatusCard } from "./system-status-card";
+import { QuickCityJump } from "./quick-city-jump";
 
 export function PharmacyList() {
   const { data, isLoading, error, refetch, isFetching } = useNearbyPharmacies();
@@ -63,9 +65,12 @@ export function PharmacyList() {
 
   if (!data?.data || data.data.length === 0) {
     return (
-      <div className="p-4 text-center text-sm text-muted-foreground">
-        Πατήστε Εντόπισέ Με για να βρείτε κοντινά φαρμακεία.
-      </div>
+      <ScrollArea className="flex-1">
+        <div className="flex flex-col gap-6 py-2">
+          <SystemStatusCard />
+          <QuickCityJump />
+        </div>
+      </ScrollArea>
     );
   }
 
@@ -73,7 +78,6 @@ export function PharmacyList() {
 
   return (
     <ScrollArea className="flex-1">
-      {/* Pharmacy count header */}
       <div className="flex items-center justify-between py-3 px-1">
         <div className="flex items-center gap-2">
           <div className="flex items-center justify-center size-8 rounded-lg bg-primary/10">

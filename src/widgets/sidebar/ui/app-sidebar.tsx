@@ -22,8 +22,9 @@ import { SearchCity } from "@/features/search-city/ui/search-city";
 import { SidebarBranding, SidebarCopyright } from "./sidebar-shared";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { locate, isLoading } = useLocateMe();
+  const { locate, isLoading, coordinates } = useLocateMe();
   const flyTo = useMapStore((state) => state.flyTo);
+  const hasLocation = coordinates !== null;
 
   return (
     <Sidebar {...props}>
@@ -54,20 +55,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
         <SidebarSeparator className="mt-4" />
 
-        <div className="mt-4 px-1 space-y-3">
-          <div>
-            <span className="text-xs font-medium text-muted-foreground mb-3 block">
-              Χρόνος
-            </span>
-            <TimeFilterChips />
+        {hasLocation && (
+          <div className="mt-4 px-1 space-y-3">
+            <div>
+              <span className="text-xs font-medium text-muted-foreground mb-3 block">
+                Χρόνος
+              </span>
+              <TimeFilterChips />
+            </div>
+            <div>
+              <span className="text-xs font-medium text-muted-foreground mb-3 block">
+                Ακτίνα Αναζήτησης
+              </span>
+              <RadiusChips />
+            </div>
           </div>
-          <div>
-            <span className="text-xs font-medium text-muted-foreground mb-3 block">
-              Ακτίνα Αναζήτησης
-            </span>
-            <RadiusChips />
-          </div>
-        </div>
+        )}
       </SidebarHeader>
 
       <SidebarContent className="px-4">
