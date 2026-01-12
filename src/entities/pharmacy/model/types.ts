@@ -16,6 +16,7 @@ export interface PharmacyStatusResult {
 export interface PharmacyHour {
   open_time: string | null;
   close_time: string | null;
+  date: string | null;
 }
 
 export interface Pharmacy {

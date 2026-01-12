@@ -8,7 +8,7 @@ import {
   buildSeoTitle,
 } from "@/shared/lib/seo";
 import { CitySidebar } from "@/widgets/sidebar/ui/city-sidebar";
-import { MapPageLayout } from "@/widgets/map-view/ui/map-page-layout";
+import { MapWithControls } from "@/widgets/map-view/ui/map-with-controls";
 import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
@@ -151,15 +151,13 @@ export default async function EfimeriesPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <MapPageLayout
-        sidebar={
-          <CitySidebar
-            cityName={cityRes.data.name}
-            citySlug={slug}
-            activeTime={timeFilter}
-            pharmacies={pharmacies}
-          />
-        }
+      <CitySidebar
+        cityName={cityRes.data.name}
+        citySlug={slug}
+        activeTime={timeFilter}
+        pharmacies={pharmacies}
+      />
+      <MapWithControls
         center={[Number(cityRes.data.longitude), Number(cityRes.data.latitude)]}
         zoom={14}
         minZoom={10}
