@@ -1,6 +1,5 @@
 "use client";
 
-import { Search, Crosshair } from "lucide-react";
 import * as React from "react";
 
 import {
@@ -19,6 +18,7 @@ import {
   type TimeFilter,
   type Pharmacy,
 } from "@/entities/pharmacy/model/types";
+import { useCityPharmaciesStore } from "@/entities/pharmacy/model/use-city-pharmacies";
 import { CityPharmacyList } from "@/widgets/sidebar/ui/city-pharmacy-list";
 import { SidebarBranding, SidebarCopyright } from "./sidebar-shared";
 
@@ -33,9 +33,18 @@ export function CitySidebar({
   cityName,
   citySlug,
   activeTime,
-  pharmacies,
+  pharmacies: initialPharmacies,
   ...props
 }: CitySidebarProps) {
+  const { pharmacies, initialize } = useCityPharmaciesStore();
+
+  React.useEffect(() => {
+    initialize(citySlug, activeTime, initialPharmacies);
+  }, [citySlug, activeTime, initialPharmacies, initialize]);
+
+  const displayPharmacies =
+    pharmacies.length > 0 ? pharmacies : initialPharmacies;
+
   return (
     <Sidebar {...props}>
       <SidebarHeader className="px-6 pt-6 pb-4">
@@ -62,8 +71,8 @@ export function CitySidebar({
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupContent>
             <CityPharmacyList
-              pharmacies={pharmacies}
-              count={pharmacies.length}
+              pharmacies={displayPharmacies}
+              count={displayPharmacies.length}
               timeFilter={activeTime}
             />
           </SidebarGroupContent>

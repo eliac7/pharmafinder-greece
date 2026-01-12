@@ -5,10 +5,12 @@ import { Button } from "@/shared/ui/button";
 import { useLocateMe } from "@/features/locate-user/model/use-locate-me";
 import { cn } from "@/shared/lib/hooks/utils";
 import { useMapStore } from "@/shared/model/use-map-store";
+import { useCityPharmaciesStore } from "@/entities/pharmacy/model/use-city-pharmacies";
 
 export function MapControls() {
   const { locate, isLoading } = useLocateMe();
   const flyTo = useMapStore((state) => state.flyTo);
+  const { refetchWithLocation, citySlug } = useCityPharmaciesStore();
 
   return (
     <>
@@ -17,6 +19,9 @@ export function MapControls() {
           onClick={() => {
             locate((coords) => {
               flyTo([coords.longitude, coords.latitude], 15);
+              if (citySlug) {
+                refetchWithLocation(coords.latitude, coords.longitude);
+              }
             });
           }}
           disabled={isLoading}

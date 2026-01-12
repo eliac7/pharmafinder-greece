@@ -18,15 +18,19 @@ export const pharmacyApi = {
   },
 
   /**
-   * For SSR City Pages
+   * For SSR City Pages (with optional user location for distance)
    */
   getCityPharmacies: async (
     citySlug: string,
-    time: "now" | "today" | "tomorrow" = "now"
+    time: "now" | "today" | "tomorrow" = "now",
+    lat?: number,
+    lng?: number
   ) => {
-    const res = await fetchAPI<{ data: Pharmacy[] }>(
-      `/city?city_slug=${citySlug}&city_name=${citySlug}&time=${time}`
-    );
+    let url = `/city?city_slug=${citySlug}&city_name=${citySlug}&time=${time}`;
+    if (lat && lng) {
+      url += `&latitude=${lat}&longitude=${lng}`;
+    }
+    const res = await fetchAPI<{ data: Pharmacy[] }>(url);
     return res.data;
   },
 

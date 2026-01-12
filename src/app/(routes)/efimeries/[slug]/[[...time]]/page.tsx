@@ -172,6 +172,7 @@ export default async function EfimeriesPage({ params }: Props) {
             Number(cityRes.data.latitude),
           ]}
           zoom={14}
+          attributionControl={false}
         >
           <MapUpdater />
           <UserLocationMarker />
