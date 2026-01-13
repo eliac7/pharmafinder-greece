@@ -157,6 +157,7 @@ export default async function EfimeriesPage({ params }: Props) {
         minZoom={10}
         pharmacies={pharmacies}
         timeFilter={timeFilter}
+        citySlug={slug}
       />
     </>
   );

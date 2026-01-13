@@ -10,7 +10,11 @@ import {
 } from "@/shared/ui/map";
 import { Phone, MapPin, Navigation, Cross, Clock, Eye } from "lucide-react";
 import { cn, useMapStore } from "@/shared";
-import { getPharmacyStatus, formatPharmacyHours } from "@/entities/pharmacy";
+import {
+  getPharmacyStatus,
+  formatPharmacyHours,
+  useCityPharmacies,
+} from "@/entities/pharmacy";
 import { useQueryState, parseAsStringLiteral } from "nuqs";
 import {
   TIME_OPTIONS,
@@ -22,13 +26,22 @@ import { useMemo } from "react";
 interface PharmacyMarkersProps {
   pharmacies?: Pharmacy[];
   timeFilter?: TimeFilter;
+  citySlug?: string;
 }
 
 export function PharmacyMarkers({
   pharmacies: propPharmacies,
   timeFilter: propTimeFilter,
+  citySlug,
 }: PharmacyMarkersProps) {
-  const { data } = useNearbyPharmacies();
+  const { data: cityPharmacies } = useCityPharmacies({
+    citySlug: citySlug ?? "",
+    timeFilter: propTimeFilter ?? "now",
+    initialData: propPharmacies,
+  });
+
+  const { data: nearbyData } = useNearbyPharmacies();
+
   const [queryTime] = useQueryState<TimeFilter>(
     "time",
     parseAsStringLiteral(TIME_OPTIONS).withDefault("now")
@@ -36,8 +49,10 @@ export function PharmacyMarkers({
 
   const effectiveTimeFilter = propTimeFilter ?? queryTime;
 
-  // Use prop data if available, otherwise use hook data
-  const pharmaciesToRender = propPharmacies ?? (data?.data || []);
+  // Use city pharmacies when on city page, otherwise use nearby or prop data
+  const pharmaciesToRender = citySlug
+    ? cityPharmacies ?? propPharmacies ?? []
+    : propPharmacies ?? nearbyData?.data ?? [];
 
   const points = useMemo(() => {
     if (pharmaciesToRender.length === 0)

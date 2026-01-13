@@ -18,6 +18,7 @@ interface MapWithControlsProps {
   >;
   pharmacies?: Pharmacy[];
   timeFilter?: TimeFilter;
+  citySlug?: string;
 }
 
 export function MapWithControls({
@@ -27,6 +28,7 @@ export function MapWithControls({
   mapProps,
   pharmacies,
   timeFilter,
+  citySlug,
 }: MapWithControlsProps) {
   return (
     <>
@@ -39,8 +41,14 @@ export function MapWithControls({
       >
         <MapUpdater />
         <UserLocationMarker />
-        {pharmacies !== undefined || timeFilter !== undefined ? (
-          <PharmacyMarkers pharmacies={pharmacies} timeFilter={timeFilter} />
+        {pharmacies !== undefined ||
+        timeFilter !== undefined ||
+        citySlug !== undefined ? (
+          <PharmacyMarkers
+            pharmacies={pharmacies}
+            timeFilter={timeFilter}
+            citySlug={citySlug}
+          />
         ) : (
           <PharmacyMarkers />
         )}

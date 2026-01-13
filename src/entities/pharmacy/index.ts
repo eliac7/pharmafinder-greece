@@ -15,6 +15,7 @@ export { pharmacyApi } from "./api/pharmacy.api";
 
 // Hooks
 export { useCityPharmaciesStore } from "./model/use-city-pharmacies";
+export { useCityPharmacies } from "./model/use-city-pharmacies-query";
 export { usePharmacies } from "./model/use-pharmacies";
 
 // UI

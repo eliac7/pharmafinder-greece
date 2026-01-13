@@ -21,12 +21,12 @@ import {
   TIME_OPTIONS,
   type TimeFilter,
   type Pharmacy,
+  useCityPharmacies,
 } from "@/entities/pharmacy";
 
 import { SearchCity, CitySearchModal } from "@/features/search-city";
 import { CityTimeFilter } from "@/features/find-pharmacies";
 import { ArrowRightLeft } from "lucide-react";
-import { useCityPharmaciesStore } from "@/entities/pharmacy";
 
 interface CitySidebarProps extends React.ComponentProps<typeof Sidebar> {
   cityName: string;
@@ -42,14 +42,13 @@ export function CitySidebar({
   pharmacies: initialPharmacies,
   ...props
 }: CitySidebarProps) {
-  const { pharmacies, initialize } = useCityPharmaciesStore();
+  const { data: pharmacies } = useCityPharmacies({
+    citySlug,
+    timeFilter: activeTime,
+    initialData: initialPharmacies,
+  });
 
-  React.useEffect(() => {
-    initialize(citySlug, activeTime, initialPharmacies);
-  }, [citySlug, activeTime, initialPharmacies, initialize]);
-
-  const displayPharmacies =
-    pharmacies.length > 0 ? pharmacies : initialPharmacies;
+  const displayPharmacies = pharmacies ?? initialPharmacies;
 
   return (
     <Sidebar {...props}>
