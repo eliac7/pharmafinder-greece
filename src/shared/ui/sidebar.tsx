@@ -12,12 +12,14 @@ import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Separator } from "@/shared/ui/separator";
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/shared/ui/sheet";
+  Drawer,
+  DrawerContent,
+  DrawerTitle,
+  DrawerDescription,
+  DRAWER_SNAP_POINTS,
+  DRAWER_DEFAULT_SNAP,
+} from "@/shared/ui/drawer";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { Skeleton } from "@/shared/ui/skeleton";
 import {
   Tooltip,
@@ -68,7 +70,7 @@ function SidebarProvider({
   onOpenChange?: (open: boolean) => void;
 }) {
   const isMobile = useIsMobile();
-  const [openMobile, setOpenMobile] = React.useState(false);
+  const [openMobile, setOpenMobile] = React.useState(true);
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -183,26 +185,33 @@ function Sidebar({
 
   if (isMobile) {
     return (
-      <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
-        <SheetContent
+      <Drawer
+        open={true}
+        dismissible={false}
+        snapPoints={DRAWER_SNAP_POINTS}
+        activeSnapPoint={DRAWER_DEFAULT_SNAP}
+        modal={false}
+      >
+        <DrawerContent
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
-          style={
-            {
-              "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
-            } as React.CSSProperties
-          }
-          side={side}
+          showOverlay={false}
+          className="h-[96vh]"
         >
-          <SheetHeader className="sr-only">
-            <SheetTitle>Sidebar</SheetTitle>
-            <SheetDescription>Displays the mobile sidebar.</SheetDescription>
-          </SheetHeader>
-          <div className="flex h-full w-full flex-col">{children}</div>
-        </SheetContent>
-      </Sheet>
+          <VisuallyHidden.Root asChild>
+            <DrawerTitle>Φαρμακεία</DrawerTitle>
+          </VisuallyHidden.Root>
+          <VisuallyHidden.Root asChild>
+            <DrawerDescription>
+              Λίστα εφημερεύοντων φαρμακείων
+            </DrawerDescription>
+          </VisuallyHidden.Root>
+          <div className="flex h-full w-full flex-col overflow-hidden">
+            {children}
+          </div>
+        </DrawerContent>
+      </Drawer>
     );
   }
 
