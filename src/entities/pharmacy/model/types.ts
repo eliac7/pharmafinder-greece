@@ -34,6 +34,7 @@ export interface Pharmacy {
   data_hours: PharmacyHour[];
   open_until_tomorrow?: boolean | null;
   next_day_close_time?: string | null;
+  is_frequent_duty?: boolean;
 }
 
 export interface PharmaciesWithCount {

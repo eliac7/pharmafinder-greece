@@ -1,7 +1,8 @@
 "use client";
 
-import { ArrowLeft, MapPin, Navigation, Phone, Star } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { getPharmacyStatus } from "@/entities/pharmacy/lib/status";
+import type { Pharmacy } from "@/entities/pharmacy/model/types";
+import { useMapStore } from "@/shared/model/use-map-store";
 import { Button } from "@/shared/ui/button";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import {
@@ -11,10 +12,10 @@ import {
   SidebarHeader,
 } from "@/shared/ui/sidebar";
 import { SidebarCopyright } from "@/widgets/sidebar/ui/sidebar-shared";
-import type { Pharmacy } from "@/entities/pharmacy/model/types";
-import { getPharmacyStatus } from "@/entities/pharmacy/lib/status";
-import { useMapStore } from "@/shared/model/use-map-store";
+import { ArrowLeft, MapPin, Navigation, Phone, Star } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { ReportDialog } from "./report-dialog";
 
 interface PharmacyDetailSidebarProps {
   pharmacy: Pharmacy;
@@ -68,7 +69,8 @@ export function PharmacyDetailSidebar({
     "now"
   );
 
-  const isFrequentDuty = (pharmacy.data_hours?.length ?? 0) > 20;
+  const isFrequentDuty =
+    pharmacy.is_frequent_duty ?? (pharmacy.data_hours?.length ?? 0) > 20;
 
   useEffect(() => {
     if (pharmacy.latitude && pharmacy.longitude) {
@@ -149,6 +151,10 @@ export function PharmacyDetailSidebar({
                 </a>
               </Button>
             </div>
+            <ReportDialog
+              pharmacyId={pharmacy.id}
+              pharmacyName={pharmacy.name}
+            />
           </div>
         </ScrollArea>
       </SidebarContent>

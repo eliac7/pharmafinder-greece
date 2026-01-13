@@ -1,11 +1,12 @@
 "use client";
 
-import { Navigation, Cross, Clock } from "lucide-react";
+import { Navigation, Cross, Clock, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/shared/lib/hooks/utils";
 import { useMapStore } from "@/shared/model/use-map-store";
 import { Button } from "@/shared/ui/button";
+import { Badge } from "@/shared/ui/badge";
 import { type Pharmacy, type TimeFilter } from "../model/types";
 import { getPharmacyStatus, formatPharmacyHours } from "../lib/status";
 
@@ -68,14 +69,25 @@ export function PharmacyCard({ pharmacy, timeFilter }: PharmacyCardProps) {
 
           <div className="flex flex-col flex-1 min-w-0 gap-1.5">
             <div className="flex justify-between items-start gap-2">
-              <h3
-                className={cn(
-                  "text-sm font-bold leading-tight",
-                  isOpen ? "text-card-foreground" : "text-muted-foreground"
+              <div className="flex items-center gap-2 min-w-0">
+                <h3
+                  className={cn(
+                    "text-sm font-bold leading-tight",
+                    isOpen ? "text-card-foreground" : "text-muted-foreground"
+                  )}
+                >
+                  {pharmacy.name}
+                </h3>
+                {pharmacy.is_frequent_duty && (
+                  <Badge
+                    variant="secondary"
+                    className="gap-1 px-1.5 py-0 text-[10px] font-semibold bg-amber-500/15 text-amber-600 border-amber-500/30 shrink-0"
+                  >
+                    <Sparkles className="size-2.5" />
+                    Συχνά
+                  </Badge>
                 )}
-              >
-                {pharmacy.name}
-              </h3>
+              </div>
               {typeof pharmacy.distance_km === "number" &&
                 pharmacy.distance_km > 0 && (
                   <span className="text-xs font-medium text-muted-foreground whitespace-nowrap shrink-0">

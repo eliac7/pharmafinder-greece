@@ -55,4 +55,21 @@ export const pharmacyApi = {
       next: { revalidate: 86400 }, //24 hour
     });
   },
+
+  /**
+   * Report a pharmacy issue
+   */
+  reportPharmacy: async (
+    pharmacyId: number,
+    data: {
+      report_type: string;
+      description: string;
+      turnstile_token: string;
+    }
+  ) => {
+    return fetchAPI<{ success: boolean }>(`/pharmacies/${pharmacyId}/report`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
 };

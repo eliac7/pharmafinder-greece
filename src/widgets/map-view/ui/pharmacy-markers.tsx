@@ -228,9 +228,12 @@ export function PharmacyMarkers({
                     </div>
 
                     <div className="flex items-center justify-between pt-3 border-t border-border mt-1">
-                      <span className="text-sm font-medium text-muted-foreground">
-                        {pharmacy.distance_km?.toFixed(1)} km
-                      </span>
+                      <a
+                        href={`/farmakeia/${pharmacy.id}`}
+                        className="text-sm font-medium text-primary hover:underline transition-colors"
+                      >
+                        Λεπτομέρειες
+                      </a>
                       <div className="flex items-center gap-3">
                         <a
                           href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${coordinates[1]},${coordinates[0]}`}

@@ -2,6 +2,7 @@ export const revalidate = 3600;
 import { pharmacyApi } from "@/entities/pharmacy/api/pharmacy.api";
 import { getPharmacyStatus } from "@/entities/pharmacy/lib/status";
 import { PharmacyStatusResult } from "@/entities/pharmacy/model/types";
+import { ReportDialog } from "@/features/pharmacy-detail";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Map, MapMarker, MarkerContent } from "@/shared/ui/map";
@@ -78,7 +79,8 @@ export default async function PharmacyPage({ params }: Props) {
     "now"
   );
 
-  const isFrequentDuty = (pharmacy.data_hours?.length ?? 0) > 20;
+  const isFrequentDuty =
+    pharmacy.is_frequent_duty ?? (pharmacy.data_hours?.length ?? 0) > 20;
 
   return (
     <div className="fixed inset-0 z-50 min-h-screen bg-background pb-20 md:pb-0 overflow-auto">
@@ -140,28 +142,34 @@ export default async function PharmacyPage({ params }: Props) {
               </CardContent>
             </Card>
 
-            <div className="hidden md:grid grid-cols-2 gap-4">
-              <Button size="lg" className="w-full gap-2" asChild>
-                <a
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+            <div className="hidden md:block space-y-3">
+              <div className="grid grid-cols-2 gap-4">
+                <Button size="lg" className="w-full gap-2" asChild>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Navigation className="size-4" />
+                    Οδηγίες Πλοήγησης
+                  </a>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full gap-2"
+                  asChild
                 >
-                  <Navigation className="size-4" />
-                  Οδηγίες Πλοήγησης
-                </a>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full gap-2"
-                asChild
-              >
-                <a href={`tel:${pharmacy.phone}`}>
-                  <Phone className="size-4" />
-                  Κλήση
-                </a>
-              </Button>
+                  <a href={`tel:${pharmacy.phone}`}>
+                    <Phone className="size-4" />
+                    Κλήση
+                  </a>
+                </Button>
+              </div>
+              <ReportDialog
+                pharmacyId={pharmacy.id}
+                pharmacyName={pharmacy.name}
+              />
             </div>
           </div>
 
@@ -191,6 +199,14 @@ export default async function PharmacyPage({ params }: Props) {
                 Ο χάρτης δεν είναι διαθέσιμος
               </div>
             )}
+          </div>
+
+          {/* Mobile Report Button (visible only on mobile) */}
+          <div className="md:hidden">
+            <ReportDialog
+              pharmacyId={pharmacy.id}
+              pharmacyName={pharmacy.name}
+            />
           </div>
         </div>
       </main>
