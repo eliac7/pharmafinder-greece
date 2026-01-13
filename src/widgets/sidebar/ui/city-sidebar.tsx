@@ -13,11 +13,13 @@ import {
 } from "@/shared/ui/sidebar";
 
 import { SearchCity } from "@/features/search-city/ui/search-city";
+import { CitySearchModal } from "@/features/search-city/ui/city-search-modal";
 import { CityTimeFilter } from "@/features/find-pharmacies/ui/city-time-filter";
 import {
   type TimeFilter,
   type Pharmacy,
 } from "@/entities/pharmacy/model/types";
+import { ArrowRightLeft } from "lucide-react";
 import { useCityPharmaciesStore } from "@/entities/pharmacy/model/use-city-pharmacies";
 import { CityPharmacyList } from "@/widgets/sidebar/ui/city-pharmacy-list";
 import { SidebarBranding, SidebarCopyright } from "./sidebar-shared";
@@ -56,10 +58,23 @@ export function CitySidebar({
 
         <div className="mt-4 px-1 space-y-3">
           <div>
-            <span className="text-xs font-medium text-muted-foreground mb-3 block">
-              Εφημερίες σε{" "}
-              <span className="text-foreground font-bold">{cityName}</span>
-            </span>
+            <div className="flex items-center gap-1 mb-3">
+              <span className="text-xs font-medium text-muted-foreground">
+                Εφημερίες σε{" "}
+                <span className="text-foreground font-bold">{cityName}</span>
+              </span>
+              <CitySearchModal
+                trigger={
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors cursor-pointer"
+                  >
+                    <ArrowRightLeft className="size-3" />
+                    <span>Αλλαγή</span>
+                  </button>
+                }
+              />
+            </div>
             <CityTimeFilter citySlug={citySlug} activeTime={activeTime} />
           </div>
         </div>

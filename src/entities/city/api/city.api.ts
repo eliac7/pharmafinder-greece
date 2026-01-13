@@ -1,5 +1,5 @@
 import { fetchAPI } from "@/shared/api/base";
-import type { City, CitySummary } from "../model/types";
+import type { CityDetail, CitySummary } from "../model/types";
 
 export const cityApi = {
   /**
@@ -15,7 +15,7 @@ export const cityApi = {
    * Get City by Slug
    */
   getCityBySlug: async (slug: string) => {
-    return fetchAPI<{ data: City }>(`/locations/cities/${slug}`, {
+    return fetchAPI<{ data: CityDetail }>(`/locations/cities/${slug}`, {
       next: { revalidate: 604800 }, //7 days
     });
   },

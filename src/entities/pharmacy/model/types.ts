@@ -19,6 +19,25 @@ export interface PharmacyHour {
   date: string | null;
 }
 
+/**
+ * Basic pharmacy info (used in search results, nearby pharmacies)
+ */
+export interface PharmacyBasic {
+  id: number;
+  name: string;
+  address: string;
+  city: string;
+  prefecture: string;
+  prefecture_english: string;
+  phone: string;
+  latitude: number | null;
+  longitude: number | null;
+  distance_km: number;
+}
+
+/**
+ * Full pharmacy with hours (used in city duty lists)
+ */
 export interface Pharmacy {
   id: number;
   name: string;
@@ -42,4 +61,13 @@ export interface PharmaciesWithCount {
   data: Pharmacy[];
   success: boolean;
   message: string;
+}
+
+/**
+ * Response from /pharmacies/{id}/is-on-duty
+ */
+export interface PharmacyDutyStatus {
+  date: string;
+  is_on_duty: boolean;
+  hours: PharmacyHour[];
 }
