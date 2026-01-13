@@ -83,8 +83,8 @@ export default async function PharmacyPage({ params }: Props) {
     pharmacy.is_frequent_duty ?? (pharmacy.data_hours?.length ?? 0) > 20;
 
   return (
-    <div className="fixed inset-0 z-50 min-h-screen bg-background pb-20 md:pb-0 overflow-auto">
-      <div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
         <div className="container flex h-14 items-center max-w-5xl px-4">
           <Button variant="ghost" size="icon" asChild className="-ml-2">
             <Link href="/" aria-label="Πίσω">
@@ -95,7 +95,7 @@ export default async function PharmacyPage({ params }: Props) {
             {pharmacy.name}
           </span>
         </div>
-      </div>
+      </header>
 
       <main className="container max-w-5xl mx-auto px-4 py-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -142,7 +142,7 @@ export default async function PharmacyPage({ params }: Props) {
               </CardContent>
             </Card>
 
-            <div className="hidden md:block space-y-3">
+            <div className="space-y-3">
               <div className="grid grid-cols-2 gap-4">
                 <Button size="lg" className="w-full gap-2" asChild>
                   <a
@@ -173,7 +173,7 @@ export default async function PharmacyPage({ params }: Props) {
             </div>
           </div>
 
-          <div className="h-[300px] md:h-auto md:min-h-[500px] rounded-xl overflow-hidden border shadow-sm relative">
+          <div className="h-[300px] md:h-auto md:min-h-[400px] rounded-xl overflow-hidden border shadow-sm relative">
             {pharmacy.latitude && pharmacy.longitude ? (
               <Map
                 center={[pharmacy.longitude, pharmacy.latitude]}
@@ -200,37 +200,8 @@ export default async function PharmacyPage({ params }: Props) {
               </div>
             )}
           </div>
-
-          {/* Mobile Report Button (visible only on mobile) */}
-          <div className="md:hidden">
-            <ReportDialog
-              pharmacyId={pharmacy.id}
-              pharmacyName={pharmacy.name}
-            />
-          </div>
         </div>
       </main>
-
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t md:hidden z-50">
-        <div className="grid grid-cols-2 gap-3">
-          <Button variant="outline" className="w-full gap-2" asChild>
-            <a href={`tel:${pharmacy.phone}`}>
-              <Phone className="size-4" />
-              Κλήση
-            </a>
-          </Button>
-          <Button className="w-full gap-2" asChild>
-            <a
-              href={`https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Navigation className="size-4" />
-              Πλοήγηση
-            </a>
-          </Button>
-        </div>
-      </div>
     </div>
   );
 }

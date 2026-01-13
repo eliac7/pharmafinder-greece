@@ -1,7 +1,7 @@
 {
   "git": {
     "deploymentEnabled": {
-      "v2-rewrite": true
+      "v2-rewrite": false
     }
   }
 }

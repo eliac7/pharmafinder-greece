@@ -1,1 +1,3 @@
-export { default } from "./page";
+export default function PharmacyDetailSidebarSlotDefault() {
+  return null;
+}
