@@ -1,5 +1,9 @@
 import { fetchAPI } from "@/shared/api/base";
-import type { Pharmacy, PharmaciesWithCount } from "../model/types";
+import type {
+  Pharmacy,
+  PharmaciesWithCount,
+  PharmacySitemapItem,
+} from "../model/types";
 
 export const pharmacyApi = {
   /**
@@ -79,5 +83,18 @@ export const pharmacyApi = {
       method: "POST",
       body: JSON.stringify(data),
     });
+  },
+
+  /**
+   * Sitemap Data (Lightweight)
+   */
+  getSitemapData: async () => {
+    const res = await fetchAPI<{ data: PharmacySitemapItem[] }>(
+      "/pharmacies/sitemap",
+      {
+        next: { revalidate: 86400 }, // 24 hours
+      }
+    );
+    return res.data;
   },
 };

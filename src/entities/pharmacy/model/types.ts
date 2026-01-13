@@ -72,3 +72,8 @@ export interface PharmacyDutyStatus {
   is_on_duty: boolean;
   hours: PharmacyHour[];
 }
+
+export interface PharmacySitemapItem {
+  id: number;
+  updated_at?: string;
+}
