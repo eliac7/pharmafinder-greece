@@ -1,8 +1,8 @@
 "use client";
 
 import { create } from "zustand";
-import { pharmacyApi } from "../api/pharmacy.api";
-import { type Pharmacy, type TimeFilter } from "./types";
+import { pharmacyApi, type Pharmacy } from "@/entities/pharmacy";
+import { type TimeFilter } from "./types";
 
 interface CityPharmaciesState {
   citySlug: string | null;

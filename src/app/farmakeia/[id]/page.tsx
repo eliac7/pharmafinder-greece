@@ -1,13 +1,15 @@
 export const revalidate = 3600;
-import { pharmacyApi } from "@/entities/pharmacy/api/pharmacy.api";
-import { getPharmacyStatus } from "@/entities/pharmacy/lib/status";
-import { PharmacyStatusResult } from "@/entities/pharmacy/model/types";
+import {
+  pharmacyApi,
+  getPharmacyStatus,
+  type PharmacyStatusResult,
+} from "@/entities/pharmacy";
 import { ReportDialog } from "@/features/pharmacy-detail";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Map, MapMarker, MarkerContent } from "@/shared/ui/map";
 import { ArrowLeft, MapPin, Navigation, Phone, Star } from "lucide-react";
-import { cn } from "@/shared/lib/hooks/utils";
+import { cn, fetchAPI } from "@/shared";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";

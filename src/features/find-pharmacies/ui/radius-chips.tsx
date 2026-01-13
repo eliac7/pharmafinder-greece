@@ -1,11 +1,9 @@
 "use client";
 
+import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
 import { useQueryState, parseAsInteger } from "nuqs";
-import {
-  RADIUS_OPTIONS,
-  DEFAULT_RADIUS,
-} from "@/entities/pharmacy/model/types";
-import { cn } from "@/shared/lib/hooks/utils";
+import { RADIUS_OPTIONS, DEFAULT_RADIUS } from "@/entities/pharmacy";
+import { cn } from "@/shared";
 
 export function RadiusChips() {
   const [radius, setRadius] = useQueryState<number>(

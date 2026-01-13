@@ -17,8 +17,8 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/shared/ui/sheet";
-import { PharmacyDetailContent } from "./pharmacy-detail-content";
-import type { Pharmacy } from "@/entities/pharmacy/model/types";
+import { PharmacyDetailContent } from "@/features/pharmacy-detail";
+import { type Pharmacy } from "@/entities/pharmacy";
 
 interface PharmacyDetailSheetProps {
   pharmacy: Pharmacy;

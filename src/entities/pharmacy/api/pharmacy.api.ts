@@ -1,7 +1,10 @@
 import { fetchAPI } from "@/shared/api/base";
-import type { Pharmacy } from "../model/types";
+import type { Pharmacy, PharmaciesWithCount } from "../model/types";
 
 export const pharmacyApi = {
+  /**
+   * For the Map & "Find Near Me" (Client-Side)
+   */
   /**
    * For the Map & "Find Near Me" (Client-Side)
    */
@@ -10,11 +13,16 @@ export const pharmacyApi = {
     lng: number,
     radius = 5,
     time: "now" | "today" | "tomorrow" = "now"
-  ) => {
-    const res = await fetchAPI<{ data: Pharmacy[] }>(
-      `/nearby_pharmacies/on_duty?latitude=${lat}&longitude=${lng}&radius=${radius}&time=${time}`
+  ): Promise<PharmaciesWithCount> => {
+    const params = new URLSearchParams({
+      latitude: lat.toString(),
+      longitude: lng.toString(),
+      radius: radius.toString(),
+      time,
+    });
+    return fetchAPI<PharmaciesWithCount>(
+      `/nearby_pharmacies/on_duty?${params}`
     );
-    return res.data;
   },
 
   /**

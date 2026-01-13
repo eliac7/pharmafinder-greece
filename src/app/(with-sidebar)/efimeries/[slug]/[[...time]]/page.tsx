@@ -1,14 +1,13 @@
-import { cityApi } from "@/entities/city/api/city.api";
-import { pharmacyApi } from "@/entities/pharmacy/api/pharmacy.api";
-import { TimeFilter } from "@/entities/pharmacy/model/types";
-import { getDateForTime } from "@/shared/lib/date";
+import { cityApi } from "@/entities/city";
+import { pharmacyApi, type TimeFilter } from "@/entities/pharmacy";
 import {
+  getDateForTime,
   buildCanonicalUrl,
   buildSeoDescription,
   buildSeoTitle,
-} from "@/shared/lib/seo";
+} from "@/shared";
 
-import { MapWithControls } from "@/widgets/map-view/ui/map-with-controls";
+import { MapWithControls } from "@/widgets/map-view";
 import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 

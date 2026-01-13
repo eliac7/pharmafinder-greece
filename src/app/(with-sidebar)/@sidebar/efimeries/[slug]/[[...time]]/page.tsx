@@ -1,7 +1,6 @@
-import { cityApi } from "@/entities/city/api/city.api";
-import { pharmacyApi } from "@/entities/pharmacy/api/pharmacy.api";
-import { TimeFilter } from "@/entities/pharmacy/model/types";
-import { CitySidebar } from "@/widgets/sidebar/ui/city-sidebar";
+import { cityApi } from "@/entities/city";
+import { pharmacyApi, type TimeFilter } from "@/entities/pharmacy";
+import { CitySidebar } from "@/widgets/sidebar";
 import { Sidebar } from "@/shared/ui/sidebar";
 import { notFound } from "next/navigation";
 

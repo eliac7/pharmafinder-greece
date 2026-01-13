@@ -13,12 +13,7 @@ import {
 } from "@/shared/lib/analytics";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
-export {
-  reportWebVitals,
-  analytics,
-  trackEvent,
-  trackPageView,
-} from "@/shared/lib/analytics";
+export { reportWebVitals } from "@/shared/lib/analytics";
 
 /**
  * Web Vitals tracking component

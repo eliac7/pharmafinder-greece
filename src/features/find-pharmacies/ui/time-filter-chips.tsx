@@ -1,8 +1,9 @@
 "use client";
 
+import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
 import { useQueryState, parseAsStringLiteral } from "nuqs";
-import { TIME_OPTIONS, type TimeFilter } from "@/entities/pharmacy/model/types";
-import { cn } from "@/shared/lib/hooks/utils";
+import { TIME_OPTIONS, type TimeFilter } from "@/entities/pharmacy";
+import { cn } from "@/shared";
 
 const LABELS: Record<TimeFilter, string> = {
   now: "Τώρα",

@@ -2,11 +2,13 @@
 
 import { MapPin } from "lucide-react";
 import { ScrollArea } from "@/shared/ui/scroll-area";
+import { cn } from "@/shared";
 import {
   type TimeFilter,
   type Pharmacy,
-} from "@/entities/pharmacy/model/types";
-import { PharmacyCard } from "@/entities/pharmacy/ui/pharmacy-card";
+  useCityPharmaciesStore,
+  PharmacyCard,
+} from "@/entities/pharmacy";
 
 interface CityPharmacyListProps {
   pharmacies: Pharmacy[];

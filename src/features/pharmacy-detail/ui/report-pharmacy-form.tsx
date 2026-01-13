@@ -1,12 +1,14 @@
 "use client";
 
+import * as React from "react";
 import { useState } from "react";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { useTheme } from "next-themes";
 import { Loader2, Send, CheckCircle } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import { cn } from "@/shared/lib/hooks/utils";
+import { pharmacyApi } from "@/entities/pharmacy";
+import { cn } from "@/shared";
 import { useReportPharmacy } from "../model/use-report-pharmacy";
 
 interface ReportPharmacyFormProps {

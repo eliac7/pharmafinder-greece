@@ -1,41 +1,41 @@
 "use client";
 
 import { Crosshair } from "lucide-react";
+import { useMap } from "@/shared/ui/map";
+import { useLocateMe } from "@/features/locate-user";
+import { cn, useMapStore } from "@/shared";
+import { useCityPharmaciesStore, usePharmacies } from "@/entities/pharmacy";
 import { Button } from "@/shared/ui/button";
-import { useLocateMe } from "@/features/locate-user/model/use-locate-me";
-import { cn } from "@/shared/lib/hooks/utils";
-import { useMapStore } from "@/shared/model/use-map-store";
-import { useCityPharmaciesStore } from "@/entities/pharmacy/model/use-city-pharmacies";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
+import * as React from "react";
 
 export function MapControls() {
+  const { map } = useMap();
   const { locate, isLoading } = useLocateMe();
-  const flyTo = useMapStore((state) => state.flyTo);
-  const { refetchWithLocation, citySlug } = useCityPharmaciesStore();
+  const setFlyTo = useMapStore((state) => state.flyTo);
+
+  const handleLocate = () => {
+    locate();
+  };
 
   return (
-    <>
-      <div className="absolute bottom-8 right-8 z-10">
-        <Button
-          onClick={() => {
-            locate((coords) => {
-              flyTo([coords.longitude, coords.latitude], 15);
-              if (citySlug) {
-                refetchWithLocation(coords.latitude, coords.longitude);
-              }
-            });
-          }}
-          disabled={isLoading}
-          className={cn(
-            "size-14 rounded-full shadow-2xl",
-            "bg-primary hover:bg-primary/90 text-primary-foreground",
-            "ring-4 ring-primary/20",
-            "transition-all duration-200"
-          )}
-          size="icon"
-        >
-          <Crosshair className={cn("size-6", isLoading && "animate-spin")} />
-        </Button>
-      </div>
-    </>
+    <div className="absolute bottom-20 right-4 flex flex-col gap-2 z-10 md:bottom-8">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="secondary"
+            size="icon"
+            className="rounded-full shadow-lg h-12 w-12 bg-background border-border text-foreground hover:bg-accent"
+            onClick={handleLocate}
+            disabled={isLoading}
+          >
+            <Crosshair className={cn("h-5 w-5", isLoading && "animate-spin")} />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="left">
+          <p>Εντοπισμός θέσης</p>
+        </TooltipContent>
+      </Tooltip>
+    </div>
   );
 }

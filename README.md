@@ -33,4 +33,14 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Architecture: Feature-Sliced Design (FSD)
+
+This project strictly follows the [Feature-Sliced Design](https://feature-sliced.design/) architectural pattern.
+
+1.  **`app/`**: Routing, global styles, and providers.
+2.  **`widgets/`**: Complex UI blocks (e.g., `Sidebar`, `MapView`).
+3.  **`features/`**: User interactions (e.g., `search-city`, `locate-user`).
+4.  **`entities/`**: Business data & domain logic (e.g., `pharmacy`, `city`).
+5.  **`shared/`**: Reusable infrastructure (e.g., `api`, `ui`, `lib`).
+
+All slices expose their public interface via an `index.ts` barrel file. Direct imports from slice internals are forbidden.

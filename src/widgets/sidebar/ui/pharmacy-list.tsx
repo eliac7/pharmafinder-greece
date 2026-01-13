@@ -2,19 +2,18 @@
 
 import { RefreshCw, MapPin } from "lucide-react";
 import { useQueryState, parseAsStringLiteral, parseAsInteger } from "nuqs";
-import { useNearbyPharmacies } from "@/features/find-pharmacies/model/use-nearby-pharmacies";
+import { useNearbyPharmacies } from "@/features/find-pharmacies";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Skeleton } from "@/shared/ui/skeleton";
-import { cn } from "@/shared/lib/hooks/utils";
+import { cn } from "@/shared";
 import { Button } from "@/shared/ui/button";
 import {
   TIME_OPTIONS,
   DEFAULT_RADIUS,
   type TimeFilter,
-} from "@/entities/pharmacy/model/types";
-import { PharmacyCard } from "@/entities/pharmacy/ui/pharmacy-card";
-import { SystemStatusCard } from "./system-status-card";
-import { QuickCityJump } from "./quick-city-jump";
+  PharmacyCard,
+} from "@/entities/pharmacy";
+import { SystemStatusCard, QuickCityJump } from "@/widgets/sidebar";
 
 export function PharmacyList() {
   const { data, isLoading, error, refetch, isFetching } = useNearbyPharmacies();

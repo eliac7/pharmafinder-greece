@@ -11,18 +11,22 @@ import {
   SidebarGroup,
   SidebarGroupContent,
 } from "@/shared/ui/sidebar";
-
-import { SearchCity } from "@/features/search-city/ui/search-city";
-import { CitySearchModal } from "@/features/search-city/ui/city-search-modal";
-import { CityTimeFilter } from "@/features/find-pharmacies/ui/city-time-filter";
+import { cn } from "@/shared";
 import {
+  CityPharmacyList,
+  SidebarBranding,
+  SidebarCopyright,
+} from "@/widgets/sidebar";
+import {
+  TIME_OPTIONS,
   type TimeFilter,
   type Pharmacy,
-} from "@/entities/pharmacy/model/types";
+} from "@/entities/pharmacy";
+
+import { SearchCity, CitySearchModal } from "@/features/search-city";
+import { CityTimeFilter } from "@/features/find-pharmacies";
 import { ArrowRightLeft } from "lucide-react";
-import { useCityPharmaciesStore } from "@/entities/pharmacy/model/use-city-pharmacies";
-import { CityPharmacyList } from "@/widgets/sidebar/ui/city-pharmacy-list";
-import { SidebarBranding, SidebarCopyright } from "./sidebar-shared";
+import { useCityPharmaciesStore } from "@/entities/pharmacy";
 
 interface CitySidebarProps extends React.ComponentProps<typeof Sidebar> {
   cityName: string;

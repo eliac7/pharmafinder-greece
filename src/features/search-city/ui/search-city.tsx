@@ -6,8 +6,9 @@ import { Loader2, MapPin, MapPinHouse, Pill, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { searchApi } from "@/shared/api/search.api";
-import { useDebounce } from "@/shared/lib/hooks/use-debounce";
+import { cn, useDebounce, searchApi } from "@/shared";
+import { type Pharmacy } from "@/entities/pharmacy";
+import { type CityDetail } from "@/entities/city";
 import {
   Command,
   CommandEmpty,

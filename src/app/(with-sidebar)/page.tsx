@@ -2,10 +2,12 @@ export const dynamic = "force-dynamic";
 
 import { Suspense } from "react";
 import { Map } from "@/shared/ui/map";
-import { MapUpdater } from "@/widgets/map-view/ui/map-updater";
-import { UserLocationMarker } from "@/widgets/map-view/ui/user-location-marker";
-import { MapControls } from "@/widgets/map-view/ui/map-controls";
-import { PharmacyMarkers } from "@/widgets/map-view/ui/pharmacy-markers";
+import {
+  MapControls,
+  UserLocationMarker,
+  PharmacyMarkers,
+  MapUpdater,
+} from "@/widgets/map-view";
 
 export default function Page() {
   return (
@@ -20,9 +22,9 @@ export default function Page() {
           <MapUpdater />
           <UserLocationMarker />
           <PharmacyMarkers />
+          <MapControls />
         </Suspense>
       </Map>
-      <MapControls />
     </>
   );
 }

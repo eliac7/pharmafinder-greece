@@ -5,8 +5,7 @@ import {
   parseAsStringLiteral,
   parseAsInteger,
 } from "nuqs";
-import { getNearbyPharmaciesOnDuty } from "@/entities/pharmacy/api/pharmacy-api";
-import { TIME_OPTIONS, DEFAULT_RADIUS } from "@/entities/pharmacy/model/types";
+import { pharmacyApi, TIME_OPTIONS, DEFAULT_RADIUS } from "@/entities/pharmacy";
 
 export function useNearbyPharmacies() {
   const [lat] = useQueryState("lat", parseAsFloat);
@@ -24,13 +23,7 @@ export function useNearbyPharmacies() {
 
   return useQuery({
     queryKey: ["nearby-pharmacies", lat, lng, time, radius],
-    queryFn: () =>
-      getNearbyPharmaciesOnDuty({
-        latitude: lat!,
-        longitude: lng!,
-        radius,
-        time,
-      }),
+    queryFn: () => pharmacyApi.getNearbyOnDuty(lat!, lng!, radius, time),
     enabled: isEnabled,
     staleTime: 1000 * 60 * 5,
   });

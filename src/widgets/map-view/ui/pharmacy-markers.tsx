@@ -1,6 +1,6 @@
 "use client";
 
-import { useNearbyPharmacies } from "@/features/find-pharmacies/model/use-nearby-pharmacies";
+import { useNearbyPharmacies } from "@/features/find-pharmacies";
 import {
   MapHybridClusterLayer,
   MapMarker,
@@ -9,17 +9,14 @@ import {
   MarkerTooltip,
 } from "@/shared/ui/map";
 import { Phone, MapPin, Navigation, Cross, Clock, Eye } from "lucide-react";
-import { cn } from "@/shared/lib/hooks/utils";
-import {
-  getPharmacyStatus,
-  formatPharmacyHours,
-} from "@/entities/pharmacy/lib/status";
+import { cn, useMapStore } from "@/shared";
+import { getPharmacyStatus, formatPharmacyHours } from "@/entities/pharmacy";
 import { useQueryState, parseAsStringLiteral } from "nuqs";
 import {
   TIME_OPTIONS,
   type TimeFilter,
   type Pharmacy,
-} from "@/entities/pharmacy/model/types";
+} from "@/entities/pharmacy";
 import { useMemo } from "react";
 
 interface PharmacyMarkersProps {

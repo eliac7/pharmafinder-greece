@@ -1,12 +1,16 @@
 "use client";
 
 import { Navigation, Cross, Clock, Sparkles } from "lucide-react";
-import { cn } from "@/shared/lib/hooks/utils";
+import { cn } from "@/shared";
 import { useMapStore } from "@/shared/model/use-map-store";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
-import { type Pharmacy, type TimeFilter } from "../model/types";
-import { getPharmacyStatus, formatPharmacyHours } from "../lib/status";
+import {
+  getPharmacyStatus,
+  formatPharmacyHours,
+  type Pharmacy,
+  type TimeFilter,
+} from "@/entities/pharmacy";
 
 interface PharmacyCardProps {
   pharmacy: Pharmacy;

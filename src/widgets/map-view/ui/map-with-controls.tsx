@@ -1,9 +1,11 @@
 import { Map } from "@/shared/ui/map";
-import { MapUpdater } from "@/widgets/map-view/ui/map-updater";
-import { UserLocationMarker } from "@/widgets/map-view/ui/user-location-marker";
-import { MapControls } from "@/widgets/map-view/ui/map-controls";
-import { PharmacyMarkers } from "@/widgets/map-view/ui/pharmacy-markers";
-import type { Pharmacy, TimeFilter } from "@/entities/pharmacy/model/types";
+import {
+  MapControls,
+  UserLocationMarker,
+  PharmacyMarkers,
+  MapUpdater,
+} from "@/widgets/map-view";
+import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
 import type MapLibreGL from "maplibre-gl";
 
 interface MapWithControlsProps {
@@ -42,8 +44,8 @@ export function MapWithControls({
         ) : (
           <PharmacyMarkers />
         )}
+        <MapControls />
       </Map>
-      <MapControls />
     </>
   );
 }

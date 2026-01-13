@@ -13,13 +13,15 @@ import {
   SidebarSeparator,
 } from "@/shared/ui/sidebar";
 import { Button } from "@/shared/ui/button";
-import { PharmacyList } from "@/widgets/sidebar/ui/pharmacy-list";
-import { useLocateMe } from "@/features/locate-user/model/use-locate-me";
-import { useMapStore } from "@/shared/model/use-map-store";
-import { TimeFilterChips } from "@/features/find-pharmacies/ui/time-filter-chips";
-import { RadiusChips } from "@/features/find-pharmacies/ui/radius-chips";
-import { SearchCity } from "@/features/search-city/ui/search-city";
-import { SidebarBranding, SidebarCopyright } from "./sidebar-shared";
+import {
+  PharmacyList,
+  SidebarBranding,
+  SidebarCopyright,
+} from "@/widgets/sidebar";
+import { useLocateMe } from "@/features/locate-user";
+import { useMapStore } from "@/shared";
+import { TimeFilterChips, RadiusChips } from "@/features/find-pharmacies";
+import { SearchCity } from "@/features/search-city";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { locate, isLoading, coordinates } = useLocateMe();
