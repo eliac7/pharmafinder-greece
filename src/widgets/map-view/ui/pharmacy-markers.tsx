@@ -103,12 +103,13 @@ export function PharmacyMarkers({
               openUntilTomorrow = openUntilTomorrow === "true";
             }
 
-            const { status, minutesUntilClose } = getPharmacyStatus(
-              dataHours,
-              openUntilTomorrow,
-              pharmacy.next_day_close_time ?? null,
-              effectiveTimeFilter
-            );
+            const { status, statusColor, minutesUntilClose } =
+              getPharmacyStatus(
+                dataHours,
+                openUntilTomorrow,
+                pharmacy.next_day_close_time ?? null,
+                effectiveTimeFilter
+              );
 
             if (status === "closed") return null;
 
@@ -186,11 +187,7 @@ export function PharmacyMarkers({
                           <span
                             className={cn(
                               "text-sm inline-block mt-1 px-2.5 py-0.5 rounded-full font-semibold",
-                              isClosingSoon
-                                ? "bg-amber-500/15 text-amber-600"
-                                : isOpen
-                                ? "bg-primary/15 text-primary"
-                                : "bg-muted text-muted-foreground"
+                              statusColor
                             )}
                           >
                             {isClosingSoon

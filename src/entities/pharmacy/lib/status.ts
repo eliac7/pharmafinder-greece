@@ -46,14 +46,31 @@ export function getPharmacyStatus(
   nextDayCloseTime: string | null,
   timeFilter: TimeFilter = "now"
 ): PharmacyStatusResult {
+  const CLOSED_COLOR = "bg-muted text-muted-foreground border border-border";
+  const OPEN_COLOR =
+    "bg-emerald-500/15 text-emerald-700 dark:bg-primary/15 dark:text-primary";
+  const CLOSING_SOON_COLOR = "bg-amber-500/15 text-amber-600";
+  const SCHEDULED_COLOR =
+    "bg-emerald-500/15 text-emerald-700 dark:bg-primary/15 dark:text-primary";
+
   if (!hours || hours.length === 0) {
-    return { status: "closed", closingTime: null, minutesUntilClose: null };
+    return {
+      status: "closed",
+      statusColor: CLOSED_COLOR,
+      closingTime: null,
+      minutesUntilClose: null,
+    };
   }
 
   // For "today" and "tomorrow" filters, we show ALL pharmacies scheduled for that day
   // without checking if they're currently open or closed
   if (timeFilter === "today" || timeFilter === "tomorrow") {
-    return { status: "scheduled", closingTime: null, minutesUntilClose: null };
+    return {
+      status: "scheduled",
+      statusColor: SCHEDULED_COLOR,
+      closingTime: null,
+      minutesUntilClose: null,
+    };
   }
 
   // For "now" filter, check real-time status
@@ -93,12 +110,14 @@ export function getPharmacyStatus(
         if (minutesUntilClose <= 30) {
           return {
             status: "closing-soon",
+            statusColor: CLOSING_SOON_COLOR,
             closingTime: slot.close_time,
             minutesUntilClose,
           };
         }
         return {
           status: "open",
+          statusColor: OPEN_COLOR,
           closingTime: slot.close_time,
           minutesUntilClose,
         };
@@ -112,12 +131,14 @@ export function getPharmacyStatus(
         if (minutesUntilClose <= 30) {
           return {
             status: "closing-soon",
+            statusColor: CLOSING_SOON_COLOR,
             closingTime: slot.close_time,
             minutesUntilClose,
           };
         }
         return {
           status: "open",
+          statusColor: OPEN_COLOR,
           closingTime: slot.close_time,
           minutesUntilClose,
         };
@@ -126,5 +147,10 @@ export function getPharmacyStatus(
   }
 
   // Not within any time slot = closed
-  return { status: "closed", closingTime: null, minutesUntilClose: null };
+  return {
+    status: "closed",
+    statusColor: CLOSED_COLOR,
+    closingTime: null,
+    minutesUntilClose: null,
+  };
 }

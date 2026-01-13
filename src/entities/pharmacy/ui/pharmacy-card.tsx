@@ -16,7 +16,7 @@ interface PharmacyCardProps {
 export function PharmacyCard({ pharmacy, timeFilter }: PharmacyCardProps) {
   const flyTo = useMapStore((state) => state.flyTo);
 
-  const { status, minutesUntilClose } = getPharmacyStatus(
+  const { status, statusColor, minutesUntilClose } = getPharmacyStatus(
     pharmacy.data_hours,
     pharmacy.open_until_tomorrow ?? null,
     pharmacy.next_day_close_time ?? null,
@@ -93,11 +93,7 @@ export function PharmacyCard({ pharmacy, timeFilter }: PharmacyCardProps) {
               <span
                 className={cn(
                   "inline-flex items-center text-xs px-2 py-0.5 rounded-md font-semibold shrink-0",
-                  isClosingSoon
-                    ? "bg-amber-500/15 text-amber-600"
-                    : isOpen
-                    ? "bg-primary/15 text-primary"
-                    : "bg-muted text-muted-foreground border border-border"
+                  statusColor
                 )}
               >
                 {isClosingSoon

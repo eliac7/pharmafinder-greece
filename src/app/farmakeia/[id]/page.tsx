@@ -7,6 +7,7 @@ import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Map, MapMarker, MarkerContent } from "@/shared/ui/map";
 import { ArrowLeft, MapPin, Navigation, Phone, Star } from "lucide-react";
+import { cn } from "@/shared/lib/hooks/utils";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -31,35 +32,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 function StatusBadge({
   status,
+  statusColor,
   minutes,
 }: {
   status: PharmacyStatusResult["status"];
+  statusColor: string;
   minutes: number | null;
 }) {
-  if (status === "open") {
-    return (
-      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-300">
-        Ανοιχτό
-      </span>
-    );
-  }
-  if (status === "closing-soon") {
-    return (
-      <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900 dark:text-amber-300">
-        Κλείνει σε {minutes} λεπτά
-      </span>
-    );
-  }
-  if (status === "scheduled") {
-    return (
-      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-        Προγραμματισμένο
-      </span>
-    );
-  }
+  const label =
+    status === "open"
+      ? "Ανοιχτό"
+      : status === "closing-soon"
+      ? `Κλείνει σε ${minutes} λεπτά`
+      : status === "scheduled"
+      ? "Προγραμματισμένο"
+      : "Κλειστό";
+
   return (
-    <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-300">
-      Κλειστό
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold",
+        statusColor
+      )}
+    >
+      {label}
     </span>
   );
 }
@@ -120,6 +116,7 @@ export default async function PharmacyPage({ params }: Props) {
                   <div className="shrink-0">
                     <StatusBadge
                       status={statusResult.status}
+                      statusColor={statusResult.statusColor}
                       minutes={statusResult.minutesUntilClose}
                     />
                   </div>

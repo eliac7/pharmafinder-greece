@@ -9,6 +9,7 @@ export type PharmacyStatus = "open" | "closing-soon" | "closed" | "scheduled";
 
 export interface PharmacyStatusResult {
   status: PharmacyStatus;
+  statusColor: string;
   closingTime: string | null;
   minutesUntilClose: number | null;
 }

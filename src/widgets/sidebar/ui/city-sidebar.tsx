@@ -67,7 +67,7 @@ export function CitySidebar({
                 trigger={
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1 text-xs text-teal-700 dark:text-primary font-medium hover:text-teal-600 dark:hover:text-primary/80 transition-colors cursor-pointer"
                   >
                     <ArrowRightLeft className="size-3" />
                     <span>Αλλαγή</span>
