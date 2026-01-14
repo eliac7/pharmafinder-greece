@@ -4,3 +4,4 @@ export { MapUpdater } from "./ui/map-updater";
 export { MapWithControls } from "./ui/map-with-controls";
 export { PharmacyMarkers } from "./ui/pharmacy-markers";
 export { UserLocationMarker } from "./ui/user-location-marker";
+export { ManualLocationAdjuster } from "./ui/manual-location-adjuster";

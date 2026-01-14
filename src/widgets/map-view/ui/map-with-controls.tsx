@@ -5,6 +5,7 @@ import {
   PharmacyMarkers,
   MapUpdater,
 } from "@/widgets/map-view";
+import { ManualLocationAdjuster } from "./manual-location-adjuster";
 import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
 import type MapLibreGL from "maplibre-gl";
 
@@ -40,6 +41,7 @@ export function MapWithControls({
         {...mapProps}
       >
         <MapUpdater />
+        <ManualLocationAdjuster />
         <UserLocationMarker />
         {pharmacies !== undefined ||
         timeFilter !== undefined ||

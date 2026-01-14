@@ -6,7 +6,9 @@ import { persist, createJSONStorage } from "zustand/middleware";
 interface LocationState {
   latitude: number | null;
   longitude: number | null;
+  isAdjusting: boolean;
   setLocation: (lat: number, lng: number) => void;
+  setIsAdjusting: (isAdjusting: boolean) => void;
   clearLocation: () => void;
 }
 
@@ -34,10 +36,12 @@ export const useLocationStore = create<LocationState>()(
     (set) => ({
       latitude: null,
       longitude: null,
+      isAdjusting: false,
       setLocation: (lat, lng) => {
         syncToCookie(lat, lng);
         set({ latitude: lat, longitude: lng });
       },
+      setIsAdjusting: (isAdjusting) => set({ isAdjusting }),
       clearLocation: () => {
         syncToCookie(null, null);
         set({ latitude: null, longitude: null });
