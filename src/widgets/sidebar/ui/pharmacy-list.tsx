@@ -62,11 +62,35 @@ export function PharmacyList() {
     );
   }
 
-  if (!data?.data || data.data.length === 0) {
+  if (!data?.data) {
     return (
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-6 py-2">
           <SystemStatusCard />
+          <QuickCityJump />
+        </div>
+      </ScrollArea>
+    );
+  }
+
+  if (data.data.length === 0) {
+    return (
+      <ScrollArea className="flex-1">
+        <div className="flex flex-col gap-6 py-2">
+          <div className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-card text-center">
+            <div className="flex items-center justify-center size-12 rounded-full bg-muted">
+              <MapPin className="size-6 text-muted-foreground" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-foreground">
+                Δεν βρέθηκαν φαρμακεία
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Δεν υπάρχουν εφημερεύοντα φαρμακεία σε ακτίνα {radius}km.
+                Δοκιμάστε μεγαλύτερη ακτίνα αναζήτησης.
+              </p>
+            </div>
+          </div>
           <QuickCityJump />
         </div>
       </ScrollArea>

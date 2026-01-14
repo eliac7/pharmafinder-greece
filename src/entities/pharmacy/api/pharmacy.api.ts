@@ -24,9 +24,19 @@ export const pharmacyApi = {
       radius: radius.toString(),
       time,
     });
-    return fetchAPI<PharmaciesWithCount>(
+    const res = await fetchAPI<PharmaciesWithCount | []>(
       `/nearby_pharmacies/on_duty?${params}`
     );
+
+    if (Array.isArray(res)) {
+      return {
+        count: 0,
+        data: [],
+        success: true,
+        message: "No pharmacies found within this radius",
+      };
+    }
+    return res;
   },
 
   /**
