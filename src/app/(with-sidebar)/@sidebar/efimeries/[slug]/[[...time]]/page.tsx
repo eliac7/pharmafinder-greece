@@ -1,7 +1,8 @@
 import { cityApi } from "@/entities/city";
 import { pharmacyApi, type TimeFilter } from "@/entities/pharmacy";
-import { CitySidebar } from "@/widgets/sidebar";
+import { getLocationFromCookies } from "@/features/locate-user/lib/location-cookie";
 import { Sidebar } from "@/shared/ui/sidebar";
+import { CitySidebar } from "@/widgets/sidebar";
 import { notFound } from "next/navigation";
 
 interface Props {
@@ -20,9 +21,16 @@ export default async function CitySidebarPage({ params }: Props) {
   const timeFilter: TimeFilter =
     timeSegment && isValidTime(timeSegment) ? timeSegment : "now";
 
+  const userLocation = await getLocationFromCookies();
+
   const [cityRes, pharmaciesRes] = await Promise.all([
     cityApi.getCityBySlug(slug),
-    pharmacyApi.getCityPharmacies(slug, timeFilter),
+    pharmacyApi.getCityPharmacies(
+      slug,
+      timeFilter,
+      userLocation?.latitude,
+      userLocation?.longitude
+    ),
   ]);
 
   if (!cityRes.data) {

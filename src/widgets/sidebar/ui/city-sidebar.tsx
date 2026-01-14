@@ -3,29 +3,27 @@
 import * as React from "react";
 
 import {
+  type Pharmacy,
+  type TimeFilter,
+  useCityPharmacies,
+} from "@/entities/pharmacy";
+import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
-  SidebarSeparator,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarHeader,
+  SidebarSeparator,
 } from "@/shared/ui/sidebar";
-import { cn } from "@/shared";
 import {
   CityPharmacyList,
   SidebarBranding,
   SidebarCopyright,
 } from "@/widgets/sidebar";
-import {
-  TIME_OPTIONS,
-  type TimeFilter,
-  type Pharmacy,
-  useCityPharmacies,
-} from "@/entities/pharmacy";
 
-import { SearchCity, CitySearchModal } from "@/features/search-city";
 import { CityTimeFilter } from "@/features/find-pharmacies";
+import { CitySearchModal, SearchCity } from "@/features/search-city";
 import { ArrowRightLeft } from "lucide-react";
 
 interface CitySidebarProps extends React.ComponentProps<typeof Sidebar> {

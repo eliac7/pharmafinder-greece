@@ -6,6 +6,7 @@ import {
   buildSeoTitle,
   getDateForTime,
 } from "@/shared";
+import { getLocationFromCookies } from "@/features/locate-user/lib/location-cookie";
 
 import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
@@ -105,9 +106,16 @@ export default async function EfimeriesPage({ params }: Props) {
 
   const timeFilter: TimeFilter = (timeSegment as TimeFilter) || "now";
 
+  const userLocation = await getLocationFromCookies();
+
   const [cityRes, pharmaciesRes] = await Promise.all([
     cityApi.getCityBySlug(slug),
-    pharmacyApi.getCityPharmacies(slug, timeFilter),
+    pharmacyApi.getCityPharmacies(
+      slug,
+      timeFilter,
+      userLocation?.latitude,
+      userLocation?.longitude
+    ),
   ]);
 
   if (!cityRes.data) {

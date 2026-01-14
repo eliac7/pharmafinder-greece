@@ -102,7 +102,6 @@ export function PharmacyDetailContent({
               </span>
             </div>
           </div>
-
           {/* Phone */}
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center size-10 rounded-xl bg-muted shrink-0">
@@ -115,7 +114,6 @@ export function PharmacyDetailContent({
               {pharmacy.phone}
             </a>
           </div>
-
           {/* Distance (if available) */}
           {typeof pharmacy.distance_km === "number" &&
             pharmacy.distance_km > 0 && (
@@ -128,9 +126,7 @@ export function PharmacyDetailContent({
                 </span>
               </div>
             )}
-
           <Separator className="my-2" />
-
           {/* Action Buttons */}
           <div className="grid grid-cols-2 gap-3">
             <Button
@@ -156,7 +152,6 @@ export function PharmacyDetailContent({
               </a>
             </Button>
           </div>
-
           <Button
             asChild
             variant="outline"
@@ -167,9 +162,7 @@ export function PharmacyDetailContent({
               Προβολή Street View
             </a>
           </Button>
-
           <Separator className="my-2" />
-
           {/* Report Section */}
           <div className="flex flex-col gap-3">
             <Button

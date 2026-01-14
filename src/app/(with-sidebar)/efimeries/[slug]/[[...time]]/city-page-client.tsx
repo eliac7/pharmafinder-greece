@@ -20,6 +20,7 @@ export function CityPageClient({
   cityCenter,
 }: CityPageClientProps) {
   const initialized = useRef(false);
+  const lastLocationRef = useRef<{ lat: number; lng: number } | null>(null);
 
   const { initialize, pharmacies, refetchWithLocation } =
     useCityPharmaciesStore();
@@ -27,18 +28,49 @@ export function CityPageClient({
 
   if (!initialized.current) {
     initialize(citySlug, timeFilter, initialPharmacies);
+
+    const hasDistances = initialPharmacies.some(
+      (p) => typeof p.distance_km === "number" && p.distance_km > 0
+    );
+
+    if (hasDistances && latitude && longitude) {
+      lastLocationRef.current = { lat: latitude, lng: longitude };
+    }
     initialized.current = true;
   }
 
   useEffect(() => {
     initialize(citySlug, timeFilter, initialPharmacies);
-  }, [citySlug, timeFilter, initialPharmacies, initialize]);
+
+    const hasDistances = initialPharmacies.some(
+      (p) => typeof p.distance_km === "number" && p.distance_km > 0
+    );
+    if (hasDistances && latitude && longitude) {
+      lastLocationRef.current = { lat: latitude, lng: longitude };
+    }
+  }, [
+    citySlug,
+    timeFilter,
+    initialPharmacies,
+    initialize,
+    latitude,
+    longitude,
+  ]);
 
   useEffect(() => {
-    if (latitude && longitude) {
+    if (!latitude || !longitude) return;
+
+    const last = lastLocationRef.current;
+    const locationChanged =
+      !last ||
+      Math.abs(last.lat - latitude) > 0.0001 ||
+      Math.abs(last.lng - longitude) > 0.0001;
+
+    if (locationChanged) {
+      lastLocationRef.current = { lat: latitude, lng: longitude };
       refetchWithLocation(latitude, longitude);
     }
-  }, [latitude, longitude, refetchWithLocation, citySlug, timeFilter]);
+  }, [latitude, longitude, refetchWithLocation]);
 
   const displayPharmacies =
     pharmacies.length > 0 ? pharmacies : initialPharmacies;
