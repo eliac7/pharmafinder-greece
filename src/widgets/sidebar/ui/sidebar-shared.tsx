@@ -24,20 +24,28 @@ export function SidebarBranding() {
 
 export function SidebarCopyright() {
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex flex-col gap-0.5 text-xs text-muted-foreground">
-        <span>© {new Date().getFullYear()} Pharmafinder</span>
-        <span className="flex gap-1">
-          Made by{" "}
-          <a
-            href="https://ilias.dev"
-            target="_blank"
-            rel="noreferrer"
-            className="font-medium hover:text-primary hover:underline transition-colors"
-          >
-            Ilias Thalassochoritis
-          </a>
-        </span>
+    <div className="flex items-end justify-between gap-4">
+      <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+        <Link
+          href="/about"
+          className="font-semibold hover:text-foreground transition-colors"
+        >
+          Σχετικά
+        </Link>
+        <div className="space-y-0.5">
+          <p>© {new Date().getFullYear()} Pharmafinder</p>
+          <p className="flex gap-1">
+            Ανάπτυξη:
+            <a
+              href="https://ilias.dev"
+              target="_blank"
+              rel="noreferrer"
+              className="font-medium hover:text-primary hover:underline transition-colors"
+            >
+              Ilias Nikolaos Thalassochoritis
+            </a>
+          </p>
+        </div>
       </div>
       <ThemeToggle />
     </div>
