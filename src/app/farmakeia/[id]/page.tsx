@@ -8,7 +8,7 @@ import { ReportDialog } from "@/features/pharmacy-detail";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Map, MapMarker, MarkerContent } from "@/shared/ui/map";
-import { ArrowLeft, MapPin, Navigation, Phone, Star } from "lucide-react";
+import { ArrowLeft, Eye, MapPin, Navigation, Phone, Star } from "lucide-react";
 import { cn } from "@/shared";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -165,6 +165,23 @@ export default async function PharmacyPage({ params }: Props) {
                   </a>
                 </Button>
               </div>
+
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full gap-2 text-muted-foreground"
+                asChild
+              >
+                <a
+                  href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${pharmacy.latitude},${pharmacy.longitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Eye className="size-4" />
+                  Προβολή Street View
+                </a>
+              </Button>
+
               <ReportDialog
                 pharmacyId={pharmacy.id}
                 pharmacyName={pharmacy.name}
