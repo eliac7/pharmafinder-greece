@@ -2,16 +2,43 @@
   "name": "pharmafinder-greece",
   "version": "0.1.0",
   "private": true,
+  "description": "Find on-duty pharmacies near you, anytime, anywhere in Greece",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eliac7/pharmafinder-greece.git"
+  },
+  "bugs": {
+    "url": "https://github.com/eliac7/pharmafinder-greece/issues"
+  },
+  "keywords": [
+    "nextjs",
+    "react",
+    "greece",
+    "pharmacy",
+    "maplibre",
+    "radix-ui",
+    "shadcn-ui",
+    "tailwindcss",
+    "typescript",
+    "zustand"
+  ],
   "author": {
     "name": "Ilias Nikolaos Thalassochoritis",
     "email": "iliascodes@gmail.com",
     "url": "https://ilias.dev"
   },
+  "engines": {
+    "node": ">=20.11.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf .next node_modules"
   },
   "dependencies": {
     "@marsidev/react-turnstile": "^1.4.1",
@@ -23,6 +50,7 @@
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@radix-ui/react-visually-hidden": "^1.2.4",
     "@tanstack/react-query": "^5.90.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -41,7 +69,6 @@
     "zustand": "^5.0.10"
   },
   "devDependencies": {
-    "@radix-ui/react-visually-hidden": "^1.2.4",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^25.0.6",
     "@types/react": "^19.2.8",
@@ -51,6 +78,7 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
     "tw-animate-css": "^1.4.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "rimraf": "^6.0.1"
   }
 }
