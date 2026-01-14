@@ -1,15 +1,15 @@
 import { cityApi } from "@/entities/city";
 import { pharmacyApi, type TimeFilter } from "@/entities/pharmacy";
 import {
-  getDateForTime,
   buildCanonicalUrl,
   buildSeoDescription,
   buildSeoTitle,
+  getDateForTime,
 } from "@/shared";
 
-import { MapWithControls } from "@/widgets/map-view";
 import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
+import { CityPageClient } from "./city-page-client";
 
 interface Props {
   params: Promise<{ slug: string; time?: string[] }>;
@@ -151,13 +151,14 @@ export default async function EfimeriesPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <MapWithControls
-        center={[Number(cityRes.data.longitude), Number(cityRes.data.latitude)]}
-        zoom={14}
-        minZoom={10}
-        pharmacies={pharmacies}
-        timeFilter={timeFilter}
+      <CityPageClient
+        initialPharmacies={pharmacies}
         citySlug={slug}
+        timeFilter={timeFilter}
+        cityCenter={[
+          Number(cityRes.data.longitude),
+          Number(cityRes.data.latitude),
+        ]}
       />
     </>
   );

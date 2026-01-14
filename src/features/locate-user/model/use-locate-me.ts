@@ -1,8 +1,8 @@
 "use client";
 
-import { useQueryState, parseAsFloat } from "nuqs";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useLocationStore } from "./use-location-store";
 
 interface Coordinates {
   latitude: number;
@@ -17,8 +17,7 @@ interface UseLocateMeReturn {
 }
 
 export function useLocateMe(): UseLocateMeReturn {
-  const [lat, setLat] = useQueryState("lat", parseAsFloat);
-  const [lng, setLng] = useQueryState("lng", parseAsFloat);
+  const { latitude, longitude, setLocation } = useLocationStore();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,8 +40,7 @@ export function useLocateMe(): UseLocateMeReturn {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         };
-        setLat(coords.latitude);
-        setLng(coords.longitude);
+        setLocation(coords.latitude, coords.longitude);
         setIsLoading(false);
         toast.success("Η τοποθεσία σας βρέθηκε!");
         onSuccess?.(coords);
@@ -60,7 +58,7 @@ export function useLocateMe(): UseLocateMeReturn {
     );
   };
 
-  const coordinates = lat && lng ? { latitude: lat, longitude: lng } : null;
+  const coordinates = latitude && longitude ? { latitude, longitude } : null;
 
   return { coordinates, isLoading, error, locate };
 }

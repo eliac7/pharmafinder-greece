@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useQueryState, parseAsFloat } from "nuqs";
 import { pharmacyApi } from "@/entities/pharmacy";
 
 export function usePharmacies(lat: number | null, lng: number | null) {

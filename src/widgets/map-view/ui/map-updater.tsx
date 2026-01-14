@@ -1,25 +1,24 @@
 "use client";
 
-import { useQueryState, parseAsFloat } from "nuqs";
 import { useEffect } from "react";
 import { useMapStore } from "@/shared/model/use-map-store";
 import { useMap } from "@/shared/ui/map";
+import { useLocationStore } from "@/features/locate-user";
 
 export function MapUpdater() {
   const { map } = useMap();
-  const [lat] = useQueryState("lat", parseAsFloat);
-  const [lng] = useQueryState("lng", parseAsFloat);
+  const { latitude, longitude } = useLocationStore();
   const flyToTarget = useMapStore((state) => state.flyToTarget);
 
   useEffect(() => {
-    if (map && lat && lng) {
+    if (map && latitude && longitude) {
       map.flyTo({
-        center: [lng, lat],
+        center: [longitude, latitude],
         zoom: 15,
         duration: 2000,
       });
     }
-  }, [map, lat, lng]);
+  }, [map, latitude, longitude]);
 
   useEffect(() => {
     if (map && flyToTarget) {

@@ -1,6 +1,5 @@
 "use client";
 
-import { useQueryState, parseAsFloat } from "nuqs";
 import { User } from "lucide-react";
 import {
   MapMarker,
@@ -8,15 +7,15 @@ import {
   MarkerPopup,
   MarkerTooltip,
 } from "@/shared/ui/map";
+import { useLocationStore } from "@/features/locate-user";
 
 export function UserLocationMarker() {
-  const [lat] = useQueryState("lat", parseAsFloat);
-  const [lng] = useQueryState("lng", parseAsFloat);
+  const { latitude, longitude } = useLocationStore();
 
-  if (!lat || !lng) return null;
+  if (!latitude || !longitude) return null;
 
   return (
-    <MapMarker longitude={lng} latitude={lat}>
+    <MapMarker longitude={longitude} latitude={latitude}>
       <MarkerContent>
         <div className="relative flex items-center justify-center size-8">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-500 opacity-75" />
@@ -30,7 +29,7 @@ export function UserLocationMarker() {
         <div className="space-y-1">
           <p className="font-medium text-foreground">Η τοποθεσία σας</p>
           <p className="text-xs text-muted-foreground">
-            {lat.toFixed(4)}, {lng.toFixed(4)}
+            {latitude.toFixed(4)}, {longitude.toFixed(4)}
           </p>
         </div>
       </MarkerPopup>
