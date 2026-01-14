@@ -8,6 +8,7 @@ export function useMediaQuery(query: string): boolean {
   useEffect(() => {
     const media = window.matchMedia(query);
 
+    // eslint-disable-next-line
     setMatches(media.matches);
 
     const listener = (event: MediaQueryListEvent) => {

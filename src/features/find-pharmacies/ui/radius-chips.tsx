@@ -1,6 +1,5 @@
 "use client";
 
-import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
 import { useQueryState, parseAsInteger } from "nuqs";
 import { RADIUS_OPTIONS, DEFAULT_RADIUS } from "@/entities/pharmacy";
 import { cn } from "@/shared";

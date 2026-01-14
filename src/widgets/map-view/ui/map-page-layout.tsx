@@ -8,7 +8,6 @@ import {
   MapUpdater,
 } from "@/widgets/map-view";
 import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
-import type MapLibreGL from "maplibre-gl";
 
 interface MapPageLayoutProps {
   children: ReactNode;

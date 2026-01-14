@@ -91,7 +91,7 @@ export function getPharmacyStatus(
 
     // Detect overnight shift (crosses midnight)
     // E.g. Open 17:00, Close 08:00
-    let isOvernight = closeTotalMinutes < openTotalMinutes;
+    const isOvernight = closeTotalMinutes < openTotalMinutes;
 
     if (isOvernight) {
       // Overnight Logic: Open [17:00] -- Midnight -- Close [08:00]

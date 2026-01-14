@@ -1,6 +1,5 @@
 "use client";
 
-import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
 import { useQueryState, parseAsStringLiteral } from "nuqs";
 import { TIME_OPTIONS, type TimeFilter } from "@/entities/pharmacy";
 import { cn } from "@/shared";

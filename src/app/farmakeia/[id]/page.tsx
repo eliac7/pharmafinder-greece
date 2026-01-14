@@ -9,7 +9,7 @@ import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Map, MapMarker, MarkerContent } from "@/shared/ui/map";
 import { ArrowLeft, MapPin, Navigation, Phone, Star } from "lucide-react";
-import { cn, fetchAPI } from "@/shared";
+import { cn } from "@/shared";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";

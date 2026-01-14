@@ -10,17 +10,13 @@ import {
   Flag,
   Sparkles,
 } from "lucide-react";
-import { cn, useIsMobile } from "@/shared";
+import { cn } from "@/shared";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import { Separator } from "@/shared/ui/separator";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { ReportPharmacyForm } from "./report-pharmacy-form";
-import {
-  getPharmacyStatus,
-  formatPharmacyHours,
-  type Pharmacy,
-} from "@/entities/pharmacy";
+import { type Pharmacy } from "@/entities/pharmacy";
 
 interface PharmacyDetailContentProps {
   pharmacy: Pharmacy;

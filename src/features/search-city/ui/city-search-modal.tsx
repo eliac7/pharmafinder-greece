@@ -28,7 +28,7 @@ export function CitySearchModal({ trigger }: CitySearchModalProps) {
   const [open, setOpen] = React.useState(false);
   const router = useRouter();
 
-  const { data: cities = [], isLoading } = useQuery({
+  const { data: cities = [] } = useQuery({
     queryKey: ["cities"],
     queryFn: () => cityApi.getCities(),
   });

@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  getPharmacyStatus,
-  formatPharmacyHours,
-  type TimeFilter,
-  type Pharmacy,
-} from "@/entities/pharmacy";
+import { getPharmacyStatus, type Pharmacy } from "@/entities/pharmacy";
 import { useMapStore } from "@/shared/model/use-map-store";
 import { Button } from "@/shared/ui/button";
 import { ScrollArea } from "@/shared/ui/scroll-area";
@@ -15,7 +10,7 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "@/shared/ui/sidebar";
-import { cn, useIsMobile } from "@/shared";
+import { cn } from "@/shared";
 import { SidebarCopyright } from "@/widgets/sidebar/ui/sidebar-shared";
 import { ArrowLeft, MapPin, Navigation, Phone, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -60,7 +55,7 @@ export function PharmacyDetailSidebar({
   pharmacy,
 }: PharmacyDetailSidebarProps) {
   const router = useRouter();
-  const isMobile = useIsMobile();
+
   const flyTo = useMapStore((state) => state.flyTo);
 
   const statusResult = getPharmacyStatus(

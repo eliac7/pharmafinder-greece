@@ -12,7 +12,6 @@ import {
 } from "@/shared/ui/dialog";
 import { Flag } from "lucide-react";
 import { ReportPharmacyForm } from "@/features/pharmacy-detail";
-import { cn } from "@/shared";
 
 interface ReportDialogProps {
   pharmacyId: number;

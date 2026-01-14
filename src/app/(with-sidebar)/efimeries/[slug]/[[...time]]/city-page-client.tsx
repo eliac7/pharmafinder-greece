@@ -19,25 +19,11 @@ export function CityPageClient({
   timeFilter,
   cityCenter,
 }: CityPageClientProps) {
-  const initialized = useRef(false);
   const lastLocationRef = useRef<{ lat: number; lng: number } | null>(null);
 
   const { initialize, pharmacies, refetchWithLocation } =
     useCityPharmaciesStore();
   const { latitude, longitude } = useLocationStore();
-
-  if (!initialized.current) {
-    initialize(citySlug, timeFilter, initialPharmacies);
-
-    const hasDistances = initialPharmacies.some(
-      (p) => typeof p.distance_km === "number" && p.distance_km > 0
-    );
-
-    if (hasDistances && latitude && longitude) {
-      lastLocationRef.current = { lat: latitude, lng: longitude };
-    }
-    initialized.current = true;
-  }
 
   useEffect(() => {
     initialize(citySlug, timeFilter, initialPharmacies);

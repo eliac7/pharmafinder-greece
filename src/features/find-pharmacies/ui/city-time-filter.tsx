@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  useNearbyPharmacies,
-  TimeFilterChips,
-} from "@/features/find-pharmacies";
 import { cn } from "@/shared";
-import { Button } from "@/shared/ui/button";
-import { type Pharmacy } from "@/entities/pharmacy";
+
 import Link from "next/link";
 import { type TimeFilter } from "@/entities/pharmacy/model/types";
 

@@ -9,7 +9,7 @@ import {
   MarkerTooltip,
 } from "@/shared/ui/map";
 import { Phone, MapPin, Navigation, Cross, Clock, Eye } from "lucide-react";
-import { cn, useMapStore } from "@/shared";
+import { cn } from "@/shared";
 import {
   getPharmacyStatus,
   formatPharmacyHours,
@@ -50,9 +50,11 @@ export function PharmacyMarkers({
   const effectiveTimeFilter = propTimeFilter ?? queryTime;
 
   // Use city pharmacies when on city page, otherwise use nearby or prop data
-  const pharmaciesToRender = citySlug
-    ? cityPharmacies ?? propPharmacies ?? []
-    : propPharmacies ?? nearbyData?.data ?? [];
+  const pharmaciesToRender = useMemo(() => {
+    return citySlug
+      ? cityPharmacies ?? propPharmacies ?? []
+      : propPharmacies ?? nearbyData?.data ?? [];
+  }, [citySlug, cityPharmacies, propPharmacies, nearbyData?.data]);
 
   const points = useMemo(() => {
     if (pharmaciesToRender.length === 0)
