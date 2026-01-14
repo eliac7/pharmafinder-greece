@@ -29,7 +29,7 @@ export function SidebarCopyright() {
       <div className="flex flex-col gap-1 text-xs text-muted-foreground">
         <Link
           href="/about"
-          className="font-semibold hover:text-foreground transition-colors"
+          className="font-semibold hover:text-foreground transition-colors w-fit"
         >
           Σχετικά
         </Link>
