@@ -10,7 +10,8 @@ export function SidebarBranding() {
           <Image
             src="/pharmacy.png"
             alt="Pharmafinder"
-            fill
+            width={40}
+            height={40}
             className="object-contain"
           />
         </div>
@@ -33,7 +34,9 @@ export function SidebarCopyright() {
           Σχετικά
         </Link>
         <div className="space-y-0.5">
-          <p>© {new Date().getFullYear()} Pharmafinder</p>
+          <p suppressHydrationWarning>
+            © {new Date().getFullYear()} Pharmafinder
+          </p>
           <p className="flex gap-1">
             Ανάπτυξη:
             <a

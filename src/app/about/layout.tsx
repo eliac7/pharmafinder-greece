@@ -28,7 +28,8 @@ export default function AboutLayout({
                 <Image
                   src="/pharmacy.png"
                   alt="Pharmafinder Logo"
-                  fill
+                  width={40}
+                  height={40}
                   className="object-contain"
                 />
               </div>

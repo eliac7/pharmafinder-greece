@@ -18,7 +18,7 @@ import {
 import { CountUp } from "@/shared/ui/count-up";
 
 export const metadata: Metadata = {
-  title: "Σχετικά με την εφαρμογή | Pharmafinder",
+  title: "Σχετικά με την εφαρμογή",
   description:
     "Η αποστολή μας, τα δεδομένα και η τεχνολογία πίσω από το Pharmafinder.",
 };
