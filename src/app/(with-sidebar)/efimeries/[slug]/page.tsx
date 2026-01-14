@@ -1,5 +1,5 @@
 import { cityApi } from "@/entities/city";
-import { pharmacyApi, type TimeFilter } from "@/entities/pharmacy";
+import { pharmacyApi } from "@/entities/pharmacy";
 import {
   buildCanonicalUrl,
   buildSeoDescription,
@@ -9,29 +9,16 @@ import {
 import { getLocationFromCookies } from "@/features/locate-user/lib/location-cookie";
 
 import { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
-import { CityPageClient } from "./city-page-client";
+import { notFound } from "next/navigation";
+import { CityPharmaciesMap } from "@/widgets/city-pharmacies-map";
 
 interface Props {
-  params: Promise<{ slug: string; time?: string[] }>;
-}
-
-function isValidTime(t: string): t is TimeFilter {
-  return ["now", "today", "tomorrow"].includes(t);
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug, time } = await params;
-
-  const timeSegment = time?.[0];
-  const timeFilter: TimeFilter =
-    timeSegment && isValidTime(timeSegment) ? timeSegment : "now";
-
-  if (time && time.length > 0 && !isValidTime(time[0])) {
-    return {
-      title: "Page Not Found",
-    };
-  }
+  const { slug } = await params;
+  const timeFilter = "now";
 
   const city = await cityApi.getCityBySlug(slug);
 
@@ -69,42 +56,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: "PharmaFinder",
       locale: "el_GR",
       type: "website",
-      images: [
-        {
-          url: "/og-image.jpg",
-          width: 1200,
-          height: 628,
-          alt: `PharmaFinder – Εφημερεύοντα Φαρμακεία ${cityName}`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: ["/og-image.jpg"],
     },
   };
 }
 
 export default async function EfimeriesPage({ params }: Props) {
-  const { slug, time } = await params;
-
-  const timeSegment = time?.[0];
-
-  if (time && time.length > 0) {
-    if (!isValidTime(time[0])) {
-      return notFound();
-    }
-    if (time.length > 1) {
-      return notFound();
-    }
-    if (time[0] === "now") {
-      redirect(`/efimeries/${slug}`);
-    }
-  }
-
-  const timeFilter: TimeFilter = (timeSegment as TimeFilter) || "now";
+  const { slug } = await params;
+  const timeFilter = "now";
 
   const userLocation = await getLocationFromCookies();
 
@@ -159,7 +117,7 @@ export default async function EfimeriesPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <CityPageClient
+      <CityPharmaciesMap
         initialPharmacies={pharmacies}
         citySlug={slug}
         timeFilter={timeFilter}

@@ -1,25 +1,17 @@
 import { cityApi } from "@/entities/city";
-import { pharmacyApi, type TimeFilter } from "@/entities/pharmacy";
+import { pharmacyApi } from "@/entities/pharmacy";
 import { getLocationFromCookies } from "@/features/locate-user/lib/location-cookie";
 import { Sidebar } from "@/shared/ui/sidebar";
 import { CitySidebar } from "@/widgets/sidebar";
 import { notFound } from "next/navigation";
 
 interface Props {
-  params: Promise<{ slug: string; time?: string[] }>;
-}
-
-function isValidTime(t: string): t is TimeFilter {
-  return ["now", "today", "tomorrow"].includes(t);
+  params: Promise<{ slug: string }>;
 }
 
 export default async function CitySidebarPage({ params }: Props) {
-  const { slug, time } = await params;
-
-  const timeSegment = time?.[0];
-
-  const timeFilter: TimeFilter =
-    timeSegment && isValidTime(timeSegment) ? timeSegment : "now";
+  const { slug } = await params;
+  const timeFilter = "now";
 
   const userLocation = await getLocationFromCookies();
 

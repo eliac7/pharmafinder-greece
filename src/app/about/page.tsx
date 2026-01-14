@@ -237,7 +237,7 @@ export default async function AboutPage() {
         </section>
 
         <div className="text-center text-sm text-muted-foreground pb-8">
-          Created by{" "}
+          Υλοποιήθηκε από{" "}
           <a
             href="https://ilias.dev"
             target="_blank"

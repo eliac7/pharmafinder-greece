@@ -26,14 +26,6 @@ export const metadata: Metadata = {
     url: process.env.NEXT_PUBLIC_APP_URL!,
     siteName: "PharmaFinder",
     description: "Βρείτε εφημερεύοντα φαρμακεία κοντά σας πιο εύκολα από ποτέ!",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 628,
-        alt: "PharmaFinder",
-      },
-    ],
   },
 };
 

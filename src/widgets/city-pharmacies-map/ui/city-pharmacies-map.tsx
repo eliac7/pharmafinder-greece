@@ -6,19 +6,19 @@ import { useCityPharmaciesStore } from "@/entities/pharmacy/model/use-city-pharm
 import { useLocationStore } from "@/features/locate-user";
 import { MapWithControls } from "@/widgets/map-view";
 
-interface CityPageClientProps {
+interface CityPharmaciesMapProps {
   initialPharmacies: Pharmacy[];
   citySlug: string;
   timeFilter: TimeFilter;
   cityCenter: [number, number];
 }
 
-export function CityPageClient({
+export function CityPharmaciesMap({
   initialPharmacies,
   citySlug,
   timeFilter,
   cityCenter,
-}: CityPageClientProps) {
+}: CityPharmaciesMapProps) {
   const lastLocationRef = useRef<{ lat: number; lng: number } | null>(null);
 
   const { initialize, pharmacies, refetchWithLocation } =
