@@ -1,4 +1,3 @@
-export { AppSidebar } from "./ui/app-sidebar";
 export { CitySidebar } from "./ui/city-sidebar";
 export { PharmacyList } from "./ui/pharmacy-list";
 export { CityPharmacyList } from "./ui/city-pharmacy-list";
