@@ -23,8 +23,10 @@ import {
   getPharmacyStatus,
   formatPharmacyHours,
   useCityPharmacies,
+  pharmacyApi,
 } from "@/entities/pharmacy";
 import { useQueryState, parseAsStringLiteral } from "nuqs";
+import { useQueries } from "@tanstack/react-query";
 import {
   TIME_OPTIONS,
   type TimeFilter,
@@ -59,13 +61,36 @@ export function PharmacyMarkers({
   const effectiveTimeFilter = propTimeFilter ?? queryTime;
 
   // Use city pharmacies when on city page, otherwise use nearby or prop data
-  const pharmaciesToRender = useMemo(() => {
+  const basePharmacies = useMemo(() => {
     return citySlug
       ? cityPharmacies ?? propPharmacies ?? []
       : propPharmacies ?? nearbyData?.data ?? [];
   }, [citySlug, cityPharmacies, propPharmacies, nearbyData?.data]);
 
   const { favoriteIds } = useFavorites();
+
+  // Find favorites that are not already in the base pharmacies list
+  const missingFavoriteIds = useMemo(() => {
+    const baseIds = new Set(basePharmacies.map((p) => p.id));
+    return favoriteIds.filter((id) => !baseIds.has(id));
+  }, [favoriteIds, basePharmacies]);
+
+  // Fetch missing favorite pharmacies
+  const favoriteQueries = useQueries({
+    queries: missingFavoriteIds.map((id) => ({
+      queryKey: ["pharmacy", id],
+      queryFn: () => pharmacyApi.getPharmacyDetails(id),
+      staleTime: 1000 * 60 * 5,
+    })),
+  });
+
+  // Merge base pharmacies with fetched favorites
+  const pharmaciesToRender = useMemo(() => {
+    const fetchedFavorites = favoriteQueries
+      .map((q) => q.data)
+      .filter((p): p is Pharmacy => p !== undefined && p !== null);
+    return [...basePharmacies, ...fetchedFavorites];
+  }, [basePharmacies, favoriteQueries]);
 
   const points = useMemo(() => {
     if (pharmaciesToRender.length === 0)

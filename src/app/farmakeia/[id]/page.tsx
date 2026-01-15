@@ -21,6 +21,7 @@ import {
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { PharmacyMapMarkerContent } from "./pharmacy-map-marker";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -274,15 +275,10 @@ export default async function PharmacyPage({ params }: Props) {
               latitude={pharmacy.latitude}
             >
               <MarkerContent>
-                <div className="relative group cursor-pointer">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-50" />
-                  <div className="relative flex items-center justify-center p-3 rounded-full bg-primary text-primary-foreground shadow-xl ring-4 ring-background transform group-hover:scale-110 transition-transform">
-                    <MapPin className="size-6" />
-                  </div>
-                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-foreground text-background text-xs font-bold rounded-full whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
-                    {pharmacy.name}
-                  </div>
-                </div>
+                <PharmacyMapMarkerContent
+                  pharmacyId={pharmacy.id}
+                  pharmacyName={pharmacy.name}
+                />
               </MarkerContent>
             </MapMarker>
           </Map>

@@ -15,6 +15,7 @@ PharmaFinder is a modern, high-performance web application designed to help user
 
 - **🗺️ Interactive Map**: Powered by **MapLibre GL**, featuring high-performance clustering, custom markers, and smooth transitions.
 - **📍 Geolocation**: Automatically detects user location to show nearby pharmacies.
+- **❤️ Favorites**: Save your preferred pharmacies to localStorage; favorites appear on the map with a red indicator and are always visible regardless of radius.
 - **🌓 Dark/Light Mode**: Fully supported system-aware theme switching.
 - **🔍 Smart Filtering**: Filter by city, time, and radius.
 - **🔗 Deep Linking**: URL-based state management using **Nuqs**, allowing users to share exact search results and map views.

@@ -3,7 +3,7 @@
 import { Heart } from "lucide-react";
 import { cn } from "@/shared";
 import { Button } from "@/shared/ui/button";
-import { useFavoritesStore } from "../model/use-favorites-store";
+import { useFavorites } from "../model/use-favorites-store";
 
 interface FavoriteButtonProps {
   pharmacyId: number;
@@ -16,8 +16,8 @@ export function FavoriteButton({
   className,
   size = "default",
 }: FavoriteButtonProps) {
-  const { isFavorite, toggleFavorite } = useFavoritesStore();
-  const favorited = isFavorite(pharmacyId);
+  const { favoriteIds, toggleFavorite } = useFavorites();
+  const favorited = favoriteIds.includes(pharmacyId);
 
   return (
     <Button
