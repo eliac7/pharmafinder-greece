@@ -1,13 +1,15 @@
 "use client";
 
-import { Crosshair } from "lucide-react";
-import { Suspense } from "react";
+import { Crosshair, MapPin, Heart } from "lucide-react";
+import { Suspense, useState } from "react";
 
 import { RadiusChips } from "@/features/find-pharmacies/ui/radius-chips";
 import { TimeFilterChips } from "@/features/find-pharmacies/ui/time-filter-chips";
 import { useLocateMe } from "@/features/locate-user/model/use-locate-me";
 import { SearchCity } from "@/features/search-city/ui/search-city";
+import { FavoritesList } from "@/features/favorites";
 import { useMapStore } from "@/shared/model/use-map-store";
+import { cn } from "@/shared";
 import { Button } from "@/shared/ui/button";
 import {
   Sidebar,
@@ -24,6 +26,8 @@ import {
   SidebarBranding,
   SidebarCopyright,
 } from "@/widgets/sidebar/ui/sidebar-shared";
+
+type SidebarTab = "nearby" | "favorites";
 
 function FiltersSkeleton() {
   return (
@@ -91,6 +95,7 @@ function SidebarFilters() {
 export default function SidebarPage() {
   const { locate, isLoading } = useLocateMe();
   const flyTo = useMapStore((state) => state.flyTo);
+  const [activeTab, setActiveTab] = useState<SidebarTab>("nearby");
 
   return (
     <Sidebar>
@@ -124,13 +129,40 @@ export default function SidebarPage() {
         <Suspense fallback={<FiltersSkeleton />}>
           <SidebarFilters />
         </Suspense>
+
+        <div className="mt-4 flex gap-1 p-1 bg-muted rounded-lg">
+          <button
+            onClick={() => setActiveTab("nearby")}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all",
+              activeTab === "nearby"
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <MapPin className="size-4" />
+            Κοντινά
+          </button>
+          <button
+            onClick={() => setActiveTab("favorites")}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all",
+              activeTab === "favorites"
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <Heart className="size-4" />
+            Αγαπημένα
+          </button>
+        </div>
       </SidebarHeader>
 
       <SidebarContent className="px-4">
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupContent>
             <Suspense fallback={<ListSkeleton />}>
-              <PharmacyList />
+              {activeTab === "nearby" ? <PharmacyList /> : <FavoritesList />}
             </Suspense>
           </SidebarGroupContent>
         </SidebarGroup>

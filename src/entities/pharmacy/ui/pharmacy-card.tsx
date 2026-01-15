@@ -1,6 +1,7 @@
 "use client";
 
 import { Navigation, Cross, Clock, Sparkles } from "lucide-react";
+import { FavoriteButton } from "@/features/favorites";
 import { cn } from "@/shared";
 import { useMapStore } from "@/shared/model/use-map-store";
 import { Button } from "@/shared/ui/button";
@@ -120,25 +121,28 @@ export function PharmacyCard({ pharmacy, timeFilter }: PharmacyCardProps) {
           </p>
         </div>
 
-        <Button
-          variant="outline"
-          size="icon"
-          className={cn(
-            "size-9 rounded-full border-border shrink-0 self-center hover:bg-primary/20 hover:text-primary hover:border-primary",
-            "transition-all"
-          )}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (pharmacy.latitude && pharmacy.longitude) {
-              window.open(
-                `https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`,
-                "_blank"
-              );
-            }
-          }}
-        >
-          <Navigation className="size-4" />
-        </Button>
+        <div className="flex items-center gap-1 shrink-0 self-center">
+          <FavoriteButton pharmacyId={pharmacy.id} size="sm" />
+          <Button
+            variant="outline"
+            size="icon"
+            className={cn(
+              "size-9 rounded-full border-border hover:bg-primary/20 hover:text-primary hover:border-primary",
+              "transition-all"
+            )}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (pharmacy.latitude && pharmacy.longitude) {
+                window.open(
+                  `https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`,
+                  "_blank"
+                );
+              }
+            }}
+          >
+            <Navigation className="size-4" />
+          </Button>
+        </div>
       </div>
     </div>
   );

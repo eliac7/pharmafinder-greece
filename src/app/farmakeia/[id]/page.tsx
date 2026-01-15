@@ -5,6 +5,7 @@ import {
   type PharmacyStatusResult,
 } from "@/entities/pharmacy";
 import { ReportDialog, SharePharmacyDialog } from "@/features/pharmacy-detail";
+import { FavoriteButton } from "@/features/favorites";
 import { cn } from "@/shared";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
@@ -153,9 +154,12 @@ export default async function PharmacyPage({ params }: Props) {
                 ΣΥΧΝΑ ΕΦΗΜΕΡΕΥΟΝ
               </Badge>
             )}
-            <h1 className="text-3xl md:text-4xl font-bold leading-tight tracking-tight">
-              {pharmacy.name}
-            </h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl md:text-4xl font-bold leading-tight tracking-tight">
+                {pharmacy.name}
+              </h1>
+              <FavoriteButton pharmacyId={pharmacy.id} />
+            </div>
             <div className="flex items-center gap-2">
               <MapPin className="size-4 text-muted-foreground" />
               <p className="text-lg text-muted-foreground">

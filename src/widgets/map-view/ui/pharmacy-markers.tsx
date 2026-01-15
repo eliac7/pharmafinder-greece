@@ -1,6 +1,7 @@
 "use client";
 
 import { useNearbyPharmacies } from "@/features/find-pharmacies";
+import { useFavorites } from "@/features/favorites";
 import {
   MapHybridClusterLayer,
   MapMarker,
@@ -8,7 +9,15 @@ import {
   MarkerPopup,
   MarkerTooltip,
 } from "@/shared/ui/map";
-import { Phone, MapPin, Navigation, Cross, Clock, Eye } from "lucide-react";
+import {
+  Phone,
+  MapPin,
+  Navigation,
+  Cross,
+  Clock,
+  Eye,
+  Heart,
+} from "lucide-react";
 import { cn } from "@/shared";
 import {
   getPharmacyStatus,
@@ -55,6 +64,8 @@ export function PharmacyMarkers({
       ? cityPharmacies ?? propPharmacies ?? []
       : propPharmacies ?? nearbyData?.data ?? [];
   }, [citySlug, cityPharmacies, propPharmacies, nearbyData?.data]);
+
+  const { favoriteIds } = useFavorites();
 
   const points = useMemo(() => {
     if (pharmaciesToRender.length === 0)
@@ -130,6 +141,7 @@ export function PharmacyMarkers({
             const isScheduled = status === "scheduled";
             const isOpen = status === "open" || isScheduled;
             const isClosingSoon = status === "closing-soon";
+            const isFavorite = favoriteIds.includes(pharmacy.id);
 
             return (
               <MapMarker
@@ -141,15 +153,23 @@ export function PharmacyMarkers({
                   <div className="relative flex flex-col items-center group cursor-pointer">
                     <div
                       className={cn(
-                        "flex items-center justify-center p-2.5 rounded-full border-2 transition-transform hover:scale-110",
+                        "relative flex items-center justify-center p-2.5 rounded-full border-2 transition-transform hover:scale-110",
+                        isFavorite
+                          ? "border-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.5)]"
+                          : isClosingSoon
+                          ? "border-amber-600"
+                          : "border-sidebar",
                         isClosingSoon
-                          ? "bg-amber-500 text-white border-amber-600 shadow-[0_0_15px_rgba(245,158,11,0.6)]"
+                          ? "bg-amber-500 text-white shadow-[0_0_15px_rgba(245,158,11,0.6)]"
                           : isOpen
-                          ? "bg-primary text-primary-foreground border-sidebar shadow-[0_0_15px_hsl(166_18%_73%/0.6)]"
-                          : "bg-muted text-muted-foreground border-sidebar shadow-md"
+                          ? "bg-primary text-primary-foreground shadow-[0_0_15px_hsl(166_18%_73%/0.6)]"
+                          : "bg-muted text-muted-foreground shadow-md"
                       )}
                     >
                       <Cross className="size-6" />
+                      {isFavorite && (
+                        <Heart className="absolute -top-1 -right-1 size-3.5 fill-rose-500 text-rose-500" />
+                      )}
                     </div>
                     {/* Pin stem */}
                     <div
