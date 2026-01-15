@@ -1,14 +1,25 @@
 "use client";
 
-import { useLocateMe, useLocationStore } from "@/features/locate-user";
+import { useLocateMe } from "@/features/locate-user";
 import { cn } from "@/shared";
 import { Button } from "@/shared/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 import { Crosshair, MapPin } from "lucide-react";
+import { useState } from "react";
 
-export function MapControls() {
+type MapControlsProps = {
+  isAdjusting?: boolean;
+  onAdjustChange?: (next: boolean) => void;
+};
+
+export function MapControls({
+  isAdjusting: controlledAdjusting,
+  onAdjustChange,
+}: MapControlsProps) {
   const { locate, isLoading } = useLocateMe();
-  const { isAdjusting, setIsAdjusting } = useLocationStore();
+  const [uncontrolledAdjusting, setUncontrolledAdjusting] = useState(false);
+  const isAdjusting = controlledAdjusting ?? uncontrolledAdjusting;
+  const setIsAdjusting = onAdjustChange ?? setUncontrolledAdjusting;
 
   const handleLocate = () => {
     locate();

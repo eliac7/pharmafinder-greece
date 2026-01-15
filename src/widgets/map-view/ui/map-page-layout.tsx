@@ -1,12 +1,6 @@
 import { type ReactNode } from "react";
-import { Map } from "@/shared/ui/map";
 import { SidebarProvider, SidebarTrigger } from "@/shared/ui/sidebar";
-import {
-  MapControls,
-  UserLocationMarker,
-  PharmacyMarkers,
-  MapUpdater,
-} from "@/widgets/map-view";
+import { MapWithControls } from "@/widgets/map-view";
 import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
 
 interface MapPageLayoutProps {
@@ -31,12 +25,13 @@ export function MapPageLayout({
       <div className="flex h-screen w-full overflow-hidden bg-background">
         {children}
         <main className="flex-1 relative">
-          <Map center={center} zoom={zoom} minZoom={minZoom}>
-            <MapUpdater />
-            <PharmacyMarkers pharmacies={pharmacies} timeFilter={timeFilter} />
-            <UserLocationMarker />
-            <MapControls />
-          </Map>
+          <MapWithControls
+            center={center}
+            zoom={zoom}
+            minZoom={minZoom}
+            pharmacies={pharmacies}
+            timeFilter={timeFilter}
+          />
           <div className="absolute top-4 left-4 z-10 md:hidden">
             <SidebarTrigger />
           </div>

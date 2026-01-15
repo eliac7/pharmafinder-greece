@@ -130,6 +130,12 @@
   }
 }
 
+/* Force crosshair during manual location adjustment */
+.manual-location-adjusting .maplibregl-canvas,
+.manual-location-adjusting .maplibregl-canvas-container {
+  cursor: crosshair !important;
+}
+
 /* Bring back the cursor pointer on buttons */
 @layer base {
   button:not([disabled]),

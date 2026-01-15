@@ -1,3 +1,5 @@
+"use client";
+
 import { Map } from "@/shared/ui/map";
 import {
   MapControls,
@@ -8,9 +10,10 @@ import {
 import { ManualLocationAdjuster } from "./manual-location-adjuster";
 import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
 import type MapLibreGL from "maplibre-gl";
+import { useState } from "react";
 
 interface MapWithControlsProps {
-  center: [number, number];
+  center?: [number, number];
   zoom?: number;
   minZoom?: number;
   mapProps?: Omit<
@@ -31,6 +34,8 @@ export function MapWithControls({
   timeFilter,
   citySlug,
 }: MapWithControlsProps) {
+  const [isAdjusting, setIsAdjusting] = useState(false);
+
   return (
     <>
       <Map
@@ -41,7 +46,10 @@ export function MapWithControls({
         {...mapProps}
       >
         <MapUpdater />
-        <ManualLocationAdjuster />
+        <ManualLocationAdjuster
+          isAdjusting={isAdjusting}
+          onAdjustChange={setIsAdjusting}
+        />
         <UserLocationMarker />
         {pharmacies !== undefined ||
         timeFilter !== undefined ||
@@ -54,7 +62,10 @@ export function MapWithControls({
         ) : (
           <PharmacyMarkers />
         )}
-        <MapControls />
+        <MapControls
+          isAdjusting={isAdjusting}
+          onAdjustChange={setIsAdjusting}
+        />
       </Map>
     </>
   );
