@@ -8,6 +8,7 @@ import {
   PharmacyCard,
   TIME_OPTIONS,
   type TimeFilter,
+  getPharmacyStatus,
 } from "@/entities/pharmacy";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Skeleton } from "@/shared/ui/skeleton";
@@ -95,7 +96,65 @@ export function FavoritesList() {
 
   const pharmacies = pharmacyQueries
     .map((q) => q.data)
-    .filter((p): p is NonNullable<typeof p> => p !== undefined);
+    .filter((p): p is NonNullable<typeof p> => p !== undefined)
+    .filter((pharmacy) => {
+      const statusResult = getPharmacyStatus(
+        pharmacy.data_hours,
+        pharmacy.open_until_tomorrow ?? false,
+        pharmacy.next_day_close_time ?? null,
+        timeFilter
+      );
+      return statusResult.status !== "closed";
+    });
+
+  if (favoriteIds.length > 0 && pharmacies.length === 0 && !isLoading) {
+    return (
+      <ScrollArea className="flex-1">
+        <div className="flex items-center justify-between py-3 px-1">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center size-8 rounded-lg bg-rose-500/10">
+              <Heart className="size-4 text-rose-500" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-foreground">
+                0 εφημερεύοντα
+              </span>
+              <span className="text-xs text-muted-foreground">
+                από {favoriteIds.length}{" "}
+                {favoriteIds.length === 1 ? "αγαπημένο" : "αγαπημένα"}
+              </span>
+            </div>
+          </div>
+          {isFetching && (
+            <RefreshCw className="size-4 text-muted-foreground animate-spin" />
+          )}
+        </div>
+        <div className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-muted/50 text-center mt-4">
+          <div className="flex items-center justify-center size-12 rounded-full bg-background border border-border">
+            <RefreshCw className="size-5 text-muted-foreground" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-foreground">
+              Κανένα αγαπημένο δεν εφημερεύει
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Δοκιμάστε να αλλάξετε το φίλτρο ώρας ή δείτε τη λίστα με όλα τα
+              εφημερεύοντα.
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={refetchAll}
+            className="gap-2 mt-2"
+          >
+            <RefreshCw className="size-3.5" />
+            Ανανέωση
+          </Button>
+        </div>
+      </ScrollArea>
+    );
+  }
 
   return (
     <ScrollArea className="flex-1">
@@ -106,10 +165,12 @@ export function FavoritesList() {
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-semibold text-foreground">
-              {favoriteIds.length}{" "}
-              {favoriteIds.length === 1 ? "αγαπημένο" : "αγαπημένα"}
+              {pharmacies.length}{" "}
+              {pharmacies.length === 1 ? "αγαπημένο" : "αγαπημένα"}
             </span>
-            <span className="text-xs text-muted-foreground">φαρμακεία</span>
+            <span className="text-xs text-muted-foreground">
+              {pharmacies.length === 1 ? "φαρμακείο" : "φαρμακεία"}
+            </span>
           </div>
         </div>
         {isFetching && (
