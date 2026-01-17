@@ -42,7 +42,7 @@ export function PharmacyCard({
   const handleCardClick = () => {
     onClick?.()
     if (pharmacy.latitude && pharmacy.longitude) {
-      flyTo([pharmacy.longitude, pharmacy.latitude], 16);
+      flyTo([pharmacy.longitude, pharmacy.latitude], 16, pharmacy.id);
     }
   };
 

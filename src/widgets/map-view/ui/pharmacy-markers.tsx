@@ -2,6 +2,7 @@
 
 import { useNearbyPharmacies } from "@/features/find-pharmacies";
 import { useFavorites } from "@/features/favorites";
+import { useMapStore } from "@/shared/model/use-map-store";
 import {
   MapHybridClusterLayer,
   MapMarker,
@@ -52,6 +53,8 @@ export function PharmacyMarkers({
   });
 
   const { data: nearbyData } = useNearbyPharmacies();
+  const popupTargetId = useMapStore((state) => state.popupTargetId);
+  const selectedPharmacyId = useMapStore((state) => state.selectedPharmacyId);
 
   const [queryTime] = useQueryState<TimeFilter>(
     "time",
@@ -126,6 +129,7 @@ export function PharmacyMarkers({
   return (
     <MapHybridClusterLayer
       data={points}
+      forceVisibleFeatureIds={selectedPharmacyId ? [selectedPharmacyId] : []}
       clusterColors={[
         "hsl(166, 18%, 73%)", // Primary (Light)
         "hsl(166, 25%, 60%)", // Medium (Darker)
@@ -223,8 +227,8 @@ export function PharmacyMarkers({
                   {pharmacy.name}
                 </MarkerTooltip>
 
-                <MarkerPopup>
-                  <div className="flex flex-col gap-3 min-w-[260px] max-w-[320px] p-0.5">
+                <MarkerPopup forceOpen={popupTargetId === pharmacy.id}>
+                  <div className="flex flex-col gap-3 min-w-65 max-w-[320px] p-0.5">
                     <div className="flex items-center gap-3">
                       <div
                         className={cn(

@@ -344,12 +344,15 @@ type MarkerPopupProps = {
   className?: string;
   /** Show a close button in the popup (default: false) */
   closeButton?: boolean;
+  /** Force the popup to be open */
+  forceOpen?: boolean;
 } & Omit<PopupOptions, "className" | "closeButton">;
 
 function MarkerPopup({
   children,
   className,
   closeButton = false,
+  forceOpen,
   ...popupOptions
 }: MarkerPopupProps) {
   const { marker, map } = useMarkerContext();
@@ -380,6 +383,12 @@ function MarkerPopup({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map]);
+
+  useEffect(() => {
+    if (forceOpen && map && !popup.isOpen()) {
+      popup.addTo(map);
+    }
+  }, [forceOpen, map, popup]);
 
   if (popup.isOpen()) {
     const prev = prevPopupOptions.current;
@@ -1299,6 +1308,8 @@ type MapHybridClusterLayerProps<
   clusterThresholds?: [number, number];
   /** Color of the cluster count text (default: "#ffffff") */
   clusterTextColor?: string;
+  /** IDs of features that should always be rendered regardless of clustering/viewport */
+  forceVisibleFeatureIds?: (string | number)[];
   /** Render prop for unclustered points */
   children: (features: GeoJSON.Feature<GeoJSON.Point, P>[]) => ReactNode;
   /** Callback when a cluster is clicked */
@@ -1318,6 +1329,7 @@ function MapHybridClusterLayer<
   clusterColors = ["#51bbd6", "#f1f075", "#f28cb1"],
   clusterThresholds = [100, 750],
   clusterTextColor = "#ffffff",
+  forceVisibleFeatureIds = [],
   children,
   onClusterClick,
 }: MapHybridClusterLayerProps<P>) {
@@ -1471,6 +1483,16 @@ function MapHybridClusterLayer<
         string | number,
         GeoJSON.Feature<GeoJSON.Point, P>
       >();
+      
+      // Add forced visible features first (so they are always included)
+      if (forceVisibleFeatureIds.length > 0 && data && typeof data !== 'string') {
+        data.features.forEach(feature => {
+          if (feature.id && forceVisibleFeatureIds.includes(feature.id)) {
+            uniqueFeatures.set(feature.id, feature);
+          }
+        });
+      }
+
       features.forEach((f) => {
         if (f.id !== undefined) uniqueFeatures.set(f.id, f);
       });
@@ -1505,7 +1527,7 @@ function MapHybridClusterLayer<
       map.off("sourcedata", onSourceData);
       clearTimeout(timeoutId);
     };
-  }, [isLoaded, map, sourceId]);
+  }, [isLoaded, map, sourceId, data, forceVisibleFeatureIds]);
 
   // Cluster click handler
   useEffect(() => {

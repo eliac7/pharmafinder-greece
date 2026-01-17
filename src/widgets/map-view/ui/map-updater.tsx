@@ -10,6 +10,7 @@ export function MapUpdater() {
   const { latitude, longitude } = useLocationStore();
   const flyToTarget = useMapStore((state) => state.flyToTarget);
   const clearFlyToTarget = useMapStore((state) => state.clearFlyToTarget);
+  const setPopupTargetId = useMapStore((state) => state.setPopupTargetId);
 
   const prevLocationRef = useRef<{ lat: number | null; lng: number | null }>({
     lat: null,
@@ -18,14 +19,24 @@ export function MapUpdater() {
 
   useEffect(() => {
     if (map && flyToTarget) {
+      // Clear any previous popup target before flying
+      setPopupTargetId(null);
+      
       map.flyTo({
         center: flyToTarget.center,
         zoom: flyToTarget.zoom || 16,
         duration: 2000,
       });
+
+      if (flyToTarget.pharmacyId) {
+        map.once("moveend", () => {
+          setPopupTargetId(flyToTarget.pharmacyId!);
+        });
+      }
+
       clearFlyToTarget();
     }
-  }, [map, flyToTarget, clearFlyToTarget]);
+  }, [map, flyToTarget, clearFlyToTarget, setPopupTargetId]);
 
   useEffect(() => {
     if (!map || !latitude || !longitude) return;
