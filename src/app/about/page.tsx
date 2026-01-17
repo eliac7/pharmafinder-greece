@@ -25,9 +25,11 @@ export const metadata: Metadata = {
 
 export default async function AboutPage() {
   const [stats, cities] = await Promise.all([
-    statisticsApi.getStatistics(),
-    cityApi.getCities(),
+    statisticsApi.getStatistics().catch(() => null),
+    cityApi.getCities().catch(() => []),
   ]);
+
+  const safeStats = stats && "counts" in stats ? stats : null;
 
   return (
     <div className="flex-1 h-full overflow-y-auto bg-background p-6 md:p-12">
@@ -56,7 +58,7 @@ export default async function AboutPage() {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
-                <CountUp end={stats.counts.total} />
+                <CountUp end={safeStats?.counts.total ?? 0} />
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 Πανελλαδική κάλυψη
@@ -88,7 +90,7 @@ export default async function AboutPage() {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
-                <CountUp end={stats.counts.on_duty_today} />
+                <CountUp end={safeStats?.counts.on_duty_today ?? 0} />
               </div>
               <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                 <span className="relative flex h-2 w-2">
