@@ -27,7 +27,7 @@ export function CityPharmacyList({
       pharmacies={pharmacies}
       count={count}
       timeFilter={timeFilter}
-      subtitle={`??????à? ${count} àã?çî??åæàçà`}
+      subtitle={`Βρέθηκαν ${count} φαρμακεία`}
     />
   );
 }
