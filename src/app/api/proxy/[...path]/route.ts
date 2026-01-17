@@ -1,12 +1,15 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
-import { decryptPayload } from "@/shared/lib/crypto";
+import { decryptPayload, encryptPayload } from "@/shared/lib/crypto";
 
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:8000";
 const API_SECRET_KEY = process.env.API_SECRET_KEY || "";
 const ENCRYPTION_SECRET = process.env.ENCRYPTION_SECRET || "";
 const ENCRYPTION_SALT = process.env.ENCRYPTION_SALT || "";
+const CLIENT_ENCRYPTION_SECRET =
+  process.env.NEXT_PUBLIC_ENCRYPTION_SECRET || "";
+const CLIENT_ENCRYPTION_SALT = process.env.NEXT_PUBLIC_ENCRYPTION_SALT || "";
 
 const cleanHeaders = (headers: Headers): Headers => {
   const newHeaders = new Headers(headers);
@@ -68,31 +71,67 @@ async function handleRequest(
 
       try {
         const json = JSON.parse(text);
+        let dataToEncrypt = json;
+
+        // If backend returned encrypted data, decrypt it first
         if (json && typeof json === "object" && "encrypted" in json) {
-          const decrypted = await decryptPayload(
-            json.encrypted,
-            ENCRYPTION_SECRET,
-            ENCRYPTION_SALT
+          try {
+            const decrypted = await decryptPayload(
+              json.encrypted,
+              ENCRYPTION_SECRET,
+              ENCRYPTION_SALT
+            );
+            if (decrypted) {
+              dataToEncrypt = decrypted;
+            }
+          } catch (err) {
+            console.error("Backend decryption failed:", err);
+            return new NextResponse(text, {
+              status: response.status,
+              headers: sanitizedHeaders,
+            });
+          }
+        }
+
+        // Enforce re-encryption for the client
+        if (!CLIENT_ENCRYPTION_SECRET || !CLIENT_ENCRYPTION_SALT) {
+          console.error(
+            "Missing NEXT_PUBLIC_ENCRYPTION_SECRET or NEXT_PUBLIC_ENCRYPTION_SALT. Cannot securely serve data."
           );
-          return NextResponse.json(decrypted, {
-            status: response.status,
-            headers: sanitizedHeaders,
-          });
-        } else {
-          return NextResponse.json(json, {
-            status: response.status,
-            headers: sanitizedHeaders,
-          });
+          return NextResponse.json(
+            { message: "Server Configuration Error: Missing Encryption Keys" },
+            { status: 500 }
+          );
         }
+
+        const clientEncrypted = await encryptPayload(
+          dataToEncrypt,
+          CLIENT_ENCRYPTION_SECRET,
+          CLIENT_ENCRYPTION_SALT
+        );
+
+        if (!clientEncrypted) {
+          console.error("Failed to re-encrypt data for client.");
+          return NextResponse.json(
+            { message: "Internal Server Error: Encryption Failed" },
+            { status: 500 }
+          );
+        }
+
+        return NextResponse.json(
+          { encrypted: clientEncrypted },
+          {
+            status: response.status,
+            headers: sanitizedHeaders,
+          }
+        );
       } catch (error: unknown) {
-        if (error instanceof Error) {
-          return new NextResponse(text, {
-            status: response.status,
-            headers: sanitizedHeaders,
-          });
-        } else {
-          console.error("Failed to parse JSON:", error);
-        }
+        console.error("Proxy processing error:", error);
+        // If parsing fails, return original text
+        return new NextResponse(text, {
+          status: response.status,
+          headers: sanitizedHeaders,
+        });
       }
     }
 

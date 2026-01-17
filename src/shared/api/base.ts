@@ -43,7 +43,7 @@ export async function fetchAPI<T>(
     throw new Error("Invalid JSON response");
   }
 
-  if (IS_SERVER && data && typeof data === "object" && "encrypted" in data) {
+  if (data && typeof data === "object" && "encrypted" in data) {
     try {
       return (await decryptPayload(
         data.encrypted,
@@ -51,7 +51,7 @@ export async function fetchAPI<T>(
         ENCRYPTION_SALT
       )) as T;
     } catch (e) {
-      console.error("Server-side decryption failed for endpoint:", endpoint, e);
+      console.error("Decryption failed for endpoint:", endpoint, e);
       throw e;
     }
   }
