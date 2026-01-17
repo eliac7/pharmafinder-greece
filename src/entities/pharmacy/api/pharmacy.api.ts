@@ -1,0 +1,110 @@
+import { fetchAPI } from "@/shared/api/base";
+import type {
+  Pharmacy,
+  PharmaciesWithCount,
+  PharmacySitemapItem,
+} from "../model/types";
+
+export const pharmacyApi = {
+  /**
+   * For the Map & "Find Near Me" (Client-Side)
+   */
+  /**
+   * For the Map & "Find Near Me" (Client-Side)
+   */
+  getNearbyOnDuty: async (
+    lat: number,
+    lng: number,
+    radius = 5,
+    time: "now" | "today" | "tomorrow" = "now"
+  ): Promise<PharmaciesWithCount> => {
+    const params = new URLSearchParams({
+      latitude: lat.toString(),
+      longitude: lng.toString(),
+      radius: radius.toString(),
+      time,
+    });
+    const res = await fetchAPI<PharmaciesWithCount | []>(
+      `/nearby_pharmacies/on_duty?${params}`
+    );
+
+    if (Array.isArray(res)) {
+      return {
+        count: 0,
+        data: [],
+        success: true,
+        message: "No pharmacies found within this radius",
+      };
+    }
+    return res;
+  },
+
+  /**
+   * For SSR City Pages (with optional user location for distance)
+   */
+  getCityPharmacies: async (
+    citySlug: string,
+    time: "now" | "today" | "tomorrow" = "now",
+    lat?: number,
+    lng?: number
+  ) => {
+    let url = `/city?city_slug=${citySlug}&city_name=${citySlug}&time=${time}`;
+    if (lat && lng) {
+      url += `&latitude=${lat}&longitude=${lng}`;
+    }
+    const res = await fetchAPI<{ data: Pharmacy[] }>(url);
+    return res.data;
+  },
+
+  /**
+   * Global Search
+   */
+  search: async (query: string, lat?: number, lng?: number) => {
+    if (query.length < 3) return [];
+
+    let url = `/pharmacies/search?q=${encodeURIComponent(query)}`;
+    if (lat && lng) url += `&latitude=${lat}&longitude=${lng}`;
+
+    const res = await fetchAPI<{ data: Pharmacy[] }>(url);
+    return res.data;
+  },
+
+  /**
+   * Details
+   */
+  getPharmacyDetails: async (id: number) => {
+    return fetchAPI<Pharmacy>(`/pharmacies/${id}`, {
+      next: { revalidate: 86400 }, //24 hour
+    });
+  },
+
+  /**
+   * Report a pharmacy issue
+   */
+  reportPharmacy: async (
+    pharmacyId: number,
+    data: {
+      report_type: string;
+      description: string;
+      turnstile_token: string;
+    }
+  ) => {
+    return fetchAPI<{ success: boolean }>(`/pharmacies/${pharmacyId}/report`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  /**
+   * Sitemap Data (Lightweight)
+   */
+  getSitemapData: async () => {
+    const res = await fetchAPI<{ data: PharmacySitemapItem[] }>(
+      "/pharmacies/sitemap",
+      {
+        next: { revalidate: 86400 }, // 24 hours
+      }
+    );
+    return res.data;
+  },
+};
