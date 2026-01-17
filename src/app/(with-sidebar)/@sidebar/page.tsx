@@ -3,8 +3,6 @@
 import { Crosshair, MapPin, Heart } from "lucide-react";
 import { Suspense, useState } from "react";
 
-import { RadiusChips } from "@/features/find-pharmacies/ui/radius-chips";
-import { TimeFilterChips } from "@/features/find-pharmacies/ui/time-filter-chips";
 import { useLocateMe } from "@/features/locate-user/model/use-locate-me";
 import { SearchCity } from "@/features/search-city/ui/search-city";
 import { FavoritesList } from "@/features/favorites";
@@ -20,77 +18,16 @@ import {
   SidebarHeader,
   SidebarSeparator,
 } from "@/shared/ui/sidebar";
-import { Skeleton } from "@/shared/ui/skeleton";
 import { PharmacyList } from "@/widgets/sidebar/ui/pharmacy-list";
 import {
   SidebarBranding,
   SidebarCopyright,
-} from "@/widgets/sidebar/ui/sidebar-shared";
+  SidebarFilters,
+  SidebarFiltersSkeleton,
+  SidebarListSkeleton,
+} from "@/widgets/sidebar";
 
 type SidebarTab = "nearby" | "favorites";
-
-function FiltersSkeleton() {
-  return (
-    <div className="mt-4 px-1 space-y-3">
-      <div>
-        <Skeleton className="h-3 w-12 mb-3" />
-        <div className="flex gap-2">
-          <Skeleton className="h-8 w-16 rounded-full" />
-          <Skeleton className="h-8 w-16 rounded-full" />
-          <Skeleton className="h-8 w-20 rounded-full" />
-        </div>
-      </div>
-      <div>
-        <Skeleton className="h-3 w-24 mb-3" />
-        <div className="flex gap-2">
-          <Skeleton className="h-8 w-12 rounded-full" />
-          <Skeleton className="h-8 w-12 rounded-full" />
-          <Skeleton className="h-8 w-14 rounded-full" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ListSkeleton() {
-  return (
-    <div className="flex flex-col gap-3 py-2">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="flex p-4 rounded-2xl bg-card gap-4">
-          <Skeleton className="size-12 rounded-xl shrink-0" />
-          <div className="flex-1 space-y-2">
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-3 w-1/2" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function SidebarFilters() {
-  const { coordinates } = useLocateMe();
-  const hasLocation = coordinates !== null;
-
-  if (!hasLocation) return null;
-
-  return (
-    <div className="mt-4 px-1 space-y-3">
-      <div>
-        <span className="text-xs font-medium text-muted-foreground mb-3 block">
-          Χρόνος
-        </span>
-        <TimeFilterChips />
-      </div>
-      <div>
-        <span className="text-xs font-medium text-muted-foreground mb-3 block">
-          Ακτίνα Αναζήτησης
-        </span>
-        <RadiusChips />
-      </div>
-    </div>
-  );
-}
 
 export default function SidebarPage() {
   const { locate, isLoading } = useLocateMe();
@@ -126,7 +63,7 @@ export default function SidebarPage() {
 
         <SidebarSeparator className="mt-4" />
 
-        <Suspense fallback={<FiltersSkeleton />}>
+        <Suspense fallback={<SidebarFiltersSkeleton />}>
           <SidebarFilters />
         </Suspense>
 
@@ -161,7 +98,7 @@ export default function SidebarPage() {
       <SidebarContent className="px-4">
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupContent>
-            <Suspense fallback={<ListSkeleton />}>
+            <Suspense fallback={<SidebarListSkeleton />}>
               {activeTab === "nearby" ? <PharmacyList /> : <FavoritesList />}
             </Suspense>
           </SidebarGroupContent>
