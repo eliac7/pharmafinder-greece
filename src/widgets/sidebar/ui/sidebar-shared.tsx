@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export function SidebarBranding() {
   return (
-    <div className="flex items-center gap-3 mb-6">
+    <div className="flex justify-center md:justify-start items-center gap-3 mb-6">
       <Link href="/" className="flex items-center gap-3">
         <div className="relative size-10 shrink-0">
           <Image

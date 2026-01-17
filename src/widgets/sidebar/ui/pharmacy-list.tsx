@@ -11,9 +11,9 @@ import {
   TIME_OPTIONS,
   DEFAULT_RADIUS,
   type TimeFilter,
-  PharmacyCard,
 } from "@/entities/pharmacy";
 import { SystemStatusCard, QuickCityJump } from "@/widgets/sidebar";
+import { PharmacyListContent } from "./pharmacy-list-content";
 
 export function PharmacyList() {
   const { data, isLoading, error, refetch, isFetching } = useNearbyPharmacies();
@@ -100,35 +100,16 @@ export function PharmacyList() {
   const count = data.count;
 
   return (
-    <ScrollArea className="flex-1">
-      <div className="flex items-center justify-between py-3 px-1">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center size-8 rounded-lg bg-primary/10">
-            <MapPin className="size-4 text-primary" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold text-foreground">
-              {count} {count === 1 ? "φαρμακείο" : "φαρμακεία"}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              σε ακτίνα {radius}km
-            </span>
-          </div>
-        </div>
-        {isFetching && (
+    <PharmacyListContent
+      pharmacies={data.data}
+      count={count}
+      timeFilter={timeFilter}
+      subtitle={`Σε ακτίνα ${radius}km`}
+      headerRight={
+        isFetching ? (
           <RefreshCw className="size-4 text-muted-foreground animate-spin" />
-        )}
-      </div>
-
-      <div className="flex flex-col gap-3 pb-2">
-        {data.data.map((pharmacy) => (
-          <PharmacyCard
-            key={pharmacy.id}
-            pharmacy={pharmacy}
-            timeFilter={timeFilter}
-          />
-        ))}
-      </div>
-    </ScrollArea>
+        ) : null
+      }
+    />
   );
 }

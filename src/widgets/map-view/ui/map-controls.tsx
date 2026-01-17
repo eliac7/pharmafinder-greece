@@ -30,7 +30,7 @@ export function MapControls({
   };
 
   return (
-    <div className="absolute bottom-20 right-4 flex flex-col gap-2 z-10 md:bottom-8">
+    <div className="absolute bottom-28 right-4 flex flex-col gap-2 z-10 md:bottom-8">
       <Tooltip>
         <TooltipTrigger asChild>
           <Button

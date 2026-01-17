@@ -16,16 +16,21 @@ import {
 interface PharmacyCardProps {
   pharmacy: Pharmacy;
   timeFilter: TimeFilter;
+  onClick?: () => void;
 }
 
-export function PharmacyCard({ pharmacy, timeFilter }: PharmacyCardProps) {
+export function PharmacyCard({
+  pharmacy,
+  timeFilter,
+  onClick
+}: PharmacyCardProps) {
   const flyTo = useMapStore((state) => state.flyTo);
 
   const { status, statusColor, minutesUntilClose } = getPharmacyStatus(
     pharmacy.data_hours,
     pharmacy.open_until_tomorrow ?? null,
     pharmacy.next_day_close_time ?? null,
-    timeFilter
+    timeFilter,
   );
 
   if (status === "closed" && timeFilter === "now") return null;
@@ -35,6 +40,7 @@ export function PharmacyCard({ pharmacy, timeFilter }: PharmacyCardProps) {
   const isScheduled = status === "scheduled";
 
   const handleCardClick = () => {
+    onClick?.()
     if (pharmacy.latitude && pharmacy.longitude) {
       flyTo([pharmacy.longitude, pharmacy.latitude], 16);
     }
@@ -57,8 +63,8 @@ export function PharmacyCard({ pharmacy, timeFilter }: PharmacyCardProps) {
             isClosingSoon
               ? "bg-amber-500/10 text-amber-600"
               : isOpen
-              ? "bg-primary/10 text-primary"
-              : "bg-muted text-muted-foreground"
+                ? "bg-primary/10 text-primary"
+                : "bg-muted text-muted-foreground"
           )}
         >
           <Cross className="size-6" />
@@ -104,8 +110,8 @@ export function PharmacyCard({ pharmacy, timeFilter }: PharmacyCardProps) {
                 {isClosingSoon
                   ? `Κλείνει σε ${minutesUntilClose} λεπτά`
                   : isOpen
-                  ? "Ανοιχτό"
-                  : "Κλειστό"}
+                    ? "Ανοιχτό"
+                    : "Κλειστό"}
               </span>
             )}
             {pharmacy.data_hours && pharmacy.data_hours.length > 0 && (

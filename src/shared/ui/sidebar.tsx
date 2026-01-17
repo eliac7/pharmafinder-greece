@@ -1,25 +1,23 @@
 "use client";
 
-import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
+import * as React from "react";
 
 import { useIsMobile } from "@/shared/lib/hooks/use-mobile";
 import { cn } from "@/shared/lib/hooks/utils";
 
 import { Button } from "@/shared/ui/button";
-import { Input } from "@/shared/ui/input";
-import { Separator } from "@/shared/ui/separator";
 import {
   Drawer,
-  DrawerContent,
-  DrawerTitle,
-  DrawerDescription,
   DRAWER_SNAP_POINTS,
-  DRAWER_DEFAULT_SNAP,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle
 } from "@/shared/ui/drawer";
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
+import { Input } from "@/shared/ui/input";
+import { Separator } from "@/shared/ui/separator";
 import { Skeleton } from "@/shared/ui/skeleton";
 import {
   Tooltip,
@@ -27,6 +25,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/shared/ui/tooltip";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -43,6 +42,8 @@ type SidebarContextProps = {
   setOpenMobile: (open: boolean) => void;
   isMobile: boolean;
   toggleSidebar: () => void;
+  snapPoint: number | string | null;
+  setSnapPoint: (point: number | string | null) => void;
 };
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null);
@@ -71,6 +72,9 @@ function SidebarProvider({
 }) {
   const isMobile = useIsMobile();
   const [openMobile, setOpenMobile] = React.useState(true);
+  const [snapPoint, setSnapPoint] = React.useState<number | string | null>(
+    null
+  );
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -125,8 +129,20 @@ function SidebarProvider({
       openMobile,
       setOpenMobile,
       toggleSidebar,
+      snapPoint,
+      setSnapPoint,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
+    [
+      state,
+      open,
+      setOpen,
+      isMobile,
+      openMobile,
+      setOpenMobile,
+      toggleSidebar,
+      snapPoint,
+      setSnapPoint,
+    ]
   );
 
   return (
@@ -166,7 +182,7 @@ function Sidebar({
   variant?: "sidebar" | "floating" | "inset";
   collapsible?: "offcanvas" | "icon" | "none";
 }) {
-  const { isMobile, state } = useSidebar();
+  const { isMobile, state, snapPoint,  } = useSidebar();
 
   if (collapsible === "none") {
     return (
@@ -189,7 +205,7 @@ function Sidebar({
         open={true}
         dismissible={false}
         snapPoints={DRAWER_SNAP_POINTS}
-        activeSnapPoint={DRAWER_DEFAULT_SNAP}
+        activeSnapPoint={snapPoint ?? undefined}
         modal={false}
       >
         <DrawerContent
@@ -247,7 +263,7 @@ function Sidebar({
           variant === "floating" || variant === "inset"
             ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
             : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l",
-          className
+          className,
         )}
         {...props}
       >
@@ -301,7 +317,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
       onClick={toggleSidebar}
       title="Toggle Sidebar"
       className={cn(
-        "hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] sm:flex",
+        "hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-0.5 sm:flex",
         "in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize",
         "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
         "hover:group-data-[collapsible=offcanvas]:bg-sidebar group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full",
@@ -734,5 +750,5 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
-  useSidebar,
+  useSidebar
 };

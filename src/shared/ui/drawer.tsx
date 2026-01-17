@@ -5,8 +5,8 @@ import { Drawer as DrawerPrimitive } from "vaul";
 
 import { cn } from "@/shared/lib/hooks/utils";
 
-const DRAWER_SNAP_POINTS = [0.15, 0.5, 1];
-const DRAWER_DEFAULT_SNAP = 0.15;
+const DRAWER_SNAP_POINTS = [0.18, 0.5, 1];
+const DRAWER_DEFAULT_SNAP = 0.18;
 
 function Drawer({
   shouldScaleBackground = false,
