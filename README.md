@@ -98,10 +98,24 @@ The project implements **Test-Driven Development (TDD)** principles using a mode
     ```
 
 3.  Set up environment variables:
-    Create a `.env.local` file in the root directory:
+    Create a `.env.local` file in the root directory (use `.env.example` as a reference):
 
     ```env
+    # App
     NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+    # Backend API
+    API_BASE_URL=http://localhost:8000
+    API_SECRET_KEY=your_api_secret_key
+
+    # Security
+    ENCRYPTION_SECRET=your_encryption_secret
+    ENCRYPTION_SALT=your_encryption_salt
+
+    # Services
+    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_key_here
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY=your_site_key
+    NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
     ```
 
 4.  Run the development server:
