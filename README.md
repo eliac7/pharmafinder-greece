@@ -10,6 +10,7 @@ PharmaFinder is a modern, high-performance web application designed to help user
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
 ![Next.js](https://img.shields.io/badge/Next.js-16.1-black)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38b2ac)
+![Jest](https://img.shields.io/badge/Jest-30.2-C21325?logo=jest&logoColor=white)
 
 ## ✨ Key Features
 
@@ -61,6 +62,17 @@ src/
 
 This structure allows for better scalability and easier refactoring as the application grows.
 
+## 🧪 Quality & Testing
+
+The project implements **Test-Driven Development (TDD)** principles using a modern testing stack:
+
+- **[Jest](https://jestjs.io/)**: Robust JavaScript testing framework.
+- **[React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)**: Standard for testing React components.
+- **Automated Verification**:
+  - **Unit Tests**: Coverage for complex business logic (e.g., pharmacy status calculations).
+  - **Server Component Tests**: Integration tests for Next.js Server Components, verifying data fetching, metadata generation, and routing logic.
+  - **Mocking Strategy**: Isolated testing of business logic from external APIs and Next.js internal modules.
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -106,6 +118,7 @@ This structure allows for better scalability and easier refactoring as the appli
 
 - `bun dev`: Starts the development server.
 - `bun build`: Builds the application for production.
+- `bun test`: Runs the Jest test suite.
 - `bun start`: Starts the production server.
 - `bun lint`: Runs ESLint to check for code quality issues.
 
