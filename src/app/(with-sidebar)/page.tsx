@@ -1,5 +1,5 @@
-import { MapWithControls } from "@/widgets/map-view";
 import { getLocationFromCookies } from "@/features/locate-user/lib/location-cookie";
+import { HomeMap } from "./home-map";
 
 const DEFAULT_CENTER: [number, number] = [23.7275, 37.9838]; // Athens
 
@@ -11,7 +11,7 @@ export default async function Page() {
 
   return (
     <>
-      <MapWithControls center={center} zoom={13} minZoom={10} />
+      <HomeMap center={center} zoom={13} minZoom={10} />
     </>
   );
 }

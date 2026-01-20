@@ -1,7 +1,17 @@
+"use client";
+
 import { type ReactNode } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/shared/ui/sidebar";
-import { MapWithControls } from "@/widgets/map-view";
 import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
+import dynamic from "next/dynamic";
+
+const MapWithControls = dynamic(
+  () => import("./map-with-controls").then((mod) => mod.MapWithControls),
+  {
+    ssr: false,
+    loading: () => <div className="h-full w-full bg-muted/20 animate-pulse" />,
+  }
+);
 
 interface MapPageLayoutProps {
   children: ReactNode;

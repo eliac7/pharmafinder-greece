@@ -1,12 +1,10 @@
 "use client";
 
 import { Map } from "@/shared/ui/map";
-import {
-  MapControls,
-  UserLocationMarker,
-  PharmacyMarkers,
-  MapUpdater,
-} from "@/widgets/map-view";
+import { MapControls } from "./map-controls";
+import { UserLocationMarker } from "./user-location-marker";
+import { PharmacyMarkers } from "./pharmacy-markers";
+import { MapUpdater } from "./map-updater";
 import { ManualLocationAdjuster } from "./manual-location-adjuster";
 import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
 import type MapLibreGL from "maplibre-gl";

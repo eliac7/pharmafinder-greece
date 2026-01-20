@@ -4,7 +4,15 @@ import { useEffect, useRef } from "react";
 import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
 import { useCityPharmaciesStore } from "@/entities/pharmacy/model/use-city-pharmacies";
 import { useLocationStore } from "@/features/locate-user";
-import { MapWithControls } from "@/widgets/map-view";
+import dynamic from "next/dynamic";
+
+const MapWithControls = dynamic(
+  () => import("@/widgets/map-view").then((mod) => mod.MapWithControls),
+  {
+    ssr: false,
+    loading: () => <div className="h-full w-full bg-muted/20 animate-pulse" />,
+  }
+);
 
 interface CityPharmaciesMapProps {
   initialPharmacies: Pharmacy[];
