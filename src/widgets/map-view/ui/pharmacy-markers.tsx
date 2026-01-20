@@ -287,7 +287,7 @@ export function PharmacyMarkers({
                       </a>
                     </div>
 
-                    <div className="flex items-center justify-between pt-3 border-t border-border mt-1">
+                    <div className="flex items-center justify-between pt-3 border-t border-border mt-1 gap-2">
                       <a
                         href={`/farmakeia/${pharmacy.id}`}
                         className="text-sm font-medium text-primary hover:underline transition-colors"
