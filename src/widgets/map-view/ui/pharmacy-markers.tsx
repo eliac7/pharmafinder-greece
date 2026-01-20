@@ -266,7 +266,7 @@ export function PharmacyMarkers({
                     <div className="flex items-start gap-2.5 text-sm text-muted-foreground">
                       <MapPin className="size-4 mt-0.5 shrink-0" />
                       <span className="leading-tight">
-                        {pharmacy.address}, {pharmacy.city}
+                        {pharmacy.address}
                       </span>
                     </div>
 
