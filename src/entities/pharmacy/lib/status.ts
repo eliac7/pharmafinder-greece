@@ -75,13 +75,40 @@ export function getPharmacyStatus(
 
   // For "now" filter, check real-time status
   const now = new Date();
-  const currentHour = now.getHours();
-  const currentMinute = now.getMinutes();
+  
+  const formatter = new Intl.DateTimeFormat("el-GR", {
+    timeZone: "Europe/Athens",
+    hour12: false,
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const parts = formatter.formatToParts(now);
+  const getPart = (type: string) =>
+    parts.find((p) => p.type === type)?.value || "";
+
+  const currentYear = getPart("year");
+  const currentMonth = getPart("month");
+  const currentDay = getPart("day");
+  const currentDateStr = `${currentYear}-${currentMonth}-${currentDay}`;
+
+  const currentHour = parseInt(getPart("hour"), 10);
+  const currentMinute = parseInt(getPart("minute"), 10);
   const currentTotalMinutes = currentHour * 60 + currentMinute;
 
   // Check if currently within any open time slot
   for (const slot of hours) {
     if (!slot.open_time || !slot.close_time) continue;
+
+    // If slot has a date, ensure it matches today's Greek date
+    // This prevents matching tomorrow's early morning slots (e.g., 00:00-08:00) against today's time
+    if (slot.date && slot.date !== currentDateStr) {
+      continue;
+    }
 
     const [openHour, openMinute] = slot.open_time.split(":").map(Number);
     const [closeHour, closeMinute] = slot.close_time.split(":").map(Number);

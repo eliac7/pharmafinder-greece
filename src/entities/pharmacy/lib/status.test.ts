@@ -27,7 +27,9 @@ describe('Pharmacy Status Logic', () => {
     // Helper to mock current time
     const mockTime = (hour: number, minute: number) => {
       jest.useFakeTimers();
-      const date = new Date(2026, 0, 1, hour, minute, 0); // Jan 1st 2026
+      const paddedHour = hour.toString().padStart(2, "0");
+      const paddedMinute = minute.toString().padStart(2, "0");
+      const date = new Date(`2026-01-01T${paddedHour}:${paddedMinute}:00+02:00`);
       jest.setSystemTime(date);
     };
 
