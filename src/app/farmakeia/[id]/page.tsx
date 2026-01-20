@@ -1,27 +1,16 @@
 export const revalidate = 3600;
-import {
-  getPharmacyStatus,
-  pharmacyApi,
-  type PharmacyStatusResult,
-} from "@/entities/pharmacy";
+import { getPharmacyStatus, pharmacyApi } from "@/entities/pharmacy";
 import { ReportDialog, SharePharmacyDialog } from "@/features/pharmacy-detail";
 import { FavoriteButton } from "@/features/favorites";
-import { cn } from "@/shared";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Map, MapMarker, MarkerContent } from "@/shared/ui/map";
-import {
-  ArrowLeft,
-  Compass,
-  MapPin,
-  Navigation,
-  Phone,
-  Star,
-} from "lucide-react";
+import { ArrowLeft, MapPin, Navigation, Phone, Star } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PharmacyMapMarkerContent } from "./pharmacy-map-marker";
+import { PharmacyHours, PharmacyStatusBadge } from "@/features/pharmacy-detail";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -39,68 +28,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${pharmacy.name} | Φαρμακείο ${pharmacy.city}`,
     description: `Τηλέφωνο: ${pharmacy.phone}. ${pharmacy.address}.`,
   };
-}
-
-function PharmacyStatusBadge({
-  status,
-  minutes,
-}: {
-  status: PharmacyStatusResult["status"];
-  minutes: number | null;
-}) {
-  const config = {
-    open: {
-      label: "Ανοιχτό Τώρα",
-      className:
-        "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/25",
-      dot: "bg-emerald-500",
-    },
-    "closing-soon": {
-      label: `Κλείνει σε ${minutes}'`,
-      className:
-        "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20 hover:bg-amber-500/25",
-      dot: "bg-amber-500",
-    },
-    scheduled: {
-      label: "Προγραμματισμένο",
-      className:
-        "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/20 hover:bg-blue-500/25",
-      dot: "bg-blue-500",
-    },
-    closed: {
-      label: "Κλειστό",
-      className:
-        "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20 hover:bg-rose-500/25",
-      dot: "bg-rose-500",
-    },
-  };
-
-  const current = config[status] || config.closed;
-
-  return (
-    <Badge
-      variant="outline"
-      className={cn("gap-2 px-3 py-1.5 text-sm", current.className)}
-    >
-      <span className="relative flex h-2 w-2">
-        {status === "open" && (
-          <span
-            className={cn(
-              "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
-              current.dot
-            )}
-          />
-        )}
-        <span
-          className={cn(
-            "relative inline-flex rounded-full h-2 w-2",
-            current.dot
-          )}
-        />
-      </span>
-      {current.label}
-    </Badge>
-  );
 }
 
 export default async function PharmacyPage({ params }: Props) {
@@ -161,13 +88,10 @@ export default async function PharmacyPage({ params }: Props) {
               </h1>
               <FavoriteButton pharmacyId={pharmacy.id} />
             </div>
-            <div className="flex items-center gap-2">
-              <MapPin className="size-4 text-muted-foreground" />
-              <p className="text-lg text-muted-foreground">
-                {pharmacy.address},{" "}
-                <span className="text-foreground font-medium">
-                  {pharmacy.city}
-                </span>
+            <div className="flex items-start gap-2"> 
+              <MapPin className="size-5 text-muted-foreground shrink-0 mt-1" />
+              <p className="text-lg text-muted-foreground leading-snug">
+                {pharmacy.address}
               </p>
             </div>
             <PharmacyStatusBadge
@@ -215,19 +139,7 @@ export default async function PharmacyPage({ params }: Props) {
           </div>
 
           <div className="space-y-4">
-            <div className="p-5 rounded-3xl bg-card border shadow-sm space-y-4">
-              <div className="flex items-start gap-4">
-                <div className="p-3 rounded-2xl bg-primary/10 text-primary">
-                  <Compass className="size-6" />
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">Τοποθεσία</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {pharmacy.address}, {pharmacy.city}, {pharmacy.prefecture}
-                  </p>
-                </div>
-              </div>
-            </div>
+          <PharmacyHours hours={pharmacy.data_hours ?? []} />
 
             {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && (
               <div className="relative group rounded-3xl overflow-hidden border bg-muted aspect-video">
@@ -269,6 +181,7 @@ export default async function PharmacyPage({ params }: Props) {
             center={[pharmacy.longitude, pharmacy.latitude]}
             zoom={15}
             attributionControl={false}
+            interactive={false}
           >
             <MapMarker
               longitude={pharmacy.longitude}

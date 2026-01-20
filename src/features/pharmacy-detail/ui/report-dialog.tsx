@@ -33,7 +33,7 @@ export function ReportDialog({ pharmacyId, pharmacyName }: ReportDialogProps) {
           Αναφορά Προβλήματος
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-106.25">
         <DialogHeader>
           <DialogTitle>Αναφορά Προβλήματος</DialogTitle>
           <DialogDescription>
