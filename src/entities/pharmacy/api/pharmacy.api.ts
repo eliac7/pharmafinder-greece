@@ -52,7 +52,12 @@ export const pharmacyApi = {
     if (lat && lng) {
       url += `&latitude=${lat}&longitude=${lng}`;
     }
-    const res = await fetchAPI<{ data: Pharmacy[] }>(url);
+    const res = await fetchAPI<{ data: Pharmacy[] }>(url, {
+      next: { 
+        revalidate: 3600, // 1 hour
+        tags: [`city-pharmacies-${citySlug}`] 
+      }
+    });
     return res.data;
   },
 
@@ -74,7 +79,10 @@ export const pharmacyApi = {
    */
   getPharmacyDetails: async (id: number) => {
     return fetchAPI<Pharmacy>(`/pharmacies/${id}`, {
-      next: { revalidate: 86400 }, //24 hour
+      next: { 
+        revalidate: 86400, // 24 hour
+        tags: [`pharmacy-${id}`]
+      },
     });
   },
 
@@ -102,7 +110,10 @@ export const pharmacyApi = {
     const res = await fetchAPI<{ data: PharmacySitemapItem[] }>(
       "/pharmacies/sitemap",
       {
-        next: { revalidate: 86400 }, // 24 hours
+        next: { 
+          revalidate: 86400, // 24 hours
+          tags: ["sitemap-pharmacies"]
+        }
       }
     );
     return res.data;

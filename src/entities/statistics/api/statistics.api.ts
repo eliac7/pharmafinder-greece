@@ -7,7 +7,10 @@ export const statisticsApi = {
    */
   getStatistics: async () => {
     return fetchAPI<Statistics>("/statistics", {
-      next: { revalidate: 3600 },
+      next: { 
+        revalidate: 3600,
+        tags: ["statistics"]
+      },
     });
   },
 };
