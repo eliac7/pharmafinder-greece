@@ -23,6 +23,16 @@ PharmaFinder is a modern, high-performance web application designed to help user
 - **📱 Mobile First**: Responsive design optimized for all device sizes.
 - **⚡ High Performance**: Utilizing **TanStack Query** for efficient data fetching and caching.
 
+## 📸 Screenshots
+
+### Desktop
+
+![Desktop View](public/screenshots/desktop.png)
+
+### Mobile
+
+![Mobile View](public/screenshots/mobile.png)
+
 ## 🛠️ Tech Stack
 
 This project is engineered with a focus on scalability, maintainability, and performance.
