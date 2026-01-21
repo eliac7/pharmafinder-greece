@@ -16,11 +16,6 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export const robots = {
-  index: false,
-  follow: true,
-};
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const timeFilter = "now";
@@ -51,9 +46,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: {
-      canonical,
-    },
+    robots: { index: false, follow: true },
+    alternates: { canonical },
     openGraph: {
       title,
       description,
