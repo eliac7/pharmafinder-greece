@@ -46,7 +46,10 @@ export function SearchCity() {
       <Command className="overflow-visible bg-transparent" shouldFilter={false}>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverAnchor>
-            <div className="flex items-center w-full rounded-full h-12 bg-sidebar-accent border border-sidebar-border focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all duration-200 overflow-hidden px-3">
+            <div
+              data-popover-anchor
+              className="flex items-center w-full rounded-full h-12 bg-sidebar-accent border border-sidebar-border focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all duration-200 overflow-hidden px-3"
+            >
               {showLoading ? (
                 <Loader2 className="size-5 shrink-0 text-muted-foreground mr-2 animate-spin" />
               ) : (
@@ -65,6 +68,12 @@ export function SearchCity() {
             className="p-0 w-(--radix-popover-trigger-width)"
             align="start"
             onOpenAutoFocus={(e) => e.preventDefault()}
+            onInteractOutside={(event) => {
+              const target = event.target as HTMLElement | null;
+              if (target?.closest("[data-popover-anchor]")) {
+                event.preventDefault();
+              }
+            }}
           >
             <CommandList>
               {!shouldSearch && (
