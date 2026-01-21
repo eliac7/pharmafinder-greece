@@ -16,6 +16,11 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+export const robots = {
+  index: false,
+  follow: true,
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const timeFilter = "now";
@@ -72,7 +77,7 @@ export default async function EfimeriesPage({ params }: Props) {
       slug,
       timeFilter,
       userLocation?.latitude,
-      userLocation?.longitude
+      userLocation?.longitude,
     ),
   ]);
 

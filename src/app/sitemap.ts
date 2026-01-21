@@ -20,7 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const cities = await cityApi.getCities();
     if (cities && Array.isArray(cities) && cities.length > 0) {
       const cityRoutes: MetadataRoute.Sitemap = cities.map((city) => ({
-        url: `${baseUrl}/efimeries/${city.slug}`,
+        url: `${baseUrl}/efimeries/${city.slug}/today`,
         lastModified: new Date(),
         changeFrequency: "daily",
         priority: 0.9,
@@ -39,14 +39,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             : new Date(),
           changeFrequency: "weekly",
           priority: 0.6,
-        })
+        }),
       );
       routes.push(...pharmacyRoutes);
     }
   } catch (error) {
     logger.error(
       { error, context: "sitemap" },
-      "Failed to generate full sitemap"
+      "Failed to generate full sitemap",
     );
   }
 

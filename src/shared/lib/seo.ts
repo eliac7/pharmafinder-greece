@@ -39,7 +39,6 @@ export function buildSeoDescription({
 
 export function buildCanonicalUrl(slug: string, time: TimeFilter) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL!;
-  const path =
-    time === "now" ? `/efimeries/${slug}` : `/efimeries/${slug}/${time}`;
-  return `${baseUrl}${path}`;
+  const canonicalTime = time === "now" ? "today" : time;
+  return `${baseUrl}/efimeries/${slug}/${canonicalTime}`;
 }

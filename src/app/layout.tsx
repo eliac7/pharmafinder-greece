@@ -19,6 +19,8 @@ export const metadata: Metadata = {
       type: "image/x-icon",
     },
   },
+  manifest: "/manifest.webmanifest",
+  themeColor: "#aec7c1",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
   openGraph: {
     type: "website",
