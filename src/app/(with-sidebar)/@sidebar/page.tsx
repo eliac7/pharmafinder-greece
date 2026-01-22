@@ -93,10 +93,12 @@ export default function SidebarPage() {
           <div className="w-px h-6 bg-border shrink-0 mx-1" />
 
           {/* Direct rendering of chips for mobile, skipping SidebarFilters wrapper to avoid hydration mismatch if we change it later */}
-          <div className="contents">
-            <TimeFilterChips />
-            <RadiusChips />
-          </div>
+          <Suspense fallback={null}>
+            <div className="contents">
+              <TimeFilterChips />
+              <RadiusChips />
+            </div>
+          </Suspense>
         </div>
       </SidebarHeader>
 

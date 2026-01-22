@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/app/providers";
@@ -20,7 +20,6 @@ export const metadata: Metadata = {
     },
   },
   manifest: "/manifest.webmanifest",
-  themeColor: "#aec7c1",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
   openGraph: {
     type: "website",
@@ -29,6 +28,10 @@ export const metadata: Metadata = {
     siteName: "PharmaFinder",
     description: "Βρείτε εφημερεύοντα φαρμακεία κοντά σας πιο εύκολα από ποτέ!",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#aec7c1",
 };
 
 export default function RootLayout({
