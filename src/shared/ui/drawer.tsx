@@ -5,7 +5,7 @@ import { Drawer as DrawerPrimitive } from "vaul";
 
 import { cn } from "@/shared/lib/hooks/utils";
 
-const DRAWER_SNAP_POINTS = [0.18, 0.5, 1];
+const DRAWER_SNAP_POINTS = [0.15, 1];
 const DRAWER_DEFAULT_SNAP = 0.18;
 
 function Drawer({
@@ -48,7 +48,7 @@ function DrawerOverlay({
       data-slot="drawer-overlay"
       className={cn(
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
-        className
+        className,
       )}
       {...props}
     />
@@ -95,7 +95,7 @@ function DrawerHandle({ className }: { className?: string }) {
         "group-data-[vaul-drawer-direction=top]/drawer-content:block",
         "group-data-[vaul-drawer-direction=left]/drawer-content:hidden",
         "group-data-[vaul-drawer-direction=right]/drawer-content:hidden",
-        className
+        className,
       )}
     />
   );
@@ -107,7 +107,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="drawer-header"
       className={cn(
         "flex flex-col gap-0.5 p-4 group-data-[vaul-drawer-direction=bottom]/drawer-content:text-center group-data-[vaul-drawer-direction=top]/drawer-content:text-center md:gap-1.5 md:text-left",
-        className
+        className,
       )}
       {...props}
     />

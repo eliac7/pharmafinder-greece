@@ -10,14 +10,18 @@ const LABELS: Record<TimeFilter, string> = {
   tomorrow: "Αύριο",
 };
 
-export function TimeFilterChips() {
+export function TimeFilterChips({
+  fullWidth = false,
+}: {
+  fullWidth?: boolean;
+}) {
   const [time, setTime] = useQueryState<TimeFilter>(
     "time",
     parseAsStringLiteral(TIME_OPTIONS).withDefault("now")
   );
 
   return (
-    <div className="flex items-center gap-2 w-full">
+    <div className="contents">
       {TIME_OPTIONS.map((option) => {
         const isSelected = time === option;
         return (
@@ -25,11 +29,12 @@ export function TimeFilterChips() {
             key={option}
             onClick={() => setTime(option)}
             className={cn(
-              "flex-1 px-4 py-1.5 rounded-full text-sm font-medium transition-all",
+              "px-4 py-1.5 rounded-full text-sm font-medium transition-all",
+              fullWidth ? "flex-1 w-full text-center" : "whitespace-nowrap",
               "border focus:outline-none focus:ring-2 focus:ring-primary/20",
               isSelected
                 ? "bg-primary text-primary-foreground border-primary"
-                : "bg-transparent text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"
+                : "bg-sidebar-accent/50 text-muted-foreground border-border hover:bg-sidebar-accent hover:text-foreground"
             )}
           >
             {LABELS[option]}

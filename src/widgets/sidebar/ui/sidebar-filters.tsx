@@ -1,32 +1,13 @@
 "use client";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { RadiusChips } from "@/features/find-pharmacies/ui/radius-chips";
 import { TimeFilterChips } from "@/features/find-pharmacies/ui/time-filter-chips";
-import { useLocateMe } from "@/features/locate-user/model/use-locate-me";
-import { useIsMobile } from "@/shared/lib/hooks/use-mobile";
 
 export function SidebarFilters() {
-  const { coordinates } = useLocateMe();
-  const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(true);
-  const hasLocation = coordinates !== null;
-
-  useEffect(() => {
-    if (isMobile) {
-      setTimeout(() => {
-        setIsOpen(false);
-      }, 100);
-    } else {
-      setTimeout(() => {
-        setIsOpen(true);
-      }, 100);
-    }
-  }, [isMobile, hasLocation]);
-
-  if (!hasLocation) return null;
 
   return (
     <div className="mt-4 px-1 space-y-3">
@@ -48,13 +29,17 @@ export function SidebarFilters() {
             <span className="text-xs font-medium text-muted-foreground mb-3 block">
               Χρόνος
             </span>
-            <TimeFilterChips />
+            <div className="flex flex-wrap gap-2">
+              <TimeFilterChips fullWidth />
+            </div>
           </div>
           <div>
             <span className="text-xs font-medium text-muted-foreground mb-3 block">
               Ακτίνα Αναζήτησης
             </span>
-            <RadiusChips />
+            <div className="flex flex-wrap gap-2">
+              <RadiusChips fullWidth />
+            </div>
           </div>
         </div>
       )}

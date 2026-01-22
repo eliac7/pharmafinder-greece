@@ -1,13 +1,17 @@
 "use client";
 
-import { Crosshair, MapPin, Heart } from "lucide-react";
+import { Crosshair, Heart, MapPin } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { Suspense, useState } from "react";
 
+import { FavoritesList } from "@/features/favorites";
+import { RadiusChips } from "@/features/find-pharmacies/ui/radius-chips";
+import { TimeFilterChips } from "@/features/find-pharmacies/ui/time-filter-chips";
 import { useLocateMe } from "@/features/locate-user/model/use-locate-me";
 import { SearchCity } from "@/features/search-city/ui/search-city";
-import { FavoritesList } from "@/features/favorites";
-import { useMapStore } from "@/shared/model/use-map-store";
 import { cn } from "@/shared";
+import { useMapStore } from "@/shared/model/use-map-store";
 import { Button } from "@/shared/ui/button";
 import {
   Sidebar,
@@ -18,7 +22,6 @@ import {
   SidebarHeader,
   SidebarSeparator,
 } from "@/shared/ui/sidebar";
-import { PharmacyList } from "@/widgets/sidebar/ui/pharmacy-list";
 import {
   SidebarBranding,
   SidebarCopyright,
@@ -26,6 +29,7 @@ import {
   SidebarFiltersSkeleton,
   SidebarListSkeleton,
 } from "@/widgets/sidebar";
+import { PharmacyList } from "@/widgets/sidebar/ui/pharmacy-list";
 
 type SidebarTab = "nearby" | "favorites";
 
@@ -34,22 +38,79 @@ export default function SidebarPage() {
   const flyTo = useMapStore((state) => state.flyTo);
   const [activeTab, setActiveTab] = useState<SidebarTab>("nearby");
 
+  const handleLocate = () => {
+    locate((coords) => {
+      flyTo([coords.longitude, coords.latitude], 15);
+    });
+  };
+
   return (
     <Sidebar>
-      <SidebarHeader className="px-6 pt-6 pb-4">
+      {/* Mobile Header */}
+      <SidebarHeader className="px-4 pt-4 pb-2 gap-3 md:hidden">
+        <div className="flex items-center gap-3">
+          <Link href="/" className="shrink-0">
+            <Image
+              src="/pharmacy.png"
+              alt="Pharmafinder"
+              width={36}
+              height={36}
+              className="object-contain"
+            />
+          </Link>
+          <div className="flex-1 relative">
+            <SearchCity onLocate={handleLocate} isLocating={isLoading} />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 mask-fade-right">
+          <button
+            onClick={() => setActiveTab("nearby")}
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap border",
+              activeTab === "nearby"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-sidebar-accent/50 text-muted-foreground border-border hover:bg-sidebar-accent hover:text-foreground"
+            )}
+          >
+            <MapPin className="size-3.5" />
+            Κοντινά
+          </button>
+
+          <button
+            onClick={() => setActiveTab("favorites")}
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap border",
+              activeTab === "favorites"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-sidebar-accent/50 text-muted-foreground border-border hover:bg-sidebar-accent hover:text-foreground"
+            )}
+          >
+            <Heart className="size-3.5" />
+            Αγαπημένα
+          </button>
+
+          <div className="w-px h-6 bg-border shrink-0 mx-1" />
+
+          {/* Direct rendering of chips for mobile, skipping SidebarFilters wrapper to avoid hydration mismatch if we change it later */}
+          <div className="contents">
+            <TimeFilterChips />
+            <RadiusChips />
+          </div>
+        </div>
+      </SidebarHeader>
+
+      {/* Desktop Header */}
+      <SidebarHeader className="hidden md:block px-6 pt-6 pb-4">
         <SidebarBranding />
 
-        <div className="relative">
+        <div className="relative mt-2">
           <SearchCity />
         </div>
 
         <div className="mt-4">
           <Button
-            onClick={() => {
-              locate((coords) => {
-                flyTo([coords.longitude, coords.latitude], 15);
-              });
-            }}
+            onClick={handleLocate}
             disabled={isLoading}
             className="w-full h-12 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg transition-all active:scale-95"
             size="lg"
@@ -96,8 +157,15 @@ export default function SidebarPage() {
       </SidebarHeader>
 
       <SidebarContent className="px-4">
-        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden pt-0 md:pt-2">
           <SidebarGroupContent>
+            {/* Mobile-only header for results count */}
+            <div className="flex md:hidden items-center justify-between mb-2 px-1">
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                {activeTab === "nearby" ? "Αποτελεσματα" : "Αγαπημενα"}
+              </span>
+            </div>
+
             <Suspense fallback={<SidebarListSkeleton />}>
               {activeTab === "nearby" ? <PharmacyList /> : <FavoritesList />}
             </Suspense>

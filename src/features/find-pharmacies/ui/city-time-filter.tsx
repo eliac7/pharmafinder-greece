@@ -14,13 +14,18 @@ const LABELS: Record<TimeFilter, string> = {
 interface CityTimeFilterProps {
   citySlug: string;
   activeTime: TimeFilter;
+  fullWidth?: boolean;
 }
 
-export function CityTimeFilter({ citySlug, activeTime }: CityTimeFilterProps) {
+export function CityTimeFilter({
+  citySlug,
+  activeTime,
+  fullWidth = false,
+}: CityTimeFilterProps) {
   const options: TimeFilter[] = ["now", "today", "tomorrow"];
 
   return (
-    <div className="flex items-center gap-2 w-full">
+    <div className={cn("flex items-center gap-2", fullWidth ? "w-full" : "")}>
       {options.map((option) => {
         const isSelected = activeTime === option;
         const href =
@@ -33,7 +38,8 @@ export function CityTimeFilter({ citySlug, activeTime }: CityTimeFilterProps) {
             key={option}
             href={href}
             className={cn(
-              "flex-1 px-4 py-1.5 rounded-full text-sm font-medium transition-all text-center",
+              "px-4 py-1.5 rounded-full text-sm font-medium transition-all text-center",
+              fullWidth ? "flex-1 w-full" : "whitespace-nowrap",
               "border focus:outline-none focus:ring-2 focus:ring-primary/20",
               isSelected
                 ? "bg-primary text-primary-foreground border-primary"

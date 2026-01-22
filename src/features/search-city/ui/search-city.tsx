@@ -2,7 +2,14 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Command as CommandPrimitive } from "cmdk";
-import { Loader2, MapPin, MapPinHouse, Pill, Search } from "lucide-react";
+import {
+  Crosshair,
+  Loader2,
+  MapPin,
+  MapPinHouse,
+  Pill,
+  Search,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
@@ -17,7 +24,13 @@ import {
 } from "@/shared/ui/command";
 import { Popover, PopoverAnchor, PopoverContent } from "@/shared/ui/popover";
 
-export function SearchCity() {
+export function SearchCity({
+  onLocate,
+  isLocating,
+}: {
+  onLocate?: () => void;
+  isLocating?: boolean;
+}) {
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
   const router = useRouter();
@@ -62,6 +75,21 @@ export function SearchCity() {
                 onValueChange={setInputValue}
                 onFocus={() => setOpen(true)}
               />
+              {onLocate && (
+                <button
+                  type="button"
+                  onClick={onLocate}
+                  disabled={isLocating}
+                  className="ml-2 p-1.5 hover:bg-background rounded-full text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
+                >
+                  {isLocating ? (
+                    <Loader2 className="size-5 shrink-0 animate-spin" />
+                  ) : (
+                    <Crosshair className="size-5 shrink-0" />
+                  )}
+                  <span className="sr-only">Εντοπισμός</span>
+                </button>
+              )}
             </div>
           </PopoverAnchor>
           <PopoverContent
