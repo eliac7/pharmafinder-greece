@@ -24,7 +24,7 @@ export function MapControls({
     setIsAdjusting(!isAdjusting);
   };
 
-  const bottomPosition = isMobile ? 'calc(15dvh + 5rem)' : '2rem';
+  const bottomPosition = isMobile ? 'calc(15dvh + 2rem)' : '2rem';
 
   return (
     <div 
