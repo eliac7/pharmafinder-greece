@@ -150,6 +150,17 @@ export default async function AboutPage() {
                 GitHub.
               </p>
             </div>
+            <div className="space-y-3">
+              <h3 className="font-bold text-lg">
+                Πώς εντοπίζεται η τοποθεσία μου;
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Κατά την πρώτη επίσκεψη, η εφαρμογή ζητάει την άδειά σας για
+                εντοπισμό μέσω GPS. Αν αρνηθείτε, χρησιμοποιούμε τη διεύθυνση IP
+                σας για κατά προσέγγιση εντοπισμό. Η τοποθεσία αποθηκεύεται μόνο
+                τοπικά στη συσκευή σας.
+              </p>
+            </div>
           </div>
         </section>
 

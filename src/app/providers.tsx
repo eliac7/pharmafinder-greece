@@ -12,6 +12,7 @@ import {
   reportWebVitals,
 } from "@/shared/lib/analytics";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { AutoLocateProvider } from "./auto-locate-provider";
 
 export { reportWebVitals } from "@/shared/lib/analytics";
 
@@ -49,7 +50,7 @@ function ReactQueryProvider({ children }: { children: ReactNode }) {
             retry: false,
           },
         },
-      })
+      }),
   );
 
   return (
@@ -77,7 +78,10 @@ export function Providers({ children }: ProvidersProps) {
         enableSystem
         disableTransitionOnChange
       >
-        <NuqsAdapter>{children}</NuqsAdapter>
+        <NuqsAdapter>
+          {children}
+          <AutoLocateProvider />
+        </NuqsAdapter>
         <GoogleAnalytics />
         <WebVitals />
       </ThemeProvider>
