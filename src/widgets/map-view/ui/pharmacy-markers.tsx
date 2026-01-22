@@ -92,7 +92,18 @@ export function PharmacyMarkers({
     const fetchedFavorites = favoriteQueries
       .map((q) => q.data)
       .filter((p): p is Pharmacy => p !== undefined && p !== null);
-    return [...basePharmacies, ...fetchedFavorites];
+  
+    const pharmacyMap = new Map<number, Pharmacy>();
+    
+    basePharmacies.forEach((pharmacy) => {
+      pharmacyMap.set(pharmacy.id, pharmacy);
+    });
+    
+    fetchedFavorites.forEach((pharmacy) => {
+      pharmacyMap.set(pharmacy.id, pharmacy);
+    });
+    
+    return Array.from(pharmacyMap.values());
   }, [basePharmacies, favoriteQueries]);
 
   const points = useMemo(() => {
@@ -105,19 +116,30 @@ export function PharmacyMarkers({
         Pharmacy & GeoJSON.GeoJsonProperties
       >;
 
+    const featureMap = new Map<
+      number,
+      GeoJSON.Feature<GeoJSON.Point, Pharmacy & GeoJSON.GeoJsonProperties>
+    >();
+
+    pharmaciesToRender
+      .filter((p) => p.latitude && p.longitude)
+      .forEach((pharmacy) => {
+        if (!featureMap.has(pharmacy.id)) {
+          featureMap.set(pharmacy.id, {
+            type: "Feature",
+            id: pharmacy.id,
+            geometry: {
+              type: "Point",
+              coordinates: [pharmacy.longitude!, pharmacy.latitude!],
+            },
+            properties: pharmacy,
+          });
+        }
+      });
+
     return {
       type: "FeatureCollection",
-      features: pharmaciesToRender
-        .filter((p) => p.latitude && p.longitude)
-        .map((pharmacy) => ({
-          type: "Feature",
-          id: pharmacy.id,
-          geometry: {
-            type: "Point",
-            coordinates: [pharmacy.longitude!, pharmacy.latitude!],
-          },
-          properties: pharmacy,
-        })),
+      features: Array.from(featureMap.values()),
     } as GeoJSON.FeatureCollection<
       GeoJSON.Point,
       Pharmacy & GeoJSON.GeoJsonProperties
