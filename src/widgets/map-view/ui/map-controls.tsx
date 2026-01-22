@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/shared";
+import { cn, useIsMobile } from "@/shared";
 import { Button } from "@/shared/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 import { MapPin } from "lucide-react";
@@ -18,13 +18,19 @@ export function MapControls({
   const [uncontrolledAdjusting, setUncontrolledAdjusting] = useState(false);
   const isAdjusting = controlledAdjusting ?? uncontrolledAdjusting;
   const setIsAdjusting = onAdjustChange ?? setUncontrolledAdjusting;
+  const isMobile = useIsMobile();
 
   const handleToggleAdjust = () => {
     setIsAdjusting(!isAdjusting);
   };
 
+  const bottomPosition = isMobile ? 'calc(15dvh + 5rem)' : '2rem';
+
   return (
-    <div className="absolute bottom-28 right-4 flex flex-col gap-2 z-10 md:bottom-8">
+    <div 
+      className="absolute right-4 flex flex-col gap-2 z-10"
+      style={{ bottom: bottomPosition }}
+    >
       <Tooltip>
         <TooltipTrigger asChild>
           <Button

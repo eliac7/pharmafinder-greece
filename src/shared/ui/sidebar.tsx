@@ -9,12 +9,12 @@ import { useIsMobile } from "@/shared/lib/hooks/use-mobile";
 import { cn } from "@/shared/lib/hooks/utils";
 
 import { Button } from "@/shared/ui/button";
+import { useVisualViewportSnapPoints } from "@/shared/lib/hooks/use-visual-viewport-snap-points";
 import {
   Drawer,
-  DRAWER_SNAP_POINTS,
   DrawerContent,
   DrawerDescription,
-  DrawerTitle
+  DrawerTitle,
 } from "@/shared/ui/drawer";
 import { Input } from "@/shared/ui/input";
 import { Separator } from "@/shared/ui/separator";
@@ -182,7 +182,8 @@ function Sidebar({
   variant?: "sidebar" | "floating" | "inset";
   collapsible?: "offcanvas" | "icon" | "none";
 }) {
-  const { isMobile, state, snapPoint,  } = useSidebar();
+  const { isMobile, state, snapPoint, setSnapPoint } = useSidebar();
+  const { viewportHeight } = useVisualViewportSnapPoints();
 
   if (collapsible === "none") {
     return (
@@ -200,12 +201,22 @@ function Sidebar({
   }
 
   if (isMobile) {
+    const SNAP_POINTS: (number | string)[] = [0.15, 1];
+    const DEFAULT_SNAP = 0.15;
+  
+    const activeSnap = snapPoint ?? DEFAULT_SNAP;
+
+    const drawerMaxHeight = viewportHeight 
+      ? `${Math.round(viewportHeight * 0.96)}px` 
+      : "96dvh";
+    
     return (
       <Drawer
         open={true}
         dismissible={false}
-        snapPoints={DRAWER_SNAP_POINTS}
-        activeSnapPoint={snapPoint ?? undefined}
+        snapPoints={SNAP_POINTS}
+        activeSnapPoint={activeSnap}
+        setActiveSnapPoint={setSnapPoint}
         modal={false}
       >
         <DrawerContent
@@ -213,7 +224,7 @@ function Sidebar({
           data-slot="sidebar"
           data-mobile="true"
           showOverlay={false}
-          className="h-[96vh]"
+          style={{ height: drawerMaxHeight }}
         >
           <VisuallyHidden.Root asChild>
             <DrawerTitle>Φαρμακεία</DrawerTitle>

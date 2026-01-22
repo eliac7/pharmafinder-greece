@@ -4,9 +4,13 @@ import * as React from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 
 import { cn } from "@/shared/lib/hooks/utils";
-
-const DRAWER_SNAP_POINTS = [0.15, 1];
-const DRAWER_DEFAULT_SNAP = 0.18;
+import {
+  DRAWER_DEFAULT_SNAP,
+  DRAWER_DEFAULT_SNAP_PERCENTAGE,
+  DRAWER_SNAP_POINTS,
+  DRAWER_SNAP_POINTS_PERCENTAGES,
+  useVisualViewportSnapPoints,
+} from "@/shared/lib/hooks/use-visual-viewport-snap-points";
 
 function Drawer({
   shouldScaleBackground = false,
@@ -150,6 +154,15 @@ function DrawerDescription({
   );
 }
 
+// Re-export hook and constants for backwards compatibility
+export {
+  DRAWER_DEFAULT_SNAP,
+  DRAWER_DEFAULT_SNAP_PERCENTAGE,
+  DRAWER_SNAP_POINTS,
+  DRAWER_SNAP_POINTS_PERCENTAGES,
+  useVisualViewportSnapPoints,
+};
+
 export {
   Drawer,
   DrawerPortal,
@@ -162,6 +175,4 @@ export {
   DrawerFooter,
   DrawerTitle,
   DrawerDescription,
-  DRAWER_SNAP_POINTS,
-  DRAWER_DEFAULT_SNAP,
 };

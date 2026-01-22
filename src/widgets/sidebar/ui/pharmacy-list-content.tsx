@@ -5,7 +5,7 @@ import { MapPin } from "lucide-react";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { type Pharmacy, type TimeFilter, PharmacyCard } from "@/entities/pharmacy";
 import { useSidebar } from "@/shared/ui/sidebar";
-import { DRAWER_DEFAULT_SNAP } from "@/shared/ui/drawer";
+import { useVisualViewportSnapPoints } from "@/shared/lib/hooks/use-visual-viewport-snap-points";
 
 interface PharmacyListContentProps {
   pharmacies: Pharmacy[];
@@ -23,13 +23,14 @@ export function PharmacyListContent({
   headerRight,
 }: PharmacyListContentProps) {
   const { isMobile, setSnapPoint } = useSidebar();
+  const { defaultSnap } = useVisualViewportSnapPoints();
 
   const handleCardClick = () => {
     if (isMobile) {
       setTimeout(() => {
         setSnapPoint(null);
         setTimeout(() => {
-          setSnapPoint(DRAWER_DEFAULT_SNAP);
+          setSnapPoint(defaultSnap);
         }, 50);
       }, 100);
     }
