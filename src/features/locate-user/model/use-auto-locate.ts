@@ -1,14 +1,35 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useLocationStore } from "./use-location-store";
 
 export function useAutoLocate() {
   const { latitude, longitude, setLocation } = useLocationStore();
   const hasAttemptedRef = useRef(false);
+  const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
+    const unsubFinishHydration = useLocationStore.persist.onFinishHydration(
+      () => {
+        setHasHydrated(true);
+      },
+    );
+
+    if (useLocationStore.persist.hasHydrated()) {
+      setHasHydrated(true);
+    }
+
+    return () => {
+      unsubFinishHydration();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
+
     if ((latitude && longitude) || hasAttemptedRef.current) {
       return;
     }
@@ -48,5 +69,5 @@ export function useAutoLocate() {
         console.warn("IP geolocation failed");
       }
     }
-  }, [latitude, longitude, setLocation]);
+  }, [hasHydrated, latitude, longitude, setLocation]);
 }
