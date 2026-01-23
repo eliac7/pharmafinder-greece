@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { useLocationStore } from "./use-location-store";
+import { useMapStore } from "@/shared/model/use-map-store";
 
 interface Coordinates {
   latitude: number;
@@ -18,6 +19,7 @@ interface UseLocateMeReturn {
 
 export function useLocateMe(): UseLocateMeReturn {
   const { latitude, longitude, setLocation } = useLocationStore();
+  const flyTo = useMapStore((state) => state.flyTo);
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,6 +43,8 @@ export function useLocateMe(): UseLocateMeReturn {
           longitude: position.coords.longitude,
         };
         setLocation(coords.latitude, coords.longitude);
+        // Fly to the user's location
+        flyTo([coords.longitude, coords.latitude], 15);
         setIsLoading(false);
         toast.success("Η τοποθεσία σας βρέθηκε!");
         onSuccess?.(coords);
