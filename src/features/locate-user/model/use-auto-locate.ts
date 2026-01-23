@@ -10,15 +10,16 @@ export function useAutoLocate() {
   const flyTo = useMapStore((state) => state.flyTo);
   const hasAttemptedRef = useRef(false);
   const [hasHydrated, setHasHydrated] = useState(
-    () => useLocationStore.persist.hasHydrated?.() ?? false
+    () => useLocationStore.persist?.hasHydrated?.() ?? true
   );
 
   useEffect(() => {
-    const unsubFinishHydration = useLocationStore.persist.onFinishHydration(
-      () => {
-        setHasHydrated(true);
-      },
-    );
+    const persist = useLocationStore.persist;
+    if (!persist?.onFinishHydration) return;
+
+    const unsubFinishHydration = persist.onFinishHydration(() => {
+      setHasHydrated(true);
+    });
 
     return () => {
       unsubFinishHydration();
