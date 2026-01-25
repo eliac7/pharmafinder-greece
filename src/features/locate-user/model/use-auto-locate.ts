@@ -35,6 +35,20 @@ export function useAutoLocate() {
       return;
     }
 
+    if (typeof window !== "undefined") {
+      const storedLocation = localStorage.getItem("user-location");
+      if (storedLocation) {
+        try {
+          const parsed = JSON.parse(storedLocation);
+          if (parsed.state?.latitude && parsed.state?.longitude) {
+            return;
+          }
+        } catch (e) {
+          console.error("Failed to parse stored location", e);
+        }
+      }
+    }
+
     hasAttemptedRef.current = true;
 
     if (!navigator.geolocation) {
