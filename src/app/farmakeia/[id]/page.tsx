@@ -88,7 +88,7 @@ export default async function PharmacyPage({ params }: Props) {
               </h1>
               <FavoriteButton pharmacyId={pharmacy.id} />
             </div>
-            <div className="flex items-start gap-2"> 
+            <div className="flex items-start gap-2">
               <MapPin className="size-5 text-muted-foreground shrink-0 mt-1" />
               <p className="text-lg text-muted-foreground leading-snug">
                 {pharmacy.address}
@@ -139,7 +139,7 @@ export default async function PharmacyPage({ params }: Props) {
           </div>
 
           <div className="space-y-4">
-          <PharmacyHours hours={pharmacy.data_hours ?? []} />
+            <PharmacyHours hours={pharmacy.data_hours ?? []} />
 
             {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && (
               <div className="relative group rounded-3xl overflow-hidden border bg-muted aspect-video">
@@ -147,7 +147,7 @@ export default async function PharmacyPage({ params }: Props) {
                   className="w-full h-full opacity-90 group-hover:opacity-100 transition-opacity pointer-events-none"
                   style={{ border: 0 }}
                   loading="lazy"
-                  src={`https://www.google.com/maps/embed/v1/streetview?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&location=${pharmacy.latitude},${pharmacy.longitude}&heading=0&pitch=10&fov=80`}
+                  src={`https://www.google.com/maps/embed/v1/streetview?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&location=${pharmacy.latitude},${pharmacy.longitude}&pitch=10&fov=80`}
                 />
                 <a
                   href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${pharmacy.latitude},${pharmacy.longitude}`}
