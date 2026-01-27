@@ -53,9 +53,9 @@ export const pharmacyApi = {
       url += `&latitude=${lat}&longitude=${lng}`;
     }
     const res = await fetchAPI<{ data: Pharmacy[] }>(url, {
-      next: { 
+      next: {
         revalidate: 3600, // 1 hour
-        tags: [`city-pharmacies-${citySlug}`] 
+        tags: [`city-pharmacies-${citySlug}`]
       }
     });
     return res.data;
@@ -79,8 +79,8 @@ export const pharmacyApi = {
    */
   getPharmacyDetails: async (id: number) => {
     return fetchAPI<Pharmacy>(`/pharmacies/${id}`, {
-      next: { 
-        revalidate: 86400, // 24 hour
+      next: {
+        revalidate: 0,
         tags: [`pharmacy-${id}`]
       },
     });
@@ -110,7 +110,7 @@ export const pharmacyApi = {
     const res = await fetchAPI<{ data: PharmacySitemapItem[] }>(
       "/pharmacies/sitemap",
       {
-        next: { 
+        next: {
           revalidate: 86400, // 24 hours
           tags: ["sitemap-pharmacies"]
         }
