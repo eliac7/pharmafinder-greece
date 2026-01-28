@@ -5,12 +5,12 @@ import { FavoriteButton } from "@/features/favorites";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Map, MapMarker, MarkerContent } from "@/shared/ui/map";
-import { ArrowLeft, MapPin, Navigation, Phone, Star } from "lucide-react";
+import { MapPin, Navigation, Phone, Star } from "lucide-react";
 import { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PharmacyMapMarkerContent } from "./pharmacy-map-marker";
 import { PharmacyHours, PharmacyStatusBadge } from "@/features/pharmacy-detail";
+import { BackButton } from "./back-button";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -52,16 +52,7 @@ export default async function PharmacyPage({ params }: Props) {
     <div className="min-h-screen bg-background text-foreground flex flex-col md:flex-row">
       <div className="flex-1 flex flex-col min-h-[50vh] md:h-screen md:overflow-y-auto relative z-10 bg-background">
         <header className="sticky top-0 z-50 p-6 bg-background/80 backdrop-blur-xl border-b md:border-none flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="icon"
-            asChild
-            className="rounded-full hover:bg-muted/50"
-          >
-            <Link href="/">
-              <ArrowLeft className="size-5" />
-            </Link>
-          </Button>
+          <BackButton />
           <span className="md:hidden font-medium text-sm truncate max-w-50">
             {pharmacy.name}
           </span>
@@ -102,7 +93,7 @@ export default async function PharmacyPage({ params }: Props) {
 
           <div className="h-px w-full bg-border/50" />
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="hidden md:grid grid-cols-2 gap-3">
             <Button
               size="lg"
               className="h-14 md:h-20 text-lg rounded-2xl flex flex-col items-center justify-center gap-1 shadow-sm hover:scale-[1.02] transition-transform"
