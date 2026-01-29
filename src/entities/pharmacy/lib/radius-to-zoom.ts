@@ -6,5 +6,5 @@ export function radiusToZoom(radiusKm: number): number {
   if (radiusKm <= 2) return 14;
   if (radiusKm <= 5) return 13;
   if (radiusKm <= 10) return 12;
-  return 10; // 20km and above
+  return 11; // 20km and above
 }
