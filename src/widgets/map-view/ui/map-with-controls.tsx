@@ -50,8 +50,8 @@ export function MapWithControls({
         />
         <UserLocationMarker />
         {pharmacies !== undefined ||
-        timeFilter !== undefined ||
-        citySlug !== undefined ? (
+          timeFilter !== undefined ||
+          citySlug !== undefined ? (
           <PharmacyMarkers
             pharmacies={pharmacies}
             timeFilter={timeFilter}

@@ -23,3 +23,4 @@ export { PharmacyCard } from "./ui/pharmacy-card";
 
 // Lib
 export { getPharmacyStatus, formatPharmacyHours } from "./lib/status";
+export { radiusToZoom } from "./lib/radius-to-zoom";
