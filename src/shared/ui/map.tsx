@@ -1,6 +1,6 @@
 "use client";
 
-import { Cross, Loader2, Locate, Maximize, Minus, X } from "lucide-react";
+import { AlertTriangle, Cross, Loader2, Locate, Maximize, Minus, X } from "lucide-react";
 import MapLibreGL, { type MarkerOptions, type PopupOptions } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useTheme } from "next-themes";
@@ -25,6 +25,7 @@ import React from "react";
 type MapContextValue = {
   map: MapLibreGL.Map | null;
   isLoaded: boolean;
+  hasError: boolean;
 };
 
 const MapContext = createContext<MapContextValue | null>(null);
@@ -35,6 +36,53 @@ function useMap() {
     throw new Error("useMap must be used within a Map component");
   }
   return context;
+}
+
+/**
+ * Check if WebGL is supported in the browser
+ */
+function isWebGLSupported(): boolean {
+  if (typeof window === "undefined") return true; // SSR - assume supported
+
+  try {
+    const canvas = document.createElement("canvas");
+    const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    return gl instanceof WebGLRenderingContext;
+  } catch {
+    return false;
+  }
+}
+
+type MapErrorFallbackProps = {
+  className?: string;
+};
+
+function MapErrorFallback({ className }: MapErrorFallbackProps) {
+  return (
+    <div className={cn("relative w-full h-full flex items-center justify-center bg-muted/50", className)}>
+      <div className="flex flex-col items-center gap-3 p-6 text-center max-w-sm">
+        <div className="rounded-full bg-destructive/10 p-3">
+          <AlertTriangle className="size-6 text-destructive" />
+        </div>
+        <div className="space-y-1.5">
+          <h3 className="font-medium text-sm">Ο χάρτης δεν είναι διαθέσιμος</h3>
+          <p className="text-xs text-muted-foreground">
+            Το WebGL είναι απενεργοποιημένο στον browser σας. Για να δείτε τον χάρτη, ενεργοποιήστε το WebGL στις ρυθμίσεις του browser.
+          </p>
+        </div>
+        <details className="text-xs text-muted-foreground">
+          <summary className="cursor-pointer hover:text-foreground transition-colors">
+            Πώς να το ενεργοποιήσω;
+          </summary>
+          <div className="mt-2 text-left space-y-1 bg-muted p-2 rounded-md">
+            <p><strong>Brave:</strong> Settings → Shields → Fingerprinting → Allow</p>
+            <p><strong>Chrome:</strong> chrome://flags → WebGL → Enabled</p>
+            <p><strong>Firefox:</strong> about:config → webgl.disabled → false</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  );
 }
 
 const defaultStyles = {
@@ -73,6 +121,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
   const [mapInstance, setMapInstance] = useState<MapLibreGL.Map | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isStyleLoaded, setIsStyleLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const { resolvedTheme } = useTheme();
   const currentStyleRef = useRef<MapStyleOption | null>(null);
   const styleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -97,19 +146,33 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // Check WebGL support before trying to create the map
+    if (!isWebGLSupported()) {
+      setHasError(true);
+      return;
+    }
+
     const initialStyle =
       resolvedTheme === "dark" ? mapStyles.dark : mapStyles.light;
     currentStyleRef.current = initialStyle;
 
-    const map = new MapLibreGL.Map({
-      container: containerRef.current,
-      style: initialStyle,
-      renderWorldCopies: false,
-      attributionControl: {
-        compact: true,
-      },
-      ...props,
-    });
+    let map: MapLibreGL.Map;
+
+    try {
+      map = new MapLibreGL.Map({
+        container: containerRef.current,
+        style: initialStyle,
+        renderWorldCopies: false,
+        attributionControl: {
+          compact: true,
+        },
+        ...props,
+      });
+    } catch (error) {
+      console.error("Failed to initialize map:", error);
+      setHasError(true);
+      return;
+    }
 
     const styleDataHandler = () => {
       clearStyleTimeout();
@@ -121,14 +184,25 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     };
     const loadHandler = () => setIsLoaded(true);
 
+    // Handle WebGL context creation errors (e.g., Brave with shields up)
+    const errorHandler = (e: ErrorEvent) => {
+      if (e.error?.type === "webglcontextcreationerror" ||
+        e.error?.message?.includes("WebGL")) {
+        console.error("WebGL context creation failed:", e.error);
+        setHasError(true);
+      }
+    };
+
     map.on("load", loadHandler);
     map.on("styledata", styleDataHandler);
+    map.on("error", errorHandler);
     setMapInstance(map);
 
     return () => {
       clearStyleTimeout();
       map.off("load", loadHandler);
       map.off("styledata", styleDataHandler);
+      map.off("error", errorHandler);
       map.remove();
       setIsLoaded(false);
       setIsStyleLoaded(false);
@@ -158,9 +232,19 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     () => ({
       map: mapInstance,
       isLoaded: isLoaded && isStyleLoaded,
+      hasError,
     }),
-    [mapInstance, isLoaded, isStyleLoaded]
+    [mapInstance, isLoaded, isStyleLoaded, hasError]
   );
+
+  // Show error fallback if WebGL is not available
+  if (hasError) {
+    return (
+      <MapContext.Provider value={contextValue}>
+        <MapErrorFallback />
+      </MapContext.Provider>
+    );
+  }
 
   return (
     <MapContext.Provider value={contextValue}>
@@ -1483,7 +1567,7 @@ function MapHybridClusterLayer<
         string | number,
         GeoJSON.Feature<GeoJSON.Point, P>
       >();
-      
+
       // Add forced visible features first (so they are always included)
       if (forceVisibleFeatureIds.length > 0 && data && typeof data !== 'string') {
         data.features.forEach(feature => {
@@ -1588,6 +1672,7 @@ export {
   Map,
   MapClusterLayer,
   MapControls,
+  MapErrorFallback,
   MapMarker,
   MapPopup,
   MapHybridClusterLayer,
@@ -1597,6 +1682,7 @@ export {
   MarkerPopup,
   MarkerTooltip,
   useMap,
+  isWebGLSupported,
 };
 
 export type { MapRef };
