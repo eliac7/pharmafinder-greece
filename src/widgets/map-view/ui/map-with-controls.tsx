@@ -6,7 +6,9 @@ import { UserLocationMarker } from "./user-location-marker";
 import { PharmacyMarkers } from "./pharmacy-markers";
 import { MapUpdater } from "./map-updater";
 import { ManualLocationAdjuster } from "./manual-location-adjuster";
+import { MapLoadingPill } from "./map-loading-pill";
 import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
+import { useNearbyPharmacies } from "@/features/find-pharmacies";
 import type MapLibreGL from "maplibre-gl";
 import { useState } from "react";
 
@@ -33,9 +35,11 @@ export function MapWithControls({
   citySlug,
 }: MapWithControlsProps) {
   const [isAdjusting, setIsAdjusting] = useState(false);
+  const { isFetching } = useNearbyPharmacies();
 
   return (
-    <>
+    <div className="relative w-full h-full">
+      <MapLoadingPill isLoading={isFetching} />
       <Map
         center={center}
         zoom={zoom}
@@ -50,8 +54,8 @@ export function MapWithControls({
         />
         <UserLocationMarker />
         {pharmacies !== undefined ||
-          timeFilter !== undefined ||
-          citySlug !== undefined ? (
+        timeFilter !== undefined ||
+        citySlug !== undefined ? (
           <PharmacyMarkers
             pharmacies={pharmacies}
             timeFilter={timeFilter}
@@ -65,6 +69,6 @@ export function MapWithControls({
           onAdjustChange={setIsAdjusting}
         />
       </Map>
-    </>
+    </div>
   );
 }
