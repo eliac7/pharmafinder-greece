@@ -383,7 +383,7 @@ export function generateOgImage({
               letterSpacing: "0.05em",
             }}
           >
-            pharmafinder.gr
+            {process.env.NEXT_PUBLIC_APP_URL}
           </div>
         </div>
       </div>
@@ -392,11 +392,11 @@ export function generateOgImage({
       ...size,
       fonts: fonts
         ? fonts.map((f) => ({
-            name: f.name,
-            data: f.data,
-            weight: f.weight,
-            style: f.style,
-          }))
+          name: f.name,
+          data: f.data,
+          weight: f.weight,
+          style: f.style,
+        }))
         : undefined,
     }
   );
