@@ -28,6 +28,9 @@ export const metadata: Metadata = {
     siteName: "PharmaFinder",
     description: "Βρείτε εφημερεύοντα φαρμακεία κοντά σας πιο εύκολα από ποτέ!",
   },
+  verification: {
+    google: "MFb7Apo4dCRqMDHcG0WYrsHDJFjqmNqzs_zmhdIWol0",
+  }
 };
 
 export const viewport: Viewport = {
