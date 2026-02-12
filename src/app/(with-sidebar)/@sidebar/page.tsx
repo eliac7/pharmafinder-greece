@@ -159,8 +159,8 @@ export default function SidebarPage() {
       </SidebarHeader>
 
       <SidebarContent className="px-4">
-        <SidebarGroup className="group-data-[collapsible=icon]:hidden pt-0 md:pt-2">
-          <SidebarGroupContent>
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden pt-0 md:pt-2 flex-1 min-h-0">
+          <SidebarGroupContent className="flex flex-1 min-h-0 flex-col">
             {/* Mobile-only header for results count */}
             <div className="flex md:hidden items-center justify-between mb-2 px-1">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
