@@ -73,6 +73,9 @@ export function SharePharmacyDialog({
       : []),
   ];
 
+  const singleShare = shareLinks[0];
+  const SingleShareIcon = singleShare.icon;
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -108,24 +111,46 @@ export function SharePharmacyDialog({
             </Button>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
-            {shareLinks.map((link) => (
+          {shareLinks.length === 1 ? (
+            <div className="flex">
               <Button
-                key={link.name}
                 variant="outline"
                 className={cn(
-                  "flex flex-col items-center justify-center gap-2 h-24 p-2",
-                  link.className
+                  "w-full justify-center gap-2 h-12 text-base",
+                  singleShare.className
                 )}
                 asChild
               >
-                <a href={link.url} target="_blank" rel="noopener noreferrer">
-                  <link.icon className="size-8" />
-                  <span className="text-xs font-medium">{link.name}</span>
+                <a
+                  href={singleShare.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <SingleShareIcon className="size-5" />
+                  <span className="font-medium">{singleShare.name}</span>
                 </a>
               </Button>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-3">
+              {shareLinks.map((link) => (
+                <Button
+                  key={link.name}
+                  variant="outline"
+                  className={cn(
+                    "flex flex-col items-center justify-center gap-2 h-24 p-2",
+                    link.className
+                  )}
+                  asChild
+                >
+                  <a href={link.url} target="_blank" rel="noopener noreferrer">
+                    <link.icon className="size-8" />
+                    <span className="text-xs font-medium">{link.name}</span>
+                  </a>
+                </Button>
+              ))}
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
