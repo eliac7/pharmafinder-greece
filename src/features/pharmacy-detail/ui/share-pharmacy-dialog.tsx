@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/shared/lib/hooks/utils";
+import { useIsMobile } from "@/shared/lib/hooks/use-mobile";
 import { Button } from "@/shared/ui/button";
 import {
   Dialog,
@@ -27,6 +28,8 @@ export function SharePharmacyDialog({
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const isMobile = useIsMobile();
+
   const url = typeof window !== "undefined" ? window.location.href : "";
   const text = `Φαρμακείο ${pharmacyName} - ${pharmacyAddress}`;
 
@@ -50,20 +53,24 @@ export function SharePharmacyDialog({
       className:
         "text-[#128C7E] border-[#128C7E]/20 hover:bg-[#128C7E]/10 hover:text-[#128C7E]",
     },
-    {
-      name: "Viber",
-      icon: ViberIcon,
-      url: `viber://forward?text=${encodeURIComponent(text + " " + url)}`,
-      className:
-        "text-[#7360f2] border-[#7360f2]/20 hover:bg-[#7360f2]/10 hover:text-[#7360f2]",
-    },
-    {
-      name: "Messenger",
-      icon: MessengerIcon,
-      url: `fb-messenger://share/?link=${encodeURIComponent(url)}`,
-      className:
-        "text-[#1877F2] border-[#1877F2]/20 hover:bg-[#1877F2]/10 hover:text-[#1877F2]",
-    },
+    ...(isMobile
+      ? [
+          {
+            name: "Viber",
+            icon: ViberIcon,
+            url: `viber://forward?text=${encodeURIComponent(text + " " + url)}`,
+            className:
+              "text-[#7360f2] border-[#7360f2]/20 hover:bg-[#7360f2]/10 hover:text-[#7360f2]",
+          },
+          {
+            name: "Messenger",
+            icon: MessengerIcon,
+            url: `fb-messenger://share/?link=${encodeURIComponent(url)}`,
+            className:
+              "text-[#1877F2] border-[#1877F2]/20 hover:bg-[#1877F2]/10 hover:text-[#1877F2]",
+          },
+        ]
+      : []),
   ];
 
   return (
