@@ -11,6 +11,7 @@ PharmaFinder is a modern, high-performance web application designed to help user
 ![Next.js](https://img.shields.io/badge/Next.js-16.1-black)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38b2ac)
 ![Jest](https://img.shields.io/badge/Jest-30.2-C21325?logo=jest&logoColor=white)
+[![React Doctor](https://img.shields.io/badge/React%20Doctor-90%25-brightgreen)](https://www.react.doctor/share?p=pharmafinder-greece&s=90&e=13&w=127&f=109)
 
 ## ✨ Key Features
 
