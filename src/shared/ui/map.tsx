@@ -328,13 +328,14 @@ function MapMarker({
   });
   const initialMarkerOptionsRef = useRef(markerOptions);
   const initialDraggableRef = useRef(draggable);
+  const initialCoordinatesRef = useRef<[number, number]>([longitude, latitude]);
 
   const marker = useMemo(() => {
     const markerInstance = new MapLibreGL.Marker({
       ...initialMarkerOptionsRef.current,
       element: document.createElement("div"),
       draggable: initialDraggableRef.current,
-    }).setLngLat([longitude, latitude]);
+    }).setLngLat(initialCoordinatesRef.current);
 
     const handleClick = (e: MouseEvent) => handlersRef.current.onClick?.(e);
     const handleMouseEnter = (e: MouseEvent) =>
@@ -368,7 +369,7 @@ function MapMarker({
     markerInstance.on("dragend", handleDragEnd);
 
     return markerInstance;
-  }, [handlersRef, latitude, longitude]);
+  }, [handlersRef]);
 
   useEffect(() => {
     if (!map) return;
