@@ -36,21 +36,22 @@ async function deriveKeys(secret: string, salt: string) {
   const signingKeyBuf = derivedBits.slice(0, 16);
   const encryptionKeyBuf = derivedBits.slice(16, 32);
 
-  const signingKey = await crypto.subtle.importKey(
-    "raw",
-    signingKeyBuf,
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign", "verify"]
-  );
-
-  const encryptionKey = await crypto.subtle.importKey(
-    "raw",
-    encryptionKeyBuf,
-    { name: "AES-CBC" },
-    false,
-    ["encrypt", "decrypt"]
-  );
+  const [signingKey, encryptionKey] = await Promise.all([
+    crypto.subtle.importKey(
+      "raw",
+      signingKeyBuf,
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign", "verify"]
+    ),
+    crypto.subtle.importKey(
+      "raw",
+      encryptionKeyBuf,
+      { name: "AES-CBC" },
+      false,
+      ["encrypt", "decrypt"]
+    ),
+  ]);
 
   return { signingKey, encryptionKey };
 }

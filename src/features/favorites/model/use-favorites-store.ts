@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 interface FavoritesState {
   favoriteIds: number[];
@@ -52,22 +52,11 @@ export const useFavoritesStore = create<FavoritesState>()(
 
 export function useFavorites() {
   const store = useFavoritesStore();
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => {
-    if (useFavoritesStore.getState()._hasHydrated) {
-      setIsHydrated(true);
-      return;
-    }
-
-    const unsubscribe = useFavoritesStore.subscribe((state) => {
-      if (state._hasHydrated) {
-        setIsHydrated(true);
-      }
-    });
-
-    return unsubscribe;
-  }, []);
+  const isHydrated = useSyncExternalStore(
+    useFavoritesStore.subscribe,
+    () => useFavoritesStore.getState()._hasHydrated,
+    () => false
+  );
 
   return {
     ...store,

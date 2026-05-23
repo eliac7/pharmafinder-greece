@@ -505,7 +505,7 @@ function MarkerContent({ children, className }: MarkerContentProps) {
 
 function DefaultMarkerIcon() {
   return (
-    <div className="relative h-4 w-4 rounded-full border-2 border-white bg-blue-500 shadow-lg" />
+    <div className="relative size-4 rounded-full border-2 border-white bg-blue-500 shadow-lg" />
   );
 }
 
@@ -590,7 +590,7 @@ function MarkerPopup({
           className="absolute top-1 right-1 z-10 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           aria-label="Close popup"
         >
-          <X className="h-4 w-4" />
+          <X className="size-4" />
           <span className="sr-only">Close</span>
         </button>
       )}
@@ -1016,7 +1016,7 @@ function MapPopup({
           className="absolute top-1 right-1 z-10 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           aria-label="Close popup"
         >
-          <X className="h-4 w-4" />
+          <X className="size-4" />
           <span className="sr-only">Close</span>
         </button>
       )}

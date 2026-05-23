@@ -14,14 +14,13 @@ export function formatPharmacyHours(hours: PharmacyHour[]): string | null {
   if (!hours || hours.length === 0) return null;
 
   return hours
-    .map((slot) => {
-      if (!slot.open_time || !slot.close_time) return null;
+    .flatMap((slot) => {
+      if (!slot.open_time || !slot.close_time) return [];
       // Remove seconds from time format (HH:MM:SS -> HH:MM)
       const openTime = slot.open_time.slice(0, 5);
       const closeTime = slot.close_time.slice(0, 5);
-      return `${openTime} - ${closeTime}`;
+      return [`${openTime} - ${closeTime}`];
     })
-    .filter(Boolean)
     .join(", ");
 }
 

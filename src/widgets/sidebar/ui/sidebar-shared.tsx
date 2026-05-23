@@ -15,7 +15,7 @@ export function SidebarBranding() {
             className="object-contain"
           />
         </div>
-        <h1 className="text-xl font-bold tracking-tight text-sidebar-foreground">
+        <h1 className="text-xl font-semibold tracking-tight text-sidebar-foreground">
           Pharmafinder
         </h1>
       </Link>

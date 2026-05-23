@@ -94,18 +94,25 @@ export function FavoritesList() {
     );
   }
 
-  const pharmacies = pharmacyQueries
-    .map((q) => q.data)
-    .filter((p): p is NonNullable<typeof p> => p !== undefined)
-    .filter((pharmacy) => {
+  const pharmacies = pharmacyQueries.reduce<NonNullable<(typeof pharmacyQueries)[number]["data"]>[]>(
+    (acc, query) => {
+      const pharmacy = query.data;
+      if (!pharmacy) return acc;
+
       const statusResult = getPharmacyStatus(
         pharmacy.data_hours,
         pharmacy.open_until_tomorrow ?? false,
         pharmacy.next_day_close_time ?? null,
         timeFilter
       );
-      return statusResult.status !== "closed";
-    });
+      if (statusResult.status !== "closed") {
+        acc.push(pharmacy);
+      }
+
+      return acc;
+    },
+    []
+  );
 
   if (favoriteIds.length > 0 && pharmacies.length === 0 && !isLoading) {
     return (

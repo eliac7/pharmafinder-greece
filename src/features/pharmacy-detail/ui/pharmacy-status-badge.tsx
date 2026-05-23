@@ -49,7 +49,7 @@ export function PharmacyStatusBadge({ status, minutes }: Props) {
       variant="outline"
       className={cn("gap-2 px-3 py-1.5 text-sm", current.className)}
     >
-      <span className="relative flex h-2 w-2">
+      <span className="relative flex size-2">
         {status === "open" && (
           <span
             className={cn(
@@ -60,7 +60,7 @@ export function PharmacyStatusBadge({ status, minutes }: Props) {
         )}
         <span
           className={cn(
-            "relative inline-flex rounded-full h-2 w-2",
+            "relative inline-flex rounded-full size-2",
             current.dot
           )}
         />

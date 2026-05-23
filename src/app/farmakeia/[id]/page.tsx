@@ -74,7 +74,7 @@ export default async function PharmacyPage({ params }: Props) {
               </Badge>
             )}
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl md:text-4xl font-bold leading-tight tracking-tight">
+              <h1 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight">
                 {pharmacy.name}
               </h1>
               <FavoriteButton pharmacyId={pharmacy.id} />

@@ -103,7 +103,7 @@ export function PharmacyHours({ hours }: PharmacyHoursProps) {
                       </div>
                     ))
                   ) : (
-                    <span className="text-muted-foreground">—</span>
+                    <span className="text-muted-foreground">-</span>
                   )}
                 </div>
               </div>

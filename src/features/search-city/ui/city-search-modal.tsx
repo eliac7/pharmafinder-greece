@@ -26,7 +26,7 @@ interface CitySearchModalProps {
 
 export function CitySearchModal({ trigger }: CitySearchModalProps) {
   const [open, setOpen] = React.useState(false);
-  const router = useRouter();
+  const { push } = useRouter();
 
   const { data: cities = [] } = useQuery({
     queryKey: ["cities"],
@@ -49,10 +49,10 @@ export function CitySearchModal({ trigger }: CitySearchModalProps) {
                 <CommandItem
                   key={city.slug}
                   value={city.city}
-                  onSelect={() => {
-                    setOpen(false);
-                    router.push(`/efimeries/${city.slug}`);
-                  }}
+	                  onSelect={() => {
+	                    setOpen(false);
+	                    push(`/efimeries/${city.slug}`);
+	                  }}
                   className="cursor-pointer"
                 >
                   {city.city}

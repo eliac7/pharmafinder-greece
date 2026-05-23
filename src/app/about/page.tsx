@@ -50,7 +50,7 @@ export default async function AboutPage() {
 
         <section className="grid gap-6 md:grid-cols-3">
           <Card className="border-l-4 border-l-primary shadow-sm hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between gap-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Σύνολο Φαρμακείων
               </CardTitle>
@@ -66,7 +66,7 @@ export default async function AboutPage() {
             </CardContent>
           </Card>
           <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between gap-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Πόλεις & Περιοχές
               </CardTitle>
@@ -82,7 +82,7 @@ export default async function AboutPage() {
             </CardContent>
           </Card>
           <Card className="border-l-4 border-l-emerald-500 shadow-sm hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between gap-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Εφημερεύουν Τώρα
               </CardTitle>

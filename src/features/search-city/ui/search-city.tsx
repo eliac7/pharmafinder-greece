@@ -24,6 +24,27 @@ import {
 } from "@/shared/ui/command";
 import { Popover, PopoverAnchor, PopoverContent } from "@/shared/ui/popover";
 
+const CITY_GROUP_HEADING = (
+  <span className="flex items-center gap-1.5">
+    <MapPin className="size-3.5" />
+    Πόλεις
+  </span>
+);
+
+const PHARMACY_GROUP_HEADING = (
+  <span className="flex items-center gap-1.5">
+    <Pill className="size-3.5" />
+    Φαρμακεία
+  </span>
+);
+
+const ADDRESS_GROUP_HEADING = (
+  <span className="flex items-center gap-1.5">
+    <MapPinHouse className="size-3.5" />
+    Διευθύνσεις
+  </span>
+);
+
 export function SearchCity({
   onLocate,
   isLocating,
@@ -33,7 +54,7 @@ export function SearchCity({
 }) {
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
-  const router = useRouter();
+  const { push } = useRouter();
 
   const debouncedQuery = useDebounce(inputValue, 300);
 
@@ -116,12 +137,7 @@ export function SearchCity({
 
               {data && data.cities.length > 0 && (
                 <CommandGroup
-                  heading={
-                    <span className="flex items-center gap-1.5">
-                      <MapPin className="size-3.5" />
-                      Πόλεις
-                    </span>
-                  }
+                  heading={CITY_GROUP_HEADING}
                 >
                   {data.cities.map((city) => (
                     <CommandItem
@@ -130,7 +146,7 @@ export function SearchCity({
                       onSelect={() => {
                         setOpen(false);
                         setInputValue("");
-                        router.push(`/efimeries/${city.slug}`);
+                        push(`/efimeries/${city.slug}`);
                       }}
                     >
                       {city.name}
@@ -141,12 +157,7 @@ export function SearchCity({
 
               {data && data.pharmacies.length > 0 && (
                 <CommandGroup
-                  heading={
-                    <span className="flex items-center gap-1.5">
-                      <Pill className="size-3.5" />
-                      Φαρμακεία
-                    </span>
-                  }
+                  heading={PHARMACY_GROUP_HEADING}
                 >
                   {data.pharmacies.map((pharmacy) => (
                     <CommandItem
@@ -155,7 +166,7 @@ export function SearchCity({
                       onSelect={() => {
                         setOpen(false);
                         setInputValue("");
-                        router.push(`/farmakeia/${pharmacy.id}`);
+                        push(`/farmakeia/${pharmacy.id}`);
                       }}
                     >
                       <div className="flex flex-col">
@@ -171,12 +182,7 @@ export function SearchCity({
 
               {data && data.addresses.length > 0 && (
                 <CommandGroup
-                  heading={
-                    <span className="flex items-center gap-1.5">
-                      <MapPinHouse className="size-3.5" />
-                      Διευθύνσεις
-                    </span>
-                  }
+                  heading={ADDRESS_GROUP_HEADING}
                 >
                   {data.addresses.map((pharmacy) => (
                     <CommandItem
@@ -185,7 +191,7 @@ export function SearchCity({
                       onSelect={() => {
                         setOpen(false);
                         setInputValue("");
-                        router.push(`/farmakeia/${pharmacy.id}`);
+                        push(`/farmakeia/${pharmacy.id}`);
                       }}
                     >
                       <div className="flex flex-col">
