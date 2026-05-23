@@ -37,14 +37,14 @@ export function MapControls({
             variant={isAdjusting ? "default" : "secondary"}
             size="icon"
             className={cn(
-              "rounded-full shadow-lg h-12 w-12 border-border hover:bg-accent",
+              "rounded-full shadow-lg size-12 border-border hover:bg-accent",
               isAdjusting
                 ? "bg-primary text-primary-foreground hover:bg-primary/90"
                 : "bg-background text-foreground"
             )}
             onClick={handleToggleAdjust}
           >
-            <MapPin className="h-5 w-5" />
+            <MapPin className="size-5" />
           </Button>
         </TooltipTrigger>
         <TooltipContent side="left">

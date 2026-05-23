@@ -1,3 +1,5 @@
+import { formatGreekLongDate } from "./formatters";
+
 /**
  * Greek translations for time filter values
  */
@@ -24,9 +26,5 @@ export function getDateForTime(
       ? new Date(today.getTime() + 24 * 60 * 60 * 1000)
       : today;
 
-  return new Intl.DateTimeFormat("el-GR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(date);
+  return formatGreekLongDate(date);
 }

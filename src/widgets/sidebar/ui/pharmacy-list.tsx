@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { RefreshCw, MapPin } from "lucide-react";
 import { useQueryState, parseAsStringLiteral, parseAsInteger } from "nuqs";
 import { useNearbyPharmacies } from "@/features/find-pharmacies";
@@ -24,6 +25,13 @@ export function PharmacyList() {
   const [radius] = useQueryState(
     "radius",
     parseAsInteger.withDefault(DEFAULT_RADIUS)
+  );
+  const headerRight = useMemo(
+    () =>
+      isFetching ? (
+        <RefreshCw className="size-4 text-muted-foreground animate-spin" />
+      ) : null,
+    [isFetching]
   );
 
   if (isLoading) {
@@ -105,11 +113,7 @@ export function PharmacyList() {
       count={count}
       timeFilter={timeFilter}
       subtitle={`Σε ακτίνα ${radius}km`}
-      headerRight={
-        isFetching ? (
-          <RefreshCw className="size-4 text-muted-foreground animate-spin" />
-        ) : null
-      }
+      headerRight={headerRight}
     />
   );
 }

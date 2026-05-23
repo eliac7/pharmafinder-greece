@@ -48,15 +48,18 @@ export function PharmacyCard({
 
   return (
     <div
-      onClick={handleCardClick}
       className={cn(
         "group flex p-3 rounded-xl bg-card border border-border",
         "hover:border-primary/40 hover:bg-accent/50",
-        "transition-all duration-200 cursor-pointer shadow-sm",
+        "transition-all duration-200 shadow-sm",
         isClosingSoon && "border-amber-500/40"
       )}
     >
-      <div className="flex items-start gap-3 w-full">
+      <button
+        type="button"
+        onClick={handleCardClick}
+        className="flex items-start gap-3 flex-1 min-w-0 text-left cursor-pointer rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      >
         <div
           className={cn(
             "flex items-center justify-center rounded-lg shrink-0 size-10 transition-colors",
@@ -132,29 +135,30 @@ export function PharmacyCard({
             </p>
           </div>
         </div>
+      </button>
 
-        <div className="flex flex-col gap-1 shrink-0 self-center ml-1">
-          <FavoriteButton pharmacyId={pharmacy.id} size="sm" />
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn(
-              "size-8 rounded-full hover:bg-primary/20 hover:text-primary",
-              "transition-all text-muted-foreground"
-            )}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (pharmacy.latitude && pharmacy.longitude) {
-                window.open(
-                  `https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`,
-                  "_blank"
-                );
-              }
-            }}
-          >
-            <Navigation className="size-4" />
-          </Button>
-        </div>
+      <div className="flex flex-col gap-1 shrink-0 self-center ml-1">
+        <FavoriteButton pharmacyId={pharmacy.id} size="sm" />
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "size-8 rounded-full hover:bg-primary/20 hover:text-primary",
+            "transition-all text-muted-foreground"
+          )}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (pharmacy.latitude && pharmacy.longitude) {
+              window.open(
+                `https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`,
+                "_blank",
+                "noopener,noreferrer"
+              );
+            }
+          }}
+        >
+          <Navigation className="size-4" />
+        </Button>
       </div>
     </div>
   );

@@ -14,8 +14,6 @@ import {
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { AutoLocateProvider } from "./auto-locate-provider";
 
-export { reportWebVitals } from "@/shared/lib/analytics";
-
 /**
  * Web Vitals tracking component
  * Automatically reports Core Web Vitals to Google Analytics

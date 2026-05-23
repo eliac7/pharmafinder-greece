@@ -16,6 +16,7 @@ export function RadiusChips({ fullWidth = false }: { fullWidth?: boolean }) {
         const isSelected = radius === option;
         return (
           <button
+            type="button"
             key={option}
             onClick={() => setRadius(option)}
             className={cn(

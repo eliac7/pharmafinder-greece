@@ -121,21 +121,20 @@ export function PharmacyMarkers({
       GeoJSON.Feature<GeoJSON.Point, Pharmacy & GeoJSON.GeoJsonProperties>
     >();
 
-    pharmaciesToRender
-      .filter((p) => p.latitude && p.longitude)
-      .forEach((pharmacy) => {
-        if (!featureMap.has(pharmacy.id)) {
-          featureMap.set(pharmacy.id, {
-            type: "Feature",
-            id: pharmacy.id,
-            geometry: {
-              type: "Point",
-              coordinates: [pharmacy.longitude!, pharmacy.latitude!],
-            },
-            properties: pharmacy,
-          });
-        }
+    for (const pharmacy of pharmaciesToRender) {
+      if (!pharmacy.latitude || !pharmacy.longitude) continue;
+      if (featureMap.has(pharmacy.id)) continue;
+
+      featureMap.set(pharmacy.id, {
+        type: "Feature",
+        id: pharmacy.id,
+        geometry: {
+          type: "Point",
+          coordinates: [pharmacy.longitude, pharmacy.latitude],
+        },
+        properties: pharmacy,
       });
+    }
 
     return {
       type: "FeatureCollection",
@@ -265,7 +264,7 @@ export function PharmacyMarkers({
                         <Cross className="size-6" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-base text-card-foreground line-clamp-2 leading-snug">
+                        <h4 className="font-semibold text-base text-card-foreground line-clamp-2 leading-snug">
                           {pharmacy.name}
                         </h4>
                         {!isScheduled && (

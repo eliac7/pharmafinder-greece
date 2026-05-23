@@ -8,6 +8,21 @@ export const DRAWER_DEFAULT_SNAP_PERCENTAGE = 0.18;
 export const DRAWER_SNAP_POINTS = DRAWER_SNAP_POINTS_PERCENTAGES;
 export const DRAWER_DEFAULT_SNAP = DRAWER_DEFAULT_SNAP_PERCENTAGE;
 
+function getViewportHeightSnapshot() {
+  if (typeof window === "undefined") return null;
+  return window.visualViewport?.height ?? window.innerHeight;
+}
+
+function subscribeToViewportHeight(onStoreChange: () => void) {
+  window.addEventListener("resize", onStoreChange);
+  window.visualViewport?.addEventListener("resize", onStoreChange);
+
+  return () => {
+    window.removeEventListener("resize", onStoreChange);
+    window.visualViewport?.removeEventListener("resize", onStoreChange);
+  };
+}
+
 /**
  * Hook that returns snap points in pixels based on the actual visual viewport height.
  * This accounts for mobile browser chrome (address bar, toolbar) that affects available space.
@@ -18,25 +33,11 @@ export const DRAWER_DEFAULT_SNAP = DRAWER_DEFAULT_SNAP_PERCENTAGE;
 export function useVisualViewportSnapPoints(
   percentages: number[] = DRAWER_SNAP_POINTS_PERCENTAGES
 ) {
-  const [viewportHeight, setViewportHeight] = React.useState<number | null>(null);
-
-  React.useEffect(() => {
-    const updateHeight = () => {
-      const height = window.visualViewport?.height ?? window.innerHeight;
-      setViewportHeight(height);
-    };
-
-    updateHeight();
-
-    window.addEventListener("resize", updateHeight);
-    
-    window.visualViewport?.addEventListener("resize", updateHeight);
-
-    return () => {
-      window.removeEventListener("resize", updateHeight);
-      window.visualViewport?.removeEventListener("resize", updateHeight);
-    };
-  }, []);
+  const viewportHeight = React.useSyncExternalStore(
+    subscribeToViewportHeight,
+    getViewportHeightSnapshot,
+    () => null
+  );
 
   const snapPoints = React.useMemo(() => {
     if (viewportHeight === null) {

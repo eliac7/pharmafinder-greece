@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { pharmacyApi } from "@/entities/pharmacy/api/pharmacy.api";
 
@@ -14,9 +14,14 @@ interface ReportVariables {
 }
 
 export function useReportPharmacy() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({ pharmacyId, data }: ReportVariables) =>
       pharmacyApi.reportPharmacy(pharmacyId, data),
+    onSuccess: (_data, { pharmacyId }) => {
+      queryClient.invalidateQueries({ queryKey: ["pharmacy", pharmacyId] });
+    },
     onError: (error) => {
       console.error("Report error:", error);
       toast.error("Αποτυχία υποβολής αναφοράς", {

@@ -65,6 +65,7 @@ export default function SidebarPage() {
 
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 mask-fade-right">
           <button
+            type="button"
             onClick={() => setActiveTab("nearby")}
             className={cn(
               "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap border",
@@ -78,6 +79,7 @@ export default function SidebarPage() {
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab("favorites")}
             className={cn(
               "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap border",
@@ -132,6 +134,7 @@ export default function SidebarPage() {
 
         <div className="mt-4 flex gap-1 p-1 bg-muted rounded-lg">
           <button
+            type="button"
             onClick={() => setActiveTab("nearby")}
             className={cn(
               "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all",
@@ -144,6 +147,7 @@ export default function SidebarPage() {
             Κοντινά
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab("favorites")}
             className={cn(
               "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all",

@@ -27,44 +27,57 @@ export function CityPharmaciesMap({
   timeFilter,
   cityCenter,
 }: CityPharmaciesMapProps) {
-  const lastLocationRef = useRef<{ lat: number; lng: number } | null>(null);
+  const initializedKeyRef = useRef<string | null>(null);
 
   const { initialize, pharmacies, refetchWithLocation } =
     useCityPharmaciesStore();
   const { latitude, longitude } = useLocationStore();
+  const hasInitialDistances = initialPharmacies.some(
+    (p) => typeof p.distance_km === "number" && p.distance_km > 0
+  );
+  const initializeKey = `${citySlug}:${timeFilter}`;
 
   useEffect(() => {
-    initialize(citySlug, timeFilter, initialPharmacies);
+    if (initializedKeyRef.current === initializeKey) return;
+    if (hasInitialDistances && (!latitude || !longitude)) return;
 
-    const hasDistances = initialPharmacies.some(
-      (p) => typeof p.distance_km === "number" && p.distance_km > 0
+    initialize(
+      citySlug,
+      timeFilter,
+      initialPharmacies,
+      hasInitialDistances ? { lat: latitude!, lng: longitude! } : null
     );
-    if (hasDistances && latitude && longitude) {
-      lastLocationRef.current = { lat: latitude, lng: longitude };
-    }
+    initializedKeyRef.current = initializeKey;
   }, [
     citySlug,
     timeFilter,
     initialPharmacies,
     initialize,
+    hasInitialDistances,
     latitude,
     longitude,
+    initializeKey,
   ]);
+
+  useEffect(() => {
+    if (initializedKeyRef.current !== initializeKey) {
+      initializedKeyRef.current = null;
+    }
+  }, [initializeKey]);
 
   useEffect(() => {
     if (!latitude || !longitude) return;
 
-    const last = lastLocationRef.current;
+    const userLocation = useCityPharmaciesStore.getState().userLocation;
     const locationChanged =
-      !last ||
-      Math.abs(last.lat - latitude) > 0.0001 ||
-      Math.abs(last.lng - longitude) > 0.0001;
+      !userLocation ||
+      Math.abs(userLocation.lat - latitude) > 0.0001 ||
+      Math.abs(userLocation.lng - longitude) > 0.0001;
 
     if (locationChanged) {
-      lastLocationRef.current = { lat: latitude, lng: longitude };
       refetchWithLocation(latitude, longitude);
     }
-  }, [latitude, longitude, refetchWithLocation]);
+  }, [latitude, longitude, refetchWithLocation, initializeKey]);
 
   const displayPharmacies =
     pharmacies.length > 0 ? pharmacies : initialPharmacies;
