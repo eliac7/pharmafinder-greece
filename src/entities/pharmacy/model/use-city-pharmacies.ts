@@ -15,7 +15,8 @@ interface CityPharmaciesState {
   initialize: (
     citySlug: string,
     timeFilter: TimeFilter,
-    pharmacies: Pharmacy[]
+    pharmacies: Pharmacy[],
+    userLocation?: { lat: number; lng: number } | null
   ) => void;
   setPharmacies: (pharmacies: Pharmacy[]) => void;
   refetchWithLocation: (lat: number, lng: number) => Promise<void>;
@@ -29,8 +30,13 @@ export const useCityPharmaciesStore = create<CityPharmaciesState>(
     isRefetching: false,
     userLocation: null,
 
-    initialize: (citySlug, timeFilter, pharmacies) =>
-      set({ citySlug, timeFilter, pharmacies }),
+    initialize: (citySlug, timeFilter, pharmacies, userLocation) =>
+      set({
+        citySlug,
+        timeFilter,
+        pharmacies,
+        ...(userLocation !== undefined ? { userLocation } : {}),
+      }),
 
     setPharmacies: (pharmacies) => set({ pharmacies }),
 
@@ -47,7 +53,7 @@ export const useCityPharmaciesStore = create<CityPharmaciesState>(
           lng
         );
         // Sort by distance when we have location data
-        const sorted = [...data].sort((a, b) => {
+        const sorted = data.toSorted((a, b) => {
           if (a.distance_km == null) return 1;
           if (b.distance_km == null) return -1;
           return a.distance_km - b.distance_km;

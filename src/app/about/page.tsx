@@ -35,7 +35,7 @@ export default async function AboutPage() {
     <div className="flex-1 h-full overflow-y-auto bg-background p-6 md:p-12">
       <div className="max-w-5xl mx-auto space-y-12">
         <section className="space-y-6 text-center md:text-left">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+          <h1 className="text-4xl font-semibold tracking-tight lg:text-5xl mb-6">
             Βρίσκουμε Φαρμακείο. <br className="hidden md:inline" />
             <span className="text-primary">Άμεσα & Αξιόπιστα.</span>
           </h1>
@@ -54,7 +54,7 @@ export default async function AboutPage() {
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Σύνολο Φαρμακείων
               </CardTitle>
-              <Store className="h-4 w-4 text-primary" />
+              <Store className="size-4 text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
@@ -70,7 +70,7 @@ export default async function AboutPage() {
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Πόλεις & Περιοχές
               </CardTitle>
-              <MapPin className="h-4 w-4 text-blue-500" />
+              <MapPin className="size-4 text-blue-500" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
@@ -86,16 +86,16 @@ export default async function AboutPage() {
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 Εφημερεύουν Τώρα
               </CardTitle>
-              <Activity className="h-4 w-4 text-emerald-500" />
+              <Activity className="size-4 text-emerald-500" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
                 <CountUp end={safeStats?.counts.on_duty_today ?? 0} />
               </div>
               <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                <span className="relative flex h-2 w-2">
+                <span className="relative flex size-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  <span className="relative inline-flex rounded-full size-2 bg-emerald-500"></span>
                 </span>
                 Live ενημέρωση
               </p>
@@ -107,7 +107,7 @@ export default async function AboutPage() {
 
         <section className="space-y-8">
           <div className="text-center md:text-left">
-            <h2 className="text-3xl font-bold tracking-tight">
+            <h2 className="text-3xl font-semibold tracking-tight">
               Συχνές Ερωτήσεις
             </h2>
             <p className="text-muted-foreground mt-2">
@@ -117,7 +117,7 @@ export default async function AboutPage() {
 
           <div className="grid md:grid-cols-2 gap-8">
             <div className="space-y-3">
-              <h3 className="font-bold text-lg">
+              <h3 className="font-semibold text-lg">
                 Πόσο συχνά ανανεώνονται τα δεδομένα;
               </h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -126,7 +126,7 @@ export default async function AboutPage() {
               </p>
             </div>
             <div className="space-y-3">
-              <h3 className="font-bold text-lg">
+              <h3 className="font-semibold text-lg">
                 Είναι τα δεδομένα 100% ακριβή;
               </h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -136,14 +136,14 @@ export default async function AboutPage() {
               </p>
             </div>
             <div className="space-y-3">
-              <h3 className="font-bold text-lg">Η υπηρεσία είναι δωρεάν;</h3>
+              <h3 className="font-semibold text-lg">Η υπηρεσία είναι δωρεάν;</h3>
               <p className="text-muted-foreground leading-relaxed">
                 Ναι, το Pharmafinder είναι και θα παραμείνει μια δωρεάν, Open
                 Source υπηρεσία για όλους τους πολίτες.
               </p>
             </div>
             <div className="space-y-3">
-              <h3 className="font-bold text-lg">Πώς μπορώ να βοηθήσω;</h3>
+              <h3 className="font-semibold text-lg">Πώς μπορώ να βοηθήσω;</h3>
               <p className="text-muted-foreground leading-relaxed">
                 Αν βρείτε κάποιο λάθος ή έχετε μια πρόταση, μπορείτε να κάνετε
                 αναφορά μέσω της εφαρμογής ή να συνεισφέρετε στον κώδικα στο
@@ -151,7 +151,7 @@ export default async function AboutPage() {
               </p>
             </div>
             <div className="space-y-3">
-              <h3 className="font-bold text-lg">
+              <h3 className="font-semibold text-lg">
                 Πώς εντοπίζεται η τοποθεσία μου;
               </h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -169,8 +169,8 @@ export default async function AboutPage() {
         <section className="grid md:grid-cols-2 gap-12">
           <div className="space-y-6">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="h-6 w-6 text-primary" />
-              <h2 className="text-2xl font-bold tracking-tight">
+              <ShieldCheck className="size-6 text-primary" />
+              <h2 className="text-2xl font-semibold tracking-tight">
                 Διαφάνεια & Δεδομένα
               </h2>
             </div>
@@ -182,7 +182,7 @@ export default async function AboutPage() {
             </p>
 
             <div className="bg-muted/50 p-4 rounded-lg border text-sm text-muted-foreground flex gap-3 items-start">
-              <AlertTriangle className="h-5 w-5 text-orange-500 shrink-0 mt-0.5" />
+              <AlertTriangle className="size-5 text-orange-500 shrink-0 mt-0.5" />
               <p>
                 Τα δεδομένα παρέχονται για ενημερωτικούς σκοπούς. Συνιστούμε
                 πάντα την τηλεφωνική επιβεβαίωση με το φαρμακείο πριν την
@@ -193,8 +193,8 @@ export default async function AboutPage() {
 
           <div className="space-y-6">
             <div className="flex items-center gap-2">
-              <Code2 className="h-6 w-6 text-primary" />
-              <h2 className="text-2xl font-bold tracking-tight">Τεχνολογία</h2>
+              <Code2 className="size-6 text-primary" />
+              <h2 className="text-2xl font-semibold tracking-tight">Τεχνολογία</h2>
             </div>
             <p className="text-muted-foreground leading-relaxed">
               Το Pharmafinder είναι ένα Open Source project, κατασκευασμένο με
@@ -222,7 +222,7 @@ export default async function AboutPage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Github className="h-4 w-4" />
+                <Github className="size-4" />
                 Προβολή κώδικα στο GitHub
               </a>
             </Button>
@@ -233,10 +233,10 @@ export default async function AboutPage() {
 
         <section className="text-center space-y-6 py-8 bg-muted/30 rounded-3xl border border-dashed">
           <div className="mx-auto bg-background p-3 rounded-full w-fit shadow-sm">
-            <MessageSquare className="h-6 w-6 text-primary" />
+            <MessageSquare className="size-6 text-primary" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-xl font-bold">Βρήκατε κάποιο λάθος;</h3>
+            <h3 className="text-xl font-semibold">Βρήκατε κάποιο λάθος;</h3>
             <p className="text-muted-foreground max-w-md mx-auto">
               Η βοήθειά σας είναι πολύτιμη. Αν εντοπίσετε κάποια ανακρίβεια,
               ενημερώστε μας για να τη διορθώσουμε άμεσα.

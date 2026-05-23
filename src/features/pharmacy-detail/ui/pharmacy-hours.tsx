@@ -1,5 +1,5 @@
 import { Clock } from "lucide-react";
-import { formatPharmacyHours, type Pharmacy } from "@/entities/pharmacy";
+import { type Pharmacy } from "@/entities/pharmacy";
 import {
   Card,
   CardContent,
@@ -74,7 +74,9 @@ export function PharmacyHours({ hours }: PharmacyHoursProps) {
         <div className="divide-y divide-border/50">
           {sortedDates.map((date) => {
             const slots = groupedHours[date];
-            const formattedHours = formatPharmacyHours(slots);
+            const visibleSlots = slots.filter(
+              (slot) => slot.open_time && slot.close_time
+            );
 
             return (
               <div
@@ -90,11 +92,16 @@ export function PharmacyHours({ hours }: PharmacyHoursProps) {
                   </span>
                 </div>
 
-                <div className="text-right text-foreground/90 font-medium tabular-nums leading-tight gap-y-2 flex flex-col">
-                  {formattedHours ? (
-                     formattedHours.split(",").map((part, i) => (
-                        <div key={i}>{part.trim()}</div>
-                     ))
+                 <div className="text-right text-foreground/90 font-medium tabular-nums leading-tight gap-y-2 flex flex-col">
+                  {visibleSlots.length > 0 ? (
+                    visibleSlots.map((slot) => (
+                      <div
+                        key={`${date}-${slot.open_time}-${slot.close_time}`}
+                      >
+                        {slot.open_time?.slice(0, 5)} -{" "}
+                        {slot.close_time?.slice(0, 5)}
+                      </div>
+                    ))
                   ) : (
                     <span className="text-muted-foreground">—</span>
                   )}
