@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { statisticsApi } from "@/entities/statistics/api/statistics.api";
+import { formatGreekNumber } from "@/shared/lib/formatters";
 
 export function SystemStatusCard() {
   const { data: stats, isLoading } = useQuery({
@@ -34,7 +35,7 @@ export function SystemStatusCard() {
       </div>
       <p className="text-sm text-muted-foreground">
         <span className="font-semibold text-foreground">
-          {stats.counts.on_duty_today.toLocaleString("el-GR")}
+          {formatGreekNumber(stats.counts.on_duty_today)}
         </span>{" "}
         φαρμακεία σε εφημερία σήμερα
       </p>

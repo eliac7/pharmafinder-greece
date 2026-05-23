@@ -12,6 +12,7 @@ export function SidebarFilters() {
   return (
     <div className="mt-4 px-1 space-y-3">
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-between w-full text-left"
       >

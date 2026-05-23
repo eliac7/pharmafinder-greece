@@ -26,6 +26,7 @@ export function TimeFilterChips({
         const isSelected = time === option;
         return (
           <button
+            type="button"
             key={option}
             onClick={() => setTime(option)}
             className={cn(

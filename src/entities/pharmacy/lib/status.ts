@@ -3,6 +3,7 @@ import {
   type PharmacyStatusResult,
   type TimeFilter,
 } from "../model/types";
+import { getAthensDateTimeParts } from "@/shared/lib/formatters";
 
 /**
  * Format pharmacy hours for display
@@ -75,19 +76,8 @@ export function getPharmacyStatus(
 
   // For "now" filter, check real-time status
   const now = new Date();
-  
-  const formatter = new Intl.DateTimeFormat("el-GR", {
-    timeZone: "Europe/Athens",
-    hour12: false,
-    hourCycle: "h23",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 
-  const parts = formatter.formatToParts(now);
+  const parts = getAthensDateTimeParts(now);
   const getPart = (type: string) =>
     parts.find((p) => p.type === type)?.value || "";
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatGreekNumber } from "@/shared/lib/formatters";
 
 interface CountUpProps {
   end: number;
@@ -34,7 +35,7 @@ export function CountUp({ end, duration = 2000, suffix = "" }: CountUpProps) {
 
   return (
     <span>
-      {count.toLocaleString("el-GR")}
+      {formatGreekNumber(count)}
       {suffix}
     </span>
   );

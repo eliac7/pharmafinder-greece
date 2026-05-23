@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useMap } from "@/shared/ui/map";
 import { useLocationStore } from "@/features/locate-user";
 import { toast } from "sonner";
@@ -17,12 +17,8 @@ export function ManualLocationAdjuster({
   const { map } = useMap();
   const { setLocation } = useLocationStore();
   const isAdjusting = controlledAdjusting ?? false;
-  const setIsAdjusting = useCallback(
-    (next: boolean) => {
-      onAdjustChange?.(next);
-    },
-    [onAdjustChange]
-  );
+  const onAdjustChangeRef = useRef(onAdjustChange);
+  onAdjustChangeRef.current = onAdjustChange;
   const previousInteractions = useRef({
     dragPan: true,
     dragRotate: true,
@@ -75,7 +71,7 @@ export function ManualLocationAdjuster({
 
       const { lng, lat } = e.lngLat;
       setLocation(lat, lng);
-      setIsAdjusting(false);
+      onAdjustChangeRef.current?.(false);
 
       toast.success("Η τοποθεσία ενημερώθηκε!");
 
@@ -103,7 +99,7 @@ export function ManualLocationAdjuster({
       canvas.style.cursor = "";
       container.style.cursor = "";
     };
-  }, [map, isAdjusting, setLocation, setIsAdjusting]);
+  }, [map, isAdjusting, setLocation]);
 
   return null;
 }

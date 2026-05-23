@@ -135,6 +135,8 @@ export default async function PharmacyPage({ params }: Props) {
             {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && (
               <div className="relative group rounded-3xl overflow-hidden border bg-muted aspect-video">
                 <iframe
+                  title={`Street View για ${pharmacy.name}`}
+                  sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
                   className="w-full h-full opacity-90 group-hover:opacity-100 transition-opacity pointer-events-none"
                   style={{ border: 0 }}
                   loading="lazy"

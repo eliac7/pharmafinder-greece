@@ -254,6 +254,7 @@ export default async function AboutPage() {
           <a
             href="https://ilias.dev"
             target="_blank"
+            rel="noopener noreferrer"
             className="font-medium text-foreground hover:underline"
           >
             Ilias Nikolaos Thalassochoritis

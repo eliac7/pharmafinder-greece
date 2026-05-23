@@ -80,6 +80,7 @@ export function ReportPharmacyForm({
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Input
+          aria-label="Τύπος προβλήματος"
           placeholder="Τύπος προβλήματος (π.χ. Λάθος ωράριο)"
           value={reportType}
           onChange={(e) => setReportType(e.target.value)}
@@ -87,6 +88,7 @@ export function ReportPharmacyForm({
           className="h-11 rounded-xl"
         />
         <textarea
+          aria-label="Περιγραφή προβλήματος"
           placeholder="Περιγραφή (προαιρετικό)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -100,6 +102,7 @@ export function ReportPharmacyForm({
 
       <div className="flex justify-center">
         <Turnstile
+          aria-label="Επαλήθευση Cloudflare Turnstile"
           siteKey={siteKey}
           onSuccess={setTurnstileToken}
           onError={() => setTurnstileToken(null)}

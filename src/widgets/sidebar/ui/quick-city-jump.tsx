@@ -31,7 +31,10 @@ export function QuickCityJump() {
       </div>
       <CitySearchModal
         trigger={
-          <button className="text-xs text-muted-foreground hover:text-primary transition-colors underline underline-offset-2">
+          <button
+            type="button"
+            className="text-xs text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
+          >
             Δεν βρήκες την πόλη σου;
           </button>
         }

@@ -1,6 +1,7 @@
 "use client";
 
 import { Navigation, Cross, Clock, Sparkles } from "lucide-react";
+import type { KeyboardEvent } from "react";
 import { FavoriteButton } from "@/features/favorites";
 import { cn } from "@/shared";
 import { useMapStore } from "@/shared/model/use-map-store";
@@ -46,13 +47,24 @@ export function PharmacyCard({
     }
   };
 
+  const handleCardKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.target !== event.currentTarget) return;
+    if (event.key !== "Enter" && event.key !== " ") return;
+
+    event.preventDefault();
+    handleCardClick();
+  };
+
   return (
     <div
+      role="button"
+      tabIndex={0}
       onClick={handleCardClick}
+      onKeyDown={handleCardKeyDown}
       className={cn(
         "group flex p-3 rounded-xl bg-card border border-border",
         "hover:border-primary/40 hover:bg-accent/50",
-        "transition-all duration-200 cursor-pointer shadow-sm",
+        "transition-all duration-200 cursor-pointer shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         isClosingSoon && "border-amber-500/40"
       )}
     >
@@ -147,7 +159,8 @@ export function PharmacyCard({
               if (pharmacy.latitude && pharmacy.longitude) {
                 window.open(
                   `https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`,
-                  "_blank"
+                  "_blank",
+                  "noopener,noreferrer"
                 );
               }
             }}

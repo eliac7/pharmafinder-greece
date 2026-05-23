@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
+import { formatGreekWeekday } from "@/shared/lib/formatters";
 
 type PharmacyHoursProps = {
   hours: NonNullable<Pharmacy["data_hours"]>;
@@ -34,9 +35,7 @@ const getDayLabel = (dateStr: string) => {
   if (dateStr === toYmdLocal(today)) return "ΣΗΜΕΡΑ";
   if (dateStr === toYmdLocal(tomorrow)) return "ΑΥΡΙΟ";
 
-  return new Intl.DateTimeFormat("el-GR", { weekday: "long" })
-    .format(parsedDate)
-    .toUpperCase();
+  return formatGreekWeekday(parsedDate).toUpperCase();
 };
 
 const getShortDate = (dateStr: string) => {
@@ -93,7 +92,7 @@ export function PharmacyHours({ hours }: PharmacyHoursProps) {
 
                 <div className="text-right text-foreground/90 font-medium tabular-nums leading-tight gap-y-2 flex flex-col">
                   {formattedHours ? (
-                     formattedHours.split(',').map((part, i) => (
+                     formattedHours.split(",").map((part, i) => (
                         <div key={i}>{part.trim()}</div>
                      ))
                   ) : (

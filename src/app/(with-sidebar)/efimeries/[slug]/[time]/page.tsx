@@ -5,6 +5,7 @@ import {
   buildSeoDescription,
   buildSeoTitle,
   getDateForTime,
+  serializeJsonLd,
 } from "@/shared";
 import { getLocationFromCookies } from "@/features/locate-user/lib/location-cookie";
 
@@ -132,10 +133,7 @@ export default async function EfimeriesTimePage({ params }: Props) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <script type="application/ld+json">{serializeJsonLd(jsonLd)}</script>
 
       <CityPharmaciesMap
         initialPharmacies={pharmacies}

@@ -35,21 +35,16 @@ export function CityPharmaciesMap({
 
   useEffect(() => {
     initialize(citySlug, timeFilter, initialPharmacies);
+  }, [citySlug, timeFilter, initialPharmacies, initialize]);
 
+  useEffect(() => {
     const hasDistances = initialPharmacies.some(
       (p) => typeof p.distance_km === "number" && p.distance_km > 0
     );
     if (hasDistances && latitude && longitude) {
       lastLocationRef.current = { lat: latitude, lng: longitude };
     }
-  }, [
-    citySlug,
-    timeFilter,
-    initialPharmacies,
-    initialize,
-    latitude,
-    longitude,
-  ]);
+  }, [initialPharmacies, latitude, longitude]);
 
   useEffect(() => {
     if (!latitude || !longitude) return;

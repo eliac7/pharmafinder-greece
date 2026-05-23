@@ -38,6 +38,12 @@ function useMap() {
   return context;
 }
 
+function useLatestRef<T>(value: T) {
+  const ref = useRef(value);
+  ref.current = value;
+  return ref;
+}
+
 /**
  * Check if WebGL is supported in the browser
  */
@@ -133,6 +139,9 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     }),
     [styles]
   );
+  const initialMapOptionsRef = useRef(props);
+  const initialMapStylesRef = useRef(mapStyles);
+  const initialThemeRef = useRef(resolvedTheme);
 
   const clearStyleTimeout = useCallback(() => {
     if (styleTimeoutRef.current) {
@@ -152,8 +161,11 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
       return;
     }
 
+    const initialStyles = initialMapStylesRef.current;
     const initialStyle =
-      resolvedTheme === "dark" ? mapStyles.dark : mapStyles.light;
+      initialThemeRef.current === "dark"
+        ? initialStyles.dark
+        : initialStyles.light;
     currentStyleRef.current = initialStyle;
 
     let map: MapLibreGL.Map;
@@ -166,7 +178,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
         attributionControl: {
           compact: true,
         },
-        ...props,
+        ...initialMapOptionsRef.current,
       });
     } catch (error) {
       console.error("Failed to initialize map:", error);
@@ -208,8 +220,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
       setIsStyleLoaded(false);
       setMapInstance(null);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [clearStyleTimeout]);
 
   useEffect(() => {
     if (!mapInstance || !resolvedTheme) return;
@@ -307,17 +318,29 @@ function MapMarker({
   ...markerOptions
 }: MapMarkerProps) {
   const { map } = useMap();
+  const handlersRef = useLatestRef({
+    onClick,
+    onMouseEnter,
+    onMouseLeave,
+    onDragStart,
+    onDrag,
+    onDragEnd,
+  });
+  const initialMarkerOptionsRef = useRef(markerOptions);
+  const initialDraggableRef = useRef(draggable);
 
   const marker = useMemo(() => {
     const markerInstance = new MapLibreGL.Marker({
-      ...markerOptions,
+      ...initialMarkerOptionsRef.current,
       element: document.createElement("div"),
-      draggable,
+      draggable: initialDraggableRef.current,
     }).setLngLat([longitude, latitude]);
 
-    const handleClick = (e: MouseEvent) => onClick?.(e);
-    const handleMouseEnter = (e: MouseEvent) => onMouseEnter?.(e);
-    const handleMouseLeave = (e: MouseEvent) => onMouseLeave?.(e);
+    const handleClick = (e: MouseEvent) => handlersRef.current.onClick?.(e);
+    const handleMouseEnter = (e: MouseEvent) =>
+      handlersRef.current.onMouseEnter?.(e);
+    const handleMouseLeave = (e: MouseEvent) =>
+      handlersRef.current.onMouseLeave?.(e);
 
     markerInstance.getElement()?.addEventListener("click", handleClick);
     markerInstance
@@ -329,15 +352,15 @@ function MapMarker({
 
     const handleDragStart = () => {
       const lngLat = markerInstance.getLngLat();
-      onDragStart?.({ lng: lngLat.lng, lat: lngLat.lat });
+      handlersRef.current.onDragStart?.({ lng: lngLat.lng, lat: lngLat.lat });
     };
     const handleDrag = () => {
       const lngLat = markerInstance.getLngLat();
-      onDrag?.({ lng: lngLat.lng, lat: lngLat.lat });
+      handlersRef.current.onDrag?.({ lng: lngLat.lng, lat: lngLat.lat });
     };
     const handleDragEnd = () => {
       const lngLat = markerInstance.getLngLat();
-      onDragEnd?.({ lng: lngLat.lng, lat: lngLat.lat });
+      handlersRef.current.onDragEnd?.({ lng: lngLat.lng, lat: lngLat.lat });
     };
 
     markerInstance.on("dragstart", handleDragStart);
@@ -345,9 +368,7 @@ function MapMarker({
     markerInstance.on("dragend", handleDragEnd);
 
     return markerInstance;
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [handlersRef, latitude, longitude]);
 
   useEffect(() => {
     if (!map) return;
@@ -357,9 +378,7 @@ function MapMarker({
     return () => {
       marker.remove();
     };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map]);
+  }, [map, marker]);
 
   if (
     marker.getLngLat().lng !== longitude ||
@@ -441,20 +460,20 @@ function MarkerPopup({
 }: MarkerPopupProps) {
   const { marker, map } = useMarkerContext();
   const container = useMemo(() => document.createElement("div"), []);
+  const initialPopupOptionsRef = useRef(popupOptions);
   const prevPopupOptions = useRef(popupOptions);
 
   const popup = useMemo(() => {
     const popupInstance = new MapLibreGL.Popup({
       offset: 16,
-      ...popupOptions,
+      ...initialPopupOptionsRef.current,
       closeButton: false,
     })
       .setMaxWidth("none")
       .setDOMContent(container);
 
     return popupInstance;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [container]);
 
   useEffect(() => {
     if (!map) return;
@@ -465,8 +484,7 @@ function MarkerPopup({
     return () => {
       marker.setPopup(null);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map]);
+  }, [container, map, marker, popup]);
 
   useEffect(() => {
     if (forceOpen && map && !popup.isOpen()) {
@@ -527,18 +545,18 @@ function MarkerTooltip({
 }: MarkerTooltipProps) {
   const { marker, map } = useMarkerContext();
   const container = useMemo(() => document.createElement("div"), []);
+  const initialTooltipOptionsRef = useRef(popupOptions);
   const prevTooltipOptions = useRef(popupOptions);
 
   const tooltip = useMemo(() => {
     const tooltipInstance = new MapLibreGL.Popup({
       offset: 16,
-      ...popupOptions,
+      ...initialTooltipOptionsRef.current,
       closeOnClick: true,
       closeButton: false,
     }).setMaxWidth("none");
 
     return tooltipInstance;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -559,8 +577,7 @@ function MarkerTooltip({
       marker.getElement()?.removeEventListener("mouseleave", handleMouseLeave);
       tooltip.remove();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map]);
+  }, [container, map, marker, tooltip]);
 
   if (tooltip.isOpen()) {
     const prev = prevTooltipOptions.current;
@@ -857,26 +874,28 @@ function MapPopup({
   ...popupOptions
 }: MapPopupProps) {
   const { map } = useMap();
+  const onCloseRef = useLatestRef(onClose);
+  const initialPopupOptionsRef = useRef(popupOptions);
+  const initialCoordinatesRef = useRef<[number, number]>([longitude, latitude]);
   const popupOptionsRef = useRef(popupOptions);
   const container = useMemo(() => document.createElement("div"), []);
 
   const popup = useMemo(() => {
     const popupInstance = new MapLibreGL.Popup({
       offset: 16,
-      ...popupOptions,
+      ...initialPopupOptionsRef.current,
       closeButton: false,
     })
       .setMaxWidth("none")
-      .setLngLat([longitude, latitude]);
+      .setLngLat(initialCoordinatesRef.current);
 
     return popupInstance;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (!map) return;
 
-    const onCloseProp = () => onClose?.();
+    const onCloseProp = () => onCloseRef.current?.();
     popup.on("close", onCloseProp);
 
     popup.setDOMContent(container);
@@ -888,8 +907,7 @@ function MapPopup({
         popup.remove();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map]);
+  }, [container, map, onCloseRef, popup]);
 
   if (popup.isOpen()) {
     const prev = popupOptionsRef.current;
@@ -912,7 +930,7 @@ function MapPopup({
 
   const handleClose = () => {
     popup.remove();
-    onClose?.();
+    onCloseRef.current?.();
   };
 
   return createPortal(
@@ -979,10 +997,18 @@ function MapRoute({
   const id = propId ?? autoId;
   const sourceId = `route-source-${id}`;
   const layerId = `route-layer-${id}`;
+  const onClickRef = useRef(onClick);
+  const onMouseEnterRef = useRef(onMouseEnter);
+  const onMouseLeaveRef = useRef(onMouseLeave);
+  const initialPaintRef = useRef({ color, width, opacity, dashArray });
+  onClickRef.current = onClick;
+  onMouseEnterRef.current = onMouseEnter;
+  onMouseLeaveRef.current = onMouseLeave;
 
   // Add source and layer on mount
   useEffect(() => {
     if (!isLoaded || !map) return;
+    const initialPaint = initialPaintRef.current;
 
     map.addSource(sourceId, {
       type: "geojson",
@@ -999,10 +1025,12 @@ function MapRoute({
       source: sourceId,
       layout: { "line-join": "round", "line-cap": "round" },
       paint: {
-        "line-color": color,
-        "line-width": width,
-        "line-opacity": opacity,
-        ...(dashArray && { "line-dasharray": dashArray }),
+        "line-color": initialPaint.color,
+        "line-width": initialPaint.width,
+        "line-opacity": initialPaint.opacity,
+        ...(initialPaint.dashArray && {
+          "line-dasharray": initialPaint.dashArray,
+        }),
       },
     });
 
@@ -1014,8 +1042,7 @@ function MapRoute({
         // ignore
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, map]);
+  }, [isLoaded, layerId, map, sourceId]);
 
   // When coordinates change, update the source data
   useEffect(() => {
@@ -1047,15 +1074,15 @@ function MapRoute({
     if (!isLoaded || !map || !interactive) return;
 
     const handleClick = () => {
-      onClick?.();
+      onClickRef.current?.();
     };
     const handleMouseEnter = () => {
       map.getCanvas().style.cursor = "pointer";
-      onMouseEnter?.();
+      onMouseEnterRef.current?.();
     };
     const handleMouseLeave = () => {
       map.getCanvas().style.cursor = "";
-      onMouseLeave?.();
+      onMouseLeaveRef.current?.();
     };
 
     map.on("click", layerId, handleClick);
@@ -1071,9 +1098,6 @@ function MapRoute({
     isLoaded,
     map,
     layerId,
-    onClick,
-    onMouseEnter,
-    onMouseLeave,
     interactive,
   ]);
 
@@ -1126,6 +1150,18 @@ function MapClusterLayer<
   const clusterLayerId = `clusters-${id}`;
   const clusterCountLayerId = `cluster-count-${id}`;
   const unclusteredLayerId = `unclustered-point-${id}`;
+  const onPointClickRef = useRef(onPointClick);
+  const onClusterClickRef = useRef(onClusterClick);
+  const initialClusterConfigRef = useRef({
+    data,
+    clusterMaxZoom,
+    clusterRadius,
+    clusterColors,
+    clusterThresholds,
+    pointColor,
+  });
+  onPointClickRef.current = onPointClick;
+  onClusterClickRef.current = onClusterClick;
 
   const stylePropsRef = useRef({
     clusterColors,
@@ -1136,14 +1172,15 @@ function MapClusterLayer<
   // Add source and layers on mount
   useEffect(() => {
     if (!isLoaded || !map) return;
+    const initialConfig = initialClusterConfigRef.current;
 
     // Add clustered GeoJSON source
     map.addSource(sourceId, {
       type: "geojson",
-      data,
+      data: initialConfig.data,
       cluster: true,
-      clusterMaxZoom,
-      clusterRadius,
+      clusterMaxZoom: initialConfig.clusterMaxZoom,
+      clusterRadius: initialConfig.clusterRadius,
     });
 
     // Add cluster circles layer
@@ -1156,19 +1193,19 @@ function MapClusterLayer<
         "circle-color": [
           "step",
           ["get", "point_count"],
-          clusterColors[0],
-          clusterThresholds[0],
-          clusterColors[1],
-          clusterThresholds[1],
-          clusterColors[2],
+          initialConfig.clusterColors[0],
+          initialConfig.clusterThresholds[0],
+          initialConfig.clusterColors[1],
+          initialConfig.clusterThresholds[1],
+          initialConfig.clusterColors[2],
         ],
         "circle-radius": [
           "step",
           ["get", "point_count"],
           20,
-          clusterThresholds[0],
+          initialConfig.clusterThresholds[0],
           30,
-          clusterThresholds[1],
+          initialConfig.clusterThresholds[1],
           40,
         ],
       },
@@ -1196,7 +1233,7 @@ function MapClusterLayer<
       source: sourceId,
       filter: ["!", ["has", "point_count"]],
       paint: {
-        "circle-color": pointColor,
+        "circle-color": initialConfig.pointColor,
         "circle-radius": 6,
       },
     });
@@ -1213,8 +1250,14 @@ function MapClusterLayer<
         // ignore
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, map, sourceId]);
+  }, [
+    clusterCountLayerId,
+    clusterLayerId,
+    isLoaded,
+    map,
+    sourceId,
+    unclusteredLayerId,
+  ]);
 
   // Update source data when data prop changes (only for non-URL data)
   useEffect(() => {
@@ -1296,8 +1339,9 @@ function MapClusterLayer<
         number
       ];
 
-      if (onClusterClick) {
-        onClusterClick(clusterId, coordinates, pointCount);
+      const latestOnClusterClick = onClusterClickRef.current;
+      if (latestOnClusterClick) {
+        latestOnClusterClick(clusterId, coordinates, pointCount);
       } else {
         // Default behavior: zoom to cluster expansion zoom
         const source = map.getSource(sourceId) as MapLibreGL.GeoJSONSource;
@@ -1315,7 +1359,8 @@ function MapClusterLayer<
         features?: MapLibreGL.MapGeoJSONFeature[];
       }
     ) => {
-      if (!onPointClick || !e.features?.length) return;
+      const latestOnPointClick = onPointClickRef.current;
+      if (!latestOnPointClick || !e.features?.length) return;
 
       const feature = e.features[0];
       const coordinates = (
@@ -1327,7 +1372,7 @@ function MapClusterLayer<
         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
       }
 
-      onPointClick(
+      latestOnPointClick(
         feature as unknown as GeoJSON.Feature<GeoJSON.Point, P>,
         coordinates
       );
@@ -1341,7 +1386,7 @@ function MapClusterLayer<
       map.getCanvas().style.cursor = "";
     };
     const handleMouseEnterPoint = () => {
-      if (onPointClick) {
+      if (onPointClickRef.current) {
         map.getCanvas().style.cursor = "pointer";
       }
     };
@@ -1370,8 +1415,6 @@ function MapClusterLayer<
     clusterLayerId,
     unclusteredLayerId,
     sourceId,
-    onClusterClick,
-    onPointClick,
   ]);
 
   return null;
@@ -1404,6 +1447,8 @@ type MapHybridClusterLayerProps<
   ) => void;
 };
 
+const EMPTY_FORCE_VISIBLE_FEATURE_IDS: (string | number)[] = [];
+
 function MapHybridClusterLayer<
   P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties
 >({
@@ -1413,7 +1458,7 @@ function MapHybridClusterLayer<
   clusterColors = ["#51bbd6", "#f1f075", "#f28cb1"],
   clusterThresholds = [100, 750],
   clusterTextColor = "#ffffff",
-  forceVisibleFeatureIds = [],
+  forceVisibleFeatureIds = EMPTY_FORCE_VISIBLE_FEATURE_IDS,
   children,
   onClusterClick,
 }: MapHybridClusterLayerProps<P>) {
@@ -1422,6 +1467,16 @@ function MapHybridClusterLayer<
   const sourceId = `hybrid-cluster-source-${id}`;
   const clusterLayerId = `hybrid-clusters-${id}`;
   const clusterCountLayerId = `hybrid-cluster-count-${id}`;
+  const onClusterClickRef = useRef(onClusterClick);
+  const initialClusterConfigRef = useRef({
+    data,
+    clusterMaxZoom,
+    clusterRadius,
+    clusterColors,
+    clusterThresholds,
+    clusterTextColor,
+  });
+  onClusterClickRef.current = onClusterClick;
 
   const [unclusteredFeatures, setUnclusteredFeatures] = useState<
     GeoJSON.Feature<GeoJSON.Point, P>[]
@@ -1430,13 +1485,14 @@ function MapHybridClusterLayer<
   // Add source and cluster layers
   useEffect(() => {
     if (!isLoaded || !map) return;
+    const initialConfig = initialClusterConfigRef.current;
 
     map.addSource(sourceId, {
       type: "geojson",
-      data,
+      data: initialConfig.data,
       cluster: true,
-      clusterMaxZoom,
-      clusterRadius,
+      clusterMaxZoom: initialConfig.clusterMaxZoom,
+      clusterRadius: initialConfig.clusterRadius,
     });
 
     // Add cluster circles layer
@@ -1449,19 +1505,19 @@ function MapHybridClusterLayer<
         "circle-color": [
           "step",
           ["get", "point_count"],
-          clusterColors[0],
-          clusterThresholds[0],
-          clusterColors[1],
-          clusterThresholds[1],
-          clusterColors[2],
+          initialConfig.clusterColors[0],
+          initialConfig.clusterThresholds[0],
+          initialConfig.clusterColors[1],
+          initialConfig.clusterThresholds[1],
+          initialConfig.clusterColors[2],
         ],
         "circle-radius": [
           "step",
           ["get", "point_count"],
           20,
-          clusterThresholds[0],
+          initialConfig.clusterThresholds[0],
           30,
-          clusterThresholds[1],
+          initialConfig.clusterThresholds[1],
           40,
         ],
       },
@@ -1478,7 +1534,7 @@ function MapHybridClusterLayer<
         "text-size": 12,
       },
       paint: {
-        "text-color": clusterTextColor,
+        "text-color": initialConfig.clusterTextColor,
       },
     });
 
@@ -1507,8 +1563,7 @@ function MapHybridClusterLayer<
         // ignore
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, map, sourceId]);
+  }, [clusterCountLayerId, clusterLayerId, isLoaded, map, sourceId]);
 
   // Update data
   useEffect(() => {
@@ -1635,8 +1690,9 @@ function MapHybridClusterLayer<
         number
       ];
 
-      if (onClusterClick) {
-        onClusterClick(clusterId, coordinates, pointCount);
+      const latestOnClusterClick = onClusterClickRef.current;
+      if (latestOnClusterClick) {
+        latestOnClusterClick(clusterId, coordinates, pointCount);
       } else {
         const source = map.getSource(sourceId) as MapLibreGL.GeoJSONSource;
         const zoom = await source.getClusterExpansionZoom(clusterId);
@@ -1663,7 +1719,7 @@ function MapHybridClusterLayer<
       map.off("mouseenter", clusterLayerId, handleMouseEnter);
       map.off("mouseleave", clusterLayerId, handleMouseLeave);
     };
-  }, [isLoaded, map, clusterLayerId, sourceId, onClusterClick]);
+  }, [isLoaded, map, clusterLayerId, sourceId]);
 
   return <>{children(unclusteredFeatures)}</>;
 }
