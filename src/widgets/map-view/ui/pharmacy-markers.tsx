@@ -2,6 +2,7 @@
 
 import { useNearbyPharmacies } from "@/features/find-pharmacies";
 import { useFavorites } from "@/features/favorites";
+import { useLocationStore } from "@/features/locate-user";
 import { PharmacyNavigationDialog } from "@/features/pharmacy-navigation";
 import { useMapStore } from "@/shared/model/use-map-store";
 import {
@@ -23,6 +24,8 @@ import { cn } from "@/shared";
 import {
   getPharmacyStatus,
   formatPharmacyHours,
+  getArrivalBadgeText,
+  getArrivalEstimate,
   useCityPharmacies,
   pharmacyApi,
 } from "@/entities/pharmacy";
@@ -55,6 +58,9 @@ export function PharmacyMarkers({
   const { data: nearbyData } = useNearbyPharmacies();
   const popupTargetId = useMapStore((state) => state.popupTargetId);
   const selectedPharmacyId = useMapStore((state) => state.selectedPharmacyId);
+  const { latitude, longitude } = useLocationStore();
+  const userLocation =
+    latitude && longitude ? { latitude, longitude } : null;
 
   const [queryTime] = useQueryState<TimeFilter>(
     "time",
@@ -185,6 +191,14 @@ export function PharmacyMarkers({
                 pharmacy.next_day_close_time ?? null,
                 effectiveTimeFilter
               );
+            const arrivalEstimate =
+              effectiveTimeFilter === "now"
+                ? getArrivalEstimate({
+                    pharmacy,
+                    userLocation,
+                    minutesUntilClose,
+                  })
+                : null;
 
             if (status === "closed") return null;
 
@@ -281,6 +295,23 @@ export function PharmacyMarkers({
                               : "Κλειστό"}
                           </span>
                         )}
+                        {arrivalEstimate && (
+                          <span
+                            className={cn(
+                              "text-xs inline-block mt-1 px-2.5 py-0.5 rounded-full font-semibold",
+                              arrivalEstimate.risk === "safe" &&
+                                "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
+                              arrivalEstimate.risk === "tight" &&
+                                "bg-amber-500/15 text-amber-700 dark:text-amber-400",
+                              arrivalEstimate.risk === "too_late" &&
+                                "bg-destructive/15 text-destructive",
+                              arrivalEstimate.risk === "unknown" &&
+                                "bg-muted text-muted-foreground"
+                            )}
+                          >
+                            {getArrivalBadgeText(arrivalEstimate)}
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -327,6 +358,7 @@ export function PharmacyMarkers({
                         </a>
                         <PharmacyNavigationDialog
                           pharmacy={pharmacy}
+                          arrivalEstimate={arrivalEstimate}
                           triggerLabel="Οδηγίες"
                           className="h-auto gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold shadow-sm"
                         />

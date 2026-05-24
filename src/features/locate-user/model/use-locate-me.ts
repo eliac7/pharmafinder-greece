@@ -13,8 +13,10 @@ interface Coordinates {
 interface UseLocateMeReturn {
   coordinates: Coordinates | null;
   isLoading: boolean;
+  isIpLoading: boolean;
   error: string | null;
   locate: (onSuccess?: (coords: Coordinates) => void) => void;
+  locateByIp: (onSuccess?: (coords: Coordinates) => void) => Promise<void>;
 }
 
 export function useLocateMe(): UseLocateMeReturn {
@@ -22,7 +24,37 @@ export function useLocateMe(): UseLocateMeReturn {
   const flyTo = useMapStore((state) => state.flyTo);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isIpLoading, setIsIpLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const locateByIp = async (onSuccess?: (coords: Coordinates) => void) => {
+    setIsIpLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/ip-location");
+      const data = await response.json();
+
+      if (!response.ok || !data.latitude || !data.longitude) {
+        throw new Error(data.error || "IP geolocation failed");
+      }
+
+      const coords = {
+        latitude: data.latitude,
+        longitude: data.longitude,
+      };
+      setLocation(coords.latitude, coords.longitude);
+      flyTo([coords.longitude, coords.latitude], 12);
+      toast.info("Εντοπισμός μέσω IP - κατά προσέγγιση τοποθεσία");
+      onSuccess?.(coords);
+    } catch {
+      const msg = "Δεν ήταν δυνατός ο κατά προσέγγιση εντοπισμός.";
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setIsIpLoading(false);
+    }
+  };
 
   const locate = (onSuccess?: (coords: Coordinates) => void) => {
     setIsLoading(true);
@@ -64,5 +96,5 @@ export function useLocateMe(): UseLocateMeReturn {
 
   const coordinates = latitude && longitude ? { latitude, longitude } : null;
 
-  return { coordinates, isLoading, error, locate };
+  return { coordinates, isLoading, isIpLoading, error, locate, locateByIp };
 }

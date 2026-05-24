@@ -9,8 +9,8 @@ import { ManualLocationAdjuster } from "./manual-location-adjuster";
 import { MapLoadingPill } from "./map-loading-pill";
 import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
 import { useNearbyPharmacies } from "@/features/find-pharmacies";
+import { useMapStore } from "@/shared/model/use-map-store";
 import type MapLibreGL from "maplibre-gl";
-import { useState } from "react";
 
 interface MapWithControlsProps {
   center?: [number, number];
@@ -34,8 +34,11 @@ export function MapWithControls({
   timeFilter,
   citySlug,
 }: MapWithControlsProps) {
-  const [isAdjusting, setIsAdjusting] = useState(false);
   const { isFetching } = useNearbyPharmacies();
+  const isAdjusting = useMapStore((state) => state.isManualLocationAdjusting);
+  const setIsAdjusting = useMapStore(
+    (state) => state.setManualLocationAdjusting
+  );
 
   return (
     <div className="relative w-full h-full">

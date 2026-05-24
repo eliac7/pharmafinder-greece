@@ -6,6 +6,7 @@ export type RadiusOption = (typeof RADIUS_OPTIONS)[number];
 export const DEFAULT_RADIUS: RadiusOption = 2;
 
 export type PharmacyStatus = "open" | "closing-soon" | "closed" | "scheduled";
+export type PharmacyConfidence = "high" | "medium" | "low";
 
 export interface PharmacyStatusResult {
   status: PharmacyStatus;
@@ -55,6 +56,12 @@ export interface Pharmacy {
   open_until_tomorrow?: boolean | null;
   next_day_close_time?: string | null;
   is_frequent_duty?: boolean;
+  last_updated_at?: string | null;
+  duty_source?: {
+    name: string;
+    url?: string | null;
+  } | null;
+  confidence?: PharmacyConfidence | null;
 }
 
 export interface PharmaciesWithCount {

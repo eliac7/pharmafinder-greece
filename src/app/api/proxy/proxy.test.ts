@@ -1,12 +1,16 @@
 /** @jest-environment node */
-import { GET, POST } from "./[...path]/route";
 import { NextRequest } from "next/server";
+
+process.env.NEXT_PUBLIC_ENCRYPTION_SECRET = "test-client-secret";
+process.env.NEXT_PUBLIC_ENCRYPTION_SALT = "test-client-salt";
 
 // Mock the crypto lib to avoid env var issues
 jest.mock("@/shared/lib/crypto", () => ({
   decryptPayload: jest.fn(),
   encryptPayload: jest.fn().mockResolvedValue("encrypted-data"),
 }));
+
+const { GET, POST } = require("./[...path]/route") as typeof import("./[...path]/route");
 
 // Mock fetch globally
 global.fetch = jest.fn(() =>

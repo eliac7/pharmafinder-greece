@@ -7,6 +7,7 @@ export type {
   PharmacyStatus,
   PharmacyHour,
   PharmacyStatusResult,
+  PharmacyConfidence,
 } from "./model/types";
 export { TIME_OPTIONS, RADIUS_OPTIONS, DEFAULT_RADIUS } from "./model/types";
 
@@ -24,3 +25,13 @@ export { PharmacyCard } from "./ui/pharmacy-card";
 // Lib
 export { getPharmacyStatus, formatPharmacyHours } from "./lib/status";
 export { radiusToZoom } from "./lib/radius-to-zoom";
+export {
+  calculateDistanceKm,
+  estimateDrivingMinutes,
+  getArrivalEstimate,
+  getPharmacyArrivalEstimate,
+  getPharmacyDistanceKm,
+  sortPharmaciesByRecommendation,
+  getArrivalBadgeText,
+} from "./lib/arrival";
+export type { ArrivalEstimate, ArrivalRisk, UserCoordinates } from "./lib/arrival";

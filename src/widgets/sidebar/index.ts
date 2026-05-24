@@ -2,6 +2,7 @@ export { CitySidebar } from "./ui/city-sidebar";
 export { PharmacyList } from "./ui/pharmacy-list";
 export { CityPharmacyList } from "./ui/city-pharmacy-list";
 export { QuickCityJump } from "./ui/quick-city-jump";
+export { LocationChoicePanel } from "./ui/location-choice-panel";
 export { SidebarBranding, SidebarCopyright } from "./ui/sidebar-shared";
 export { SystemStatusCard } from "./ui/system-status-card";
 export { SidebarFilters } from "./ui/sidebar-filters";

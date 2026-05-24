@@ -13,7 +13,11 @@ import {
   DEFAULT_RADIUS,
   type TimeFilter,
 } from "@/entities/pharmacy";
-import { SystemStatusCard, QuickCityJump } from "@/widgets/sidebar";
+import {
+  SystemStatusCard,
+  QuickCityJump,
+  LocationChoicePanel,
+} from "@/widgets/sidebar";
 import { PharmacyListContent } from "./pharmacy-list-content";
 
 export function PharmacyList() {
@@ -74,6 +78,7 @@ export function PharmacyList() {
     return (
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-6 py-2">
+          <LocationChoicePanel />
           <SystemStatusCard />
           <QuickCityJump />
         </div>
@@ -85,6 +90,7 @@ export function PharmacyList() {
     return (
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-6 py-2">
+          <LocationChoicePanel />
           <div className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-card text-center">
             <div className="flex items-center justify-center size-12 rounded-full bg-muted">
               <MapPin className="size-6 text-muted-foreground" />

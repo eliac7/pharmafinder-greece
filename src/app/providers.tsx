@@ -12,7 +12,6 @@ import {
   reportWebVitals,
 } from "@/shared/lib/analytics";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { AutoLocateProvider } from "./auto-locate-provider";
 
 /**
  * Web Vitals tracking component
@@ -78,7 +77,6 @@ export function Providers({ children }: ProvidersProps) {
       >
         <NuqsAdapter>
           {children}
-          <AutoLocateProvider />
         </NuqsAdapter>
         <GoogleAnalytics />
         <WebVitals />

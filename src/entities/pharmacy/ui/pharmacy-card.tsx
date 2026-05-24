@@ -3,12 +3,15 @@
 import { Cross, Clock, Sparkles } from "lucide-react";
 import { FavoriteButton } from "@/features/favorites";
 import { PharmacyNavigationDialog } from "@/features/pharmacy-navigation";
+import { useLocationStore } from "@/features/locate-user";
 import { cn } from "@/shared";
 import { useMapStore } from "@/shared/model/use-map-store";
 import { Badge } from "@/shared/ui/badge";
 import {
-  getPharmacyStatus,
   formatPharmacyHours,
+  getArrivalBadgeText,
+  getPharmacyArrivalEstimate,
+  getPharmacyStatus,
   type Pharmacy,
   type TimeFilter,
 } from "@/entities/pharmacy";
@@ -25,6 +28,8 @@ export function PharmacyCard({
   onClick,
 }: PharmacyCardProps) {
   const flyTo = useMapStore((state) => state.flyTo);
+  const { latitude, longitude } = useLocationStore();
+  const userLocation = latitude && longitude ? { latitude, longitude } : null;
 
   const { status, statusColor, minutesUntilClose } = getPharmacyStatus(
     pharmacy.data_hours,
@@ -38,6 +43,10 @@ export function PharmacyCard({
   const isOpen = status === "open" || status === "scheduled";
   const isClosingSoon = status === "closing-soon";
   const isScheduled = status === "scheduled";
+  const arrivalEstimate =
+    timeFilter === "now"
+      ? getPharmacyArrivalEstimate(pharmacy, timeFilter, userLocation)
+      : null;
 
   const handleCardClick = () => {
     onClick?.();
@@ -99,6 +108,23 @@ export function PharmacyCard({
                         : "Κλειστό"}
                   </span>
                 )}
+                {arrivalEstimate && (
+                  <span
+                    className={cn(
+                      "inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-md font-bold shrink-0",
+                      arrivalEstimate.risk === "safe" &&
+                        "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
+                      arrivalEstimate.risk === "tight" &&
+                        "bg-amber-500/15 text-amber-700 dark:text-amber-400",
+                      arrivalEstimate.risk === "too_late" &&
+                        "bg-destructive/15 text-destructive",
+                      arrivalEstimate.risk === "unknown" &&
+                        "bg-muted text-muted-foreground"
+                    )}
+                  >
+                    {getArrivalBadgeText(arrivalEstimate)}
+                  </span>
+                )}
               </div>
 
               {pharmacy.is_frequent_duty && (
@@ -133,6 +159,29 @@ export function PharmacyCard({
             <p className="text-xs text-muted-foreground leading-snug truncate">
               {pharmacy.address}
             </p>
+
+            {(pharmacy.last_updated_at ||
+              pharmacy.duty_source ||
+              pharmacy.confidence) && (
+              <p className="text-[11px] text-muted-foreground leading-snug truncate">
+                {pharmacy.last_updated_at &&
+                  `Ενημερώθηκε ${new Date(
+                    pharmacy.last_updated_at
+                  ).toLocaleDateString("el-GR")}`}
+                {pharmacy.duty_source?.name &&
+                  `${pharmacy.last_updated_at ? " · " : ""}Πηγή: ${
+                    pharmacy.duty_source.name
+                  }`}
+                {pharmacy.confidence &&
+                  `${pharmacy.last_updated_at || pharmacy.duty_source ? " · " : ""}Αξιοπιστία: ${
+                    pharmacy.confidence === "high"
+                      ? "υψηλή"
+                      : pharmacy.confidence === "medium"
+                        ? "μεσαία"
+                        : "χαμηλή"
+                  }`}
+              </p>
+            )}
           </div>
         </div>
       </button>
@@ -141,6 +190,7 @@ export function PharmacyCard({
         <FavoriteButton pharmacyId={pharmacy.id} size="sm" />
         <PharmacyNavigationDialog
           pharmacy={pharmacy}
+          arrivalEstimate={arrivalEstimate}
           compact
           triggerVariant="ghost"
           triggerLabel="Οδηγίες"

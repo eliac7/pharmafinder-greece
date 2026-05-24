@@ -17,6 +17,7 @@ import {
 import {
   buildNavigationLinks,
 } from "../lib/build-navigation-links";
+import type { ArrivalEstimate } from "@/entities/pharmacy";
 import type { NavigationPharmacy } from "../model/types";
 
 type ButtonVariant =
@@ -33,6 +34,7 @@ interface PharmacyNavigationDialogProps {
   triggerLabel?: string;
   compact?: boolean;
   className?: string;
+  arrivalEstimate?: ArrivalEstimate | null;
 }
 
 export function PharmacyNavigationDialog({
@@ -41,6 +43,7 @@ export function PharmacyNavigationDialog({
   triggerLabel = "Οδηγίες",
   compact = false,
   className,
+  arrivalEstimate,
 }: PharmacyNavigationDialogProps) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -101,6 +104,20 @@ export function PharmacyNavigationDialog({
         </DialogHeader>
 
         <div className="grid gap-3">
+          {arrivalEstimate?.risk === "tight" && (
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-300">
+              Ο χρόνος είναι οριακός. Καλό είναι να τηλεφωνήσετε πριν
+              ξεκινήσετε.
+            </div>
+          )}
+
+          {arrivalEstimate?.risk === "too_late" && (
+            <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+              Μάλλον δεν προλαβαίνετε πριν κλείσει. Δείτε και τις επόμενες
+              προτεινόμενες επιλογές.
+            </div>
+          )}
+
           <div className="grid gap-2">
             {providerLinks.map((provider) => {
               const Icon = provider.icon;
