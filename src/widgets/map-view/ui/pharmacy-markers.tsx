@@ -2,6 +2,7 @@
 
 import { useNearbyPharmacies } from "@/features/find-pharmacies";
 import { useFavorites } from "@/features/favorites";
+import { PharmacyNavigationDialog } from "@/features/pharmacy-navigation";
 import { useMapStore } from "@/shared/model/use-map-store";
 import {
   MapHybridClusterLayer,
@@ -13,7 +14,6 @@ import {
 import {
   Phone,
   MapPin,
-  Navigation,
   Cross,
   Clock,
   Eye,
@@ -325,15 +325,11 @@ export function PharmacyMarkers({
                           <Eye className="size-3.5" />
                           Street View
                         </a>
-                        <a
-                          href={`https://www.google.com/maps/dir/?api=1&destination=${coordinates[1]},${coordinates[0]}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors shadow-sm"
-                        >
-                          <Navigation className="size-3.5" />
-                          Οδηγίες
-                        </a>
+                        <PharmacyNavigationDialog
+                          pharmacy={pharmacy}
+                          triggerLabel="Οδηγίες"
+                          className="h-auto gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold shadow-sm"
+                        />
                       </div>
                     </div>
                   </div>
