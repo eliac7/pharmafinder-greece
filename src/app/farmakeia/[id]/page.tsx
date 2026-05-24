@@ -2,10 +2,11 @@ export const revalidate = 3600;
 import { getPharmacyStatus, pharmacyApi } from "@/entities/pharmacy";
 import { ReportDialog, SharePharmacyDialog } from "@/features/pharmacy-detail";
 import { FavoriteButton } from "@/features/favorites";
+import { PharmacyNavigationDialog } from "@/features/pharmacy-navigation";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Map, MapMarker, MarkerContent } from "@/shared/ui/map";
-import { MapPin, Navigation, Phone, Star } from "lucide-react";
+import { MapPin, Phone, Star } from "lucide-react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PharmacyMapMarkerContent } from "./pharmacy-map-marker";
@@ -110,23 +111,12 @@ export default async function PharmacyPage({ params }: Props) {
               </a>
             </Button>
 
-            <Button
-              size="lg"
-              variant="secondary"
-              className="h-14 md:h-20 text-lg rounded-2xl flex flex-col items-center justify-center gap-1 bg-muted/50 hover:bg-muted border border-transparent hover:border-border hover:scale-[1.02] transition-all"
-              asChild
-            >
-              <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div className="flex items-center gap-2">
-                  <Navigation className="size-5" />
-                  <span>Οδηγίες</span>
-                </div>
-              </a>
-            </Button>
+            <PharmacyNavigationDialog
+              pharmacy={pharmacy}
+              triggerVariant="secondary"
+              triggerLabel="Οδηγίες"
+              className="h-14 md:h-20 text-lg rounded-2xl flex-col bg-muted/50 hover:bg-muted border border-transparent hover:border-border hover:scale-[1.02] transition-all"
+            />
           </div>
 
           <div className="space-y-4">
@@ -206,21 +196,11 @@ export default async function PharmacyPage({ params }: Props) {
               Κλήση
             </a>
           </Button>
-          <Button
-            size="lg"
-            variant="default"
+          <PharmacyNavigationDialog
+            pharmacy={pharmacy}
+            triggerLabel="Πλοήγηση"
             className="w-full rounded-xl shadow-lg bg-blue-600 hover:bg-blue-700 text-white"
-            asChild
-          >
-            <a
-              href={`https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Navigation className="size-4 mr-2" />
-              Πλοήγηση
-            </a>
-          </Button>
+          />
         </div>
       </div>
     </div>

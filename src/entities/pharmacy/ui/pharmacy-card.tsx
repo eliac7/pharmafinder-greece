@@ -1,10 +1,10 @@
 "use client";
 
-import { Navigation, Cross, Clock, Sparkles } from "lucide-react";
+import { Cross, Clock, Sparkles } from "lucide-react";
 import { FavoriteButton } from "@/features/favorites";
+import { PharmacyNavigationDialog } from "@/features/pharmacy-navigation";
 import { cn } from "@/shared";
 import { useMapStore } from "@/shared/model/use-map-store";
-import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import {
   getPharmacyStatus,
@@ -139,26 +139,16 @@ export function PharmacyCard({
 
       <div className="flex flex-col gap-1 shrink-0 self-center ml-1">
         <FavoriteButton pharmacyId={pharmacy.id} size="sm" />
-        <Button
-          variant="ghost"
-          size="icon"
+        <PharmacyNavigationDialog
+          pharmacy={pharmacy}
+          compact
+          triggerVariant="ghost"
+          triggerLabel="Οδηγίες"
           className={cn(
-            "size-8 rounded-full hover:bg-primary/20 hover:text-primary",
+            "hover:bg-primary/20 hover:text-primary",
             "transition-all text-muted-foreground"
           )}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (pharmacy.latitude && pharmacy.longitude) {
-              window.open(
-                `https://www.google.com/maps/dir/?api=1&destination=${pharmacy.latitude},${pharmacy.longitude}`,
-                "_blank",
-                "noopener,noreferrer"
-              );
-            }
-          }}
-        >
-          <Navigation className="size-4" />
-        </Button>
+        />
       </div>
     </div>
   );
