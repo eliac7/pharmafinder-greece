@@ -47,7 +47,12 @@ export function MapWithControls({
         attributionControl={false}
         {...mapProps}
       >
-        <MapUpdater />
+        <MapUpdater
+          viewportMode={citySlug ? "city" : "nearby"}
+          cityCenter={center}
+          cityZoom={zoom}
+          cameraKey={citySlug}
+        />
         <ManualLocationAdjuster
           isAdjusting={isAdjusting}
           onAdjustChange={setIsAdjusting}

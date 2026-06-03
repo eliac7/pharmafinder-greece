@@ -3,14 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useLocationStore } from "./use-location-store";
-import { useMapStore } from "@/shared/model/use-map-store";
 
 export function useAutoLocate() {
   const { latitude, longitude, setLocation } = useLocationStore();
-  const flyTo = useMapStore((state) => state.flyTo);
   const hasAttemptedRef = useRef(false);
   const [hasHydrated, setHasHydrated] = useState(
-    () => useLocationStore.persist?.hasHydrated?.() ?? true
+    () => useLocationStore.persist?.hasHydrated?.() ?? true,
   );
 
   useEffect(() => {
@@ -61,8 +59,6 @@ export function useAutoLocate() {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         setLocation(lat, lng);
-        // Fly to the user's location
-        flyTo([lng, lat], 15);
         toast.success("Η τοποθεσία σας βρέθηκε!");
       },
       () => {
@@ -88,5 +84,5 @@ export function useAutoLocate() {
         console.warn("IP geolocation failed");
       }
     }
-  }, [hasHydrated, latitude, longitude, setLocation, flyTo]);
+  }, [hasHydrated, latitude, longitude, setLocation]);
 }

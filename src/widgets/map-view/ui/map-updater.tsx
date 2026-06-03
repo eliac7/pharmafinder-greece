@@ -7,19 +7,38 @@ import { useMap } from "@/shared/ui/map";
 import { useLocationStore } from "@/features/locate-user";
 import { DEFAULT_RADIUS, radiusToZoom } from "@/entities/pharmacy";
 
-export function MapUpdater() {
+type ViewportMode = "nearby" | "city";
+
+type MapUpdaterProps = {
+  viewportMode?: ViewportMode;
+  cityCenter?: [number, number];
+  cityZoom?: number;
+  cameraKey?: string;
+};
+
+export function MapUpdater({
+  viewportMode = "nearby",
+  cityCenter,
+  cityZoom = 14,
+  cameraKey,
+}: MapUpdaterProps) {
   const { map } = useMap();
   const { latitude, longitude } = useLocationStore();
-  const [radius] = useQueryState("radius", parseAsInteger.withDefault(DEFAULT_RADIUS));
+  const [radius] = useQueryState(
+    "radius",
+    parseAsInteger.withDefault(DEFAULT_RADIUS),
+  );
   const flyToTarget = useMapStore((state) => state.flyToTarget);
   const clearFlyToTarget = useMapStore((state) => state.clearFlyToTarget);
   const setPopupTargetId = useMapStore((state) => state.setPopupTargetId);
 
   const prevLocationRef = useRef<{ lat: number | null; lng: number | null }>({
-    lat: null,
-    lng: null,
+    lat: latitude ?? null,
+    lng: longitude ?? null,
   });
   const prevRadiusRef = useRef<number | null>(null);
+  const prevCityCameraKeyRef = useRef<string | null>(null);
+  const isCityView = viewportMode === "city";
 
   useEffect(() => {
     if (map && flyToTarget) {
@@ -43,13 +62,32 @@ export function MapUpdater() {
   }, [map, flyToTarget, clearFlyToTarget, setPopupTargetId]);
 
   useEffect(() => {
-    if (!map || !latitude || !longitude) return;
+    if (!isCityView) {
+      prevCityCameraKeyRef.current = null;
+      return;
+    }
+
+    if (!map || !cityCenter) return;
+
+    const nextKey = `${cameraKey ?? "city"}:${cityCenter.join(",")}`;
+    if (prevCityCameraKeyRef.current === nextKey) return;
+
+    map.flyTo({
+      center: cityCenter,
+      zoom: cityZoom,
+      duration: prevCityCameraKeyRef.current === null ? 0 : 800,
+    });
+
+    prevCityCameraKeyRef.current = nextKey;
+  }, [map, isCityView, cityCenter, cityZoom, cameraKey]);
+
+  useEffect(() => {
+    if (!map || !latitude || !longitude || isCityView) return;
 
     const prev = prevLocationRef.current;
     const hasChanged = prev.lat !== latitude || prev.lng !== longitude;
 
-    // Only fly if this is a genuine location change
-    if (hasChanged && prev.lat !== null && prev.lng !== null) {
+    if (hasChanged) {
       map.flyTo({
         center: [longitude, latitude],
         zoom: radiusToZoom(radius),
@@ -58,10 +96,10 @@ export function MapUpdater() {
     }
 
     prevLocationRef.current = { lat: latitude, lng: longitude };
-  }, [map, latitude, longitude, radius]);
+  }, [map, latitude, longitude, radius, isCityView]);
 
   useEffect(() => {
-    if (!map) return;
+    if (!map || isCityView) return;
 
     const prevRadius = prevRadiusRef.current;
     const isInitial = prevRadius === null;
@@ -80,7 +118,7 @@ export function MapUpdater() {
     }
 
     prevRadiusRef.current = radius;
-  }, [map, radius, latitude, longitude]);
+  }, [map, radius, latitude, longitude, isCityView]);
 
   return null;
 }
