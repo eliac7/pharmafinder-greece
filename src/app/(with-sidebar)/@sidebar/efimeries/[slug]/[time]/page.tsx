@@ -7,14 +7,23 @@ import { notFound } from "next/navigation";
 
 interface Props {
   params: Promise<{ slug: string; time: string }>;
+  searchParams?: Promise<{ radius?: string | string[] }>;
 }
 
 function isValidTime(t: string): t is TimeFilter {
   return ["now", "today", "tomorrow"].includes(t);
 }
 
-export default async function CitySidebarTimePage({ params }: Props) {
+function getRadiusParam(radius: string | string[] | undefined) {
+  return Array.isArray(radius) ? radius[0] : radius;
+}
+
+export default async function CitySidebarTimePage({
+  params,
+  searchParams,
+}: Props) {
   const { slug, time } = await params;
+  const query = await searchParams;
 
   if (!isValidTime(time)) {
     return notFound();
@@ -47,6 +56,7 @@ export default async function CitySidebarTimePage({ params }: Props) {
         citySlug={slug}
         activeTime={timeFilter}
         pharmacies={pharmacies}
+        nearbyRadius={getRadiusParam(query?.radius)}
       />
     </Sidebar>
   );

@@ -7,10 +7,16 @@ import { notFound } from "next/navigation";
 
 interface Props {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ radius?: string | string[] }>;
 }
 
-export default async function CitySidebarPage({ params }: Props) {
+function getRadiusParam(radius: string | string[] | undefined) {
+  return Array.isArray(radius) ? radius[0] : radius;
+}
+
+export default async function CitySidebarPage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const query = await searchParams;
   const timeFilter = "now";
 
   const userLocation = await getLocationFromCookies();
@@ -38,6 +44,7 @@ export default async function CitySidebarPage({ params }: Props) {
         citySlug={slug}
         activeTime={timeFilter}
         pharmacies={pharmacies}
+        nearbyRadius={getRadiusParam(query?.radius)}
       />
     </Sidebar>
   );

@@ -5,9 +5,9 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowRightLeft } from "lucide-react";
+import { ArrowRightLeft, Crosshair, Loader2 } from "lucide-react";
 import { useLocateMe } from "@/features/locate-user/model/use-locate-me";
-import { useMapStore } from "@/shared/model/use-map-store";
+import { useLocationStore } from "@/features/locate-user";
 
 import {
   type Pharmacy,
@@ -29,14 +29,19 @@ import {
   SidebarCopyright,
 } from "@/widgets/sidebar";
 
-import { CityTimeFilter } from "@/features/find-pharmacies";
+import {
+  buildNearbyPharmaciesUrl,
+  CityTimeFilter,
+} from "@/features/find-pharmacies";
 import { CitySearchModal, SearchCity } from "@/features/search-city";
+import { Button } from "@/shared/ui/button";
 
 interface CitySidebarProps extends React.ComponentProps<typeof Sidebar> {
   cityName: string;
   citySlug: string;
   activeTime: TimeFilter;
   pharmacies: Pharmacy[];
+  nearbyRadius?: string;
 }
 
 export function CitySidebar({
@@ -44,15 +49,26 @@ export function CitySidebar({
   citySlug,
   activeTime,
   pharmacies: initialPharmacies,
+  nearbyRadius,
   ...props
 }: CitySidebarProps) {
   const { locate, isLoading } = useLocateMe();
-  const flyTo = useMapStore((state) => state.flyTo);
+  const { latitude, longitude } = useLocationStore();
   const router = useRouter();
+  const nearbyUrl = buildNearbyPharmaciesUrl({
+    timeFilter: activeTime,
+    radius: nearbyRadius,
+  });
+  const hasLocation = latitude != null && longitude != null;
 
-  const handleLocate = () => {
-    locate((coords) => {
-      flyTo([coords.longitude, coords.latitude], 15);
+  const handleNearby = () => {
+    if (hasLocation) {
+      router.push(nearbyUrl);
+      return;
+    }
+
+    locate(() => {
+      router.push(nearbyUrl);
     });
   };
 
@@ -79,11 +95,25 @@ export function CitySidebar({
             />
           </Link>
           <div className="flex-1 relative">
-            <SearchCity onLocate={handleLocate} isLocating={isLoading} />
+            <SearchCity />
           </div>
         </div>
 
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 -mx-4 px-4 mask-fade-right">
+          <button
+            type="button"
+            onClick={handleNearby}
+            disabled={isLoading}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-primary text-primary-foreground border border-primary whitespace-nowrap shrink-0 disabled:opacity-60"
+          >
+            {isLoading ? (
+              <Loader2 className="size-3.5 animate-spin" />
+            ) : (
+              <Crosshair className="size-3.5" />
+            )}
+            Κοντά μου
+          </button>
+
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-secondary text-secondary-foreground border border-border whitespace-nowrap shrink-0">
             <span className="text-muted-foreground text-xs">Πόλη:</span>
             <span className="font-bold">{cityName}</span>
@@ -110,6 +140,22 @@ export function CitySidebar({
 
         <div className="relative mt-2">
           <SearchCity />
+        </div>
+
+        <div className="mt-4">
+          <Button
+            onClick={handleNearby}
+            disabled={isLoading}
+            className="w-full h-12 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg transition-all active:scale-95"
+            size="lg"
+          >
+            {isLoading ? (
+              <Loader2 className="mr-2 size-5 animate-spin" />
+            ) : (
+              <Crosshair className="mr-2 size-5" />
+            )}
+            {isLoading ? "Εντοπισμός..." : "Εφημερίες κοντά μου"}
+          </Button>
         </div>
 
         <div className="mt-4 px-1 space-y-3">
