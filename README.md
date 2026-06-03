@@ -6,7 +6,7 @@
 
 PharmaFinder is a modern, high-performance web application designed to help users locate on-duty pharmacies (εφημερεύοντα φαρμακεία) across Greece. Built with the latest web technologies, it offers a seamless experience with an interactive map, real-time filtering, and a mobile-first design.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![License](https://img.shields.io/badge/license-Proprietary-red.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
 ![Next.js](https://img.shields.io/badge/Next.js-16.1-black)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38b2ac)
