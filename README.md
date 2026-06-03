@@ -147,19 +147,13 @@ The project implements **Test-Driven Development (TDD)** principles using a mode
 - `bun start`: Starts the production server.
 - `bun lint`: Runs ESLint to check for code quality issues.
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1.  Fork the project
-2.  Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the branch (`git push origin feature/AmazingFeature`)
-5.  Open a Pull Request
-
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+**© 2026 Ilias Nikolaos Thalassochoritis. All Rights Reserved.**
+
+This repository and its contents are proprietary. The source code is provided publicly **strictly for portfolio demonstration and educational viewing purposes only**.
+
+You are **NOT** permitted to use, copy, modify, merge, publish, distribute, sublicense, or sell copies of this software, for commercial or non-commercial purposes, without explicit prior written consent from the author. See the [LICENSE](LICENSE) file for full details.
 
 ## 👨‍💻 Author
 
