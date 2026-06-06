@@ -248,7 +248,10 @@ export function PharmacyMarkers({
                   {pharmacy.name}
                 </MarkerTooltip>
 
-                <MarkerPopup forceOpen={popupTargetId === pharmacy.id}>
+                <MarkerPopup
+                  forceOpen={popupTargetId === pharmacy.id}
+                  focusAfterOpen={false}
+                >
                   <div className="flex flex-col gap-3 min-w-65 max-w-[320px] p-0.5">
                     <div className="flex items-center gap-3">
                       <div
