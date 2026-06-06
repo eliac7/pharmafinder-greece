@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/shared/ui/button";
-import { Home, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
+import { NotFoundBackButton } from "./not-found-back-button";
 
 export default function NotFound() {
   return (
@@ -30,8 +31,8 @@ export default function NotFound() {
             Ωχ! Χαθήκαμε...
           </h1>
           <p className="text-muted-foreground text-lg leading-relaxed">
-            Η σελίδα που ψάχνετε δεν υπάρχει ή έχει μετακινηθεί. Μην ανησυχείτε,
-            μπορούμε να σας βοηθήσουμε να βρείτε το δρόμο σας!
+            Η σελίδα που ψάχνετε δεν υπάρχει ή έχει μετακινηθεί. Μπορούμε να
+            σας επιστρέψουμε γρήγορα στην αναζήτηση εφημερευόντων φαρμακείων.
           </p>
         </div>
 
@@ -43,22 +44,17 @@ export default function NotFound() {
           >
             <Link href="/">
               <MapPin className="size-5" />
-              Βρείτε Φαρμακεία
+              Βρες φαρμακεία
             </Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="gap-2">
-            <Link href="/">
-              <Home className="size-5" />
-              Αρχική Σελίδα
-            </Link>
-          </Button>
+          <NotFoundBackButton />
         </div>
 
         <div className="mt-12 p-4 bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl max-w-md">
           <p className="text-sm text-muted-foreground">
             <span className="font-medium text-foreground">💡 Tip:</span>{" "}
-            Χρησιμοποιήστε την αναζήτηση στην αρχική σελίδα για να βρείτε
-            εφημερεύοντα φαρμακεία κοντά σας.
+            Ξεκινήστε από τον χάρτη για να βρείτε εφημερεύοντα φαρμακεία κοντά
+            σας.
           </p>
         </div>
       </div>
