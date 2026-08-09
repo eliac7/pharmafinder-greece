@@ -7,6 +7,7 @@ export type {
   PharmacyStatus,
   PharmacyHour,
   PharmacyStatusResult,
+  ViewportBounds,
 } from "./model/types";
 export { TIME_OPTIONS, RADIUS_OPTIONS, DEFAULT_RADIUS } from "./model/types";
 

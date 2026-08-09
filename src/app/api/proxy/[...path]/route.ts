@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { decryptPayload, encryptPayload } from "@/shared/lib/crypto";
 import { logger } from "@/shared/lib/logger";
+import { isIP } from "node:net";
 
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:8000";
 const API_SECRET_KEY = process.env.API_SECRET_KEY || "";
@@ -16,6 +17,7 @@ const ALLOWED_ENDPOINTS = [
   { pattern: /^\/pharmacies\/sitemap$/, methods: ["GET"] },
   { pattern: /^\/pharmacies\/\d+\/is-on-duty$/, methods: ["GET"] },
   { pattern: /^\/pharmacies\/search$/, methods: ["GET"] },
+  { pattern: /^\/pharmacies\/viewport\/on_duty$/, methods: ["GET"] },
   { pattern: /^\/pharmacies\/\d+$/, methods: ["GET"] },
   { pattern: /^\/pharmacies\/\d+\/report$/, methods: ["POST"] },
   { pattern: /^\/nearby_pharmacies$/, methods: ["GET"] },
@@ -29,6 +31,21 @@ const ALLOWED_ENDPOINTS = [
 ];
 
 const ALLOWED_HEADERS = ["content-type", "accept", "user-agent"];
+const INTERNAL_CLIENT_IP_HEADER = "x-pharmafinder-client-ip";
+
+function getTrustedClientIp(headers: Headers): string | null {
+  const forwardedValues = [
+    headers.get("cf-connecting-ip"),
+    headers.get("x-vercel-forwarded-for"),
+  ];
+
+  for (const value of forwardedValues) {
+    const candidate = value?.split(",")[0]?.trim();
+    if (candidate && isIP(candidate)) return candidate;
+  }
+
+  return null;
+}
 
 async function handleRequest(
   request: NextRequest,
@@ -73,6 +90,10 @@ async function handleRequest(
     });
 
     headers.set("x-secret-key", API_SECRET_KEY);
+    const clientIp = getTrustedClientIp(request.headers);
+    if (clientIp) {
+      headers.set(INTERNAL_CLIENT_IP_HEADER, clientIp);
+    }
 
     const body = request.body;
 

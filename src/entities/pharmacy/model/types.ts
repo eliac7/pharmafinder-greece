@@ -5,6 +5,13 @@ export const RADIUS_OPTIONS = [2, 5, 10, 20] as const;
 export type RadiusOption = (typeof RADIUS_OPTIONS)[number];
 export const DEFAULT_RADIUS: RadiusOption = 2;
 
+export interface ViewportBounds {
+  west: number;
+  south: number;
+  east: number;
+  north: number;
+}
+
 export type PharmacyStatus = "open" | "closing-soon" | "closed" | "scheduled";
 
 export interface PharmacyStatusResult {

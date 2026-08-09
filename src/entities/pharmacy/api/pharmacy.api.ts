@@ -3,6 +3,8 @@ import type {
   Pharmacy,
   PharmaciesWithCount,
   PharmacySitemapItem,
+  TimeFilter,
+  ViewportBounds,
 } from "../model/types";
 
 export const pharmacyApi = {
@@ -37,6 +39,24 @@ export const pharmacyApi = {
       };
     }
     return res;
+  },
+
+  getViewportOnDuty: async (
+    bounds: ViewportBounds,
+    time: TimeFilter = "now",
+    signal?: AbortSignal
+  ): Promise<PharmaciesWithCount> => {
+    const params = new URLSearchParams({
+      west: bounds.west.toString(),
+      south: bounds.south.toString(),
+      east: bounds.east.toString(),
+      north: bounds.north.toString(),
+      time,
+    });
+    return fetchAPI<PharmaciesWithCount>(
+      `/pharmacies/viewport/on_duty?${params}`,
+      { signal }
+    );
   },
 
   /**

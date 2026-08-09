@@ -11,6 +11,7 @@ import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
 import { useNearbyPharmacies } from "@/features/find-pharmacies";
 import type MapLibreGL from "maplibre-gl";
 import { useState } from "react";
+import { HomeViewportPharmacies } from "./home-viewport-pharmacies";
 
 interface MapWithControlsProps {
   center?: [number, number];
@@ -36,10 +37,14 @@ export function MapWithControls({
 }: MapWithControlsProps) {
   const [isAdjusting, setIsAdjusting] = useState(false);
   const { isFetching } = useNearbyPharmacies();
+  const isHomeMap =
+    citySlug === undefined &&
+    pharmacies === undefined &&
+    timeFilter === undefined;
 
   return (
     <div className="relative w-full h-full">
-      <MapLoadingPill isLoading={isFetching} />
+      <MapLoadingPill isLoading={!isHomeMap && isFetching} />
       <Map
         center={center}
         zoom={zoom}
@@ -58,16 +63,14 @@ export function MapWithControls({
           onAdjustChange={setIsAdjusting}
         />
         <UserLocationMarker />
-        {pharmacies !== undefined ||
-        timeFilter !== undefined ||
-        citySlug !== undefined ? (
+        {!isHomeMap ? (
           <PharmacyMarkers
             pharmacies={pharmacies}
             timeFilter={timeFilter}
             citySlug={citySlug}
           />
         ) : (
-          <PharmacyMarkers />
+          <HomeViewportPharmacies />
         )}
         <MapControls
           isAdjusting={isAdjusting}

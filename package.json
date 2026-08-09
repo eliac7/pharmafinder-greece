@@ -1,6 +1,6 @@
 {
   "name": "pharmafinder-greece",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "description": "Find on-duty pharmacies near you, anytime, anywhere in Greece",
   "license": "MIT",
@@ -39,6 +39,9 @@
     "lint:fix": "next lint --fix",
     "test": "jest",
     "typecheck": "tsc --noEmit",
+    "release:patch": "bun pm version patch --message \"chore(release): %s\"",
+    "release:minor": "bun pm version minor --message \"chore(release): %s\"",
+    "release:major": "bun pm version major --message \"chore(release): %s\"",
     "clean": "rimraf .next node_modules"
   },
   "dependencies": {

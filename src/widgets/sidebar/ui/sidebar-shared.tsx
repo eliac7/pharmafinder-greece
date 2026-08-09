@@ -2,6 +2,7 @@ import Image from "next/image";
 import { NavigationSettingsSheet } from "@/features/pharmacy-navigation";
 import { ThemeToggle } from "@/shared/ui/theme-toggle";
 import Link from "next/link";
+import { APP_VERSION } from "@/shared/config/app-version";
 
 export function SidebarBranding() {
   return (
@@ -36,7 +37,7 @@ export function SidebarCopyright() {
         </Link>
         <div className="space-y-0.5">
           <p suppressHydrationWarning>
-            © {new Date().getFullYear()} Pharmafinder
+            © {new Date().getFullYear()} Pharmafinder | {APP_VERSION}
           </p>
           <p className="flex gap-1">
             Ανάπτυξη:
