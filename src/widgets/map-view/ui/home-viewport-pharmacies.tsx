@@ -11,12 +11,14 @@ import {
   DEFAULT_RADIUS,
   pharmacyApi,
   TIME_OPTIONS,
-  type Pharmacy,
   type TimeFilter,
   type ViewportBounds,
 } from "@/entities/pharmacy";
 import { useLocationStore } from "@/features/locate-user";
-import { useNearbyPharmacies } from "@/features/find-pharmacies";
+import {
+  useNearbyPharmacies,
+  useViewportPharmaciesStore,
+} from "@/features/find-pharmacies";
 import { Button } from "@/shared/ui/button";
 import { useMap } from "@/shared/ui/map";
 import { MapLoadingPill } from "./map-loading-pill";
@@ -62,9 +64,16 @@ export function HomeViewportPharmacies() {
   const [pendingBounds, setPendingBounds] = useState<ViewportBounds | null>(null);
   const [committedBounds, setCommittedBounds] =
     useState<ViewportBounds | null>(null);
-  const [viewportPharmacies, setViewportPharmacies] = useState<
-    Pharmacy[] | null
-  >(null);
+  const viewportPharmacies = useViewportPharmaciesStore(
+    (state) => state.pharmacies
+  );
+  const setViewportPharmacies = useViewportPharmaciesStore(
+    (state) => state.setPharmacies
+  );
+  const setViewportFetching = useViewportPharmaciesStore(
+    (state) => state.setIsFetching
+  );
+  const resetViewport = useViewportPharmaciesStore((state) => state.reset);
   const userMovementRef = useRef(false);
   const resetKey = `${latitude ?? ""}:${longitude ?? ""}:${radius}`;
   const previousResetKeyRef = useRef(resetKey);
@@ -120,8 +129,19 @@ export function HomeViewportPharmacies() {
     previousResetKeyRef.current = resetKey;
     setPendingBounds(null);
     setCommittedBounds(null);
-    setViewportPharmacies(null);
-  }, [resetKey]);
+    resetViewport();
+  }, [resetKey, resetViewport]);
+
+  useEffect(() => {
+    setViewportFetching(viewportQuery.isFetching);
+  }, [setViewportFetching, viewportQuery.isFetching]);
+
+  useEffect(
+    () => () => {
+      resetViewport();
+    },
+    [resetViewport]
+  );
 
   useEffect(() => {
     if (!viewportQuery.data || !committedBounds) return;

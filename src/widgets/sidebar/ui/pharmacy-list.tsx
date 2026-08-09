@@ -3,7 +3,10 @@
 import { useMemo } from "react";
 import { RefreshCw, MapPin } from "lucide-react";
 import { useQueryState, parseAsStringLiteral, parseAsInteger } from "nuqs";
-import { useNearbyPharmacies } from "@/features/find-pharmacies";
+import {
+  useNearbyPharmacies,
+  useViewportPharmaciesStore,
+} from "@/features/find-pharmacies";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { cn } from "@/shared";
@@ -18,6 +21,19 @@ import { PharmacyListContent } from "./pharmacy-list-content";
 
 export function PharmacyList() {
   const { data, isLoading, error, refetch, isFetching } = useNearbyPharmacies();
+  const viewportPharmacies = useViewportPharmaciesStore(
+    (state) => state.pharmacies
+  );
+  const isViewportFetching = useViewportPharmaciesStore(
+    (state) => state.isFetching
+  );
+  const isViewportMode = viewportPharmacies !== null;
+  const effectivePharmacies = isViewportMode
+    ? viewportPharmacies
+    : data?.data;
+  const isEffectiveFetching = isViewportMode
+    ? isViewportFetching
+    : isFetching;
   const [timeFilter] = useQueryState<TimeFilter>(
     "time",
     parseAsStringLiteral(TIME_OPTIONS).withDefault("now")
@@ -28,13 +44,13 @@ export function PharmacyList() {
   );
   const headerRight = useMemo(
     () =>
-      isFetching ? (
+      isEffectiveFetching ? (
         <RefreshCw className="size-4 text-muted-foreground animate-spin" />
       ) : null,
-    [isFetching]
+    [isEffectiveFetching]
   );
 
-  if (isLoading) {
+  if (isLoading && !isViewportMode) {
     return (
       <div className="flex flex-col gap-3 py-2">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -50,7 +66,7 @@ export function PharmacyList() {
     );
   }
 
-  if (error) {
+  if (error && !isViewportMode) {
     return (
       <div className="flex flex-col items-center gap-3 p-4 text-center">
         <p className="text-sm text-destructive">
@@ -70,7 +86,7 @@ export function PharmacyList() {
     );
   }
 
-  if (!data?.data) {
+  if (!effectivePharmacies) {
     return (
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-6 py-2">
@@ -81,7 +97,7 @@ export function PharmacyList() {
     );
   }
 
-  if (data.data.length === 0) {
+  if (effectivePharmacies.length === 0) {
     return (
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-6 py-2">
@@ -94,8 +110,9 @@ export function PharmacyList() {
                 Δεν βρέθηκαν φαρμακεία
               </p>
               <p className="text-xs text-muted-foreground">
-                Δεν υπάρχουν εφημερεύοντα φαρμακεία σε ακτίνα {radius}km.
-                Δοκιμάστε μεγαλύτερη ακτίνα αναζήτησης.
+                {isViewportMode
+                  ? "Δεν υπάρχουν εφημερεύοντα φαρμακεία στην ορατή περιοχή του χάρτη."
+                  : `Δεν υπάρχουν εφημερεύοντα φαρμακεία σε ακτίνα ${radius}km. Δοκιμάστε μεγαλύτερη ακτίνα αναζήτησης.`}
               </p>
             </div>
           </div>
@@ -105,14 +122,16 @@ export function PharmacyList() {
     );
   }
 
-  const count = data.count;
+  const count = isViewportMode ? effectivePharmacies.length : data!.count;
 
   return (
     <PharmacyListContent
-      pharmacies={data.data}
+      pharmacies={effectivePharmacies}
       count={count}
       timeFilter={timeFilter}
-      subtitle={`Σε ακτίνα ${radius}km`}
+      subtitle={
+        isViewportMode ? "Στην περιοχή του χάρτη" : `Σε ακτίνα ${radius}km`
+      }
       headerRight={headerRight}
     />
   );

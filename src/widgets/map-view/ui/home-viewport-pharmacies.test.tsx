@@ -39,6 +39,9 @@ jest.mock("@/features/locate-user", () => ({
 
 jest.mock("@/features/find-pharmacies", () => ({
   useNearbyPharmacies: () => ({ isFetching: false }),
+  useViewportPharmaciesStore: jest.requireActual(
+    "@/features/find-pharmacies/model/use-viewport-pharmacies-store"
+  ).useViewportPharmaciesStore,
 }));
 
 jest.mock("nuqs", () => ({
