@@ -52,13 +52,7 @@ export const useCityPharmaciesStore = create<CityPharmaciesState>(
           lat,
           lng
         );
-        // Sort by distance when we have location data
-        const sorted = data.toSorted((a, b) => {
-          if (a.distance_km == null) return 1;
-          if (b.distance_km == null) return -1;
-          return a.distance_km - b.distance_km;
-        });
-        set({ pharmacies: sorted, isRefetching: false });
+        set({ pharmacies: data, isRefetching: false });
       } catch (error) {
         console.error("Failed to refetch pharmacies with location:", error);
         set({ isRefetching: false });
