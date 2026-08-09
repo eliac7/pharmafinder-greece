@@ -1,5 +1,6 @@
 import type {
   NavigationPharmacy,
+  NavigationProvider,
   PharmacyNavigationLinks,
 } from "../model/types";
 
@@ -54,4 +55,18 @@ export function buildNavigationLinks(
     telUrl: phone ? `tel:${phone}` : null,
     copyText: copyParts.join("\n"),
   };
+}
+
+export function getNavigationProviderUrl(
+  links: PharmacyNavigationLinks,
+  provider: NavigationProvider
+): string | null {
+  switch (provider) {
+    case "google-maps":
+      return links.googleMapsUrl;
+    case "apple-maps":
+      return links.appleMapsUrl;
+    case "waze":
+      return links.wazeUrl;
+  }
 }

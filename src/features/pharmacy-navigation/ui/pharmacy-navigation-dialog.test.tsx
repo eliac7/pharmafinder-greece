@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "sonner";
 
+import { useNavigationPreferenceStore } from "../model/use-navigation-preference";
 import { PharmacyNavigationDialog } from "./pharmacy-navigation-dialog";
 
 jest.mock("sonner", () => ({
@@ -25,6 +26,11 @@ describe("PharmacyNavigationDialog", () => {
     .mockImplementation(() => undefined);
 
   beforeEach(() => {
+    localStorage.clear();
+    useNavigationPreferenceStore.setState({
+      preferredProvider: "ask",
+      _hasHydrated: true,
+    });
     writeText.mockResolvedValue(undefined);
     Object.assign(navigator, {
       clipboard: {
@@ -61,6 +67,76 @@ describe("PharmacyNavigationDialog", () => {
       "href",
       "tel:2101234567"
     );
+    expect(
+      screen.getByRole("checkbox", { name: "Να θυμάσαι την επιλογή μου" })
+    ).not.toBeChecked();
+  });
+
+  it("does not save a provider when remember is not selected", () => {
+    render(<PharmacyNavigationDialog pharmacy={pharmacy} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Οδηγίες" }));
+    fireEvent.click(screen.getByRole("link", { name: /Google Maps/ }));
+
+    expect(
+      useNavigationPreferenceStore.getState().preferredProvider
+    ).toBe("ask");
+  });
+
+  it("saves a remembered provider and uses it for direct navigation", async () => {
+    render(<PharmacyNavigationDialog pharmacy={pharmacy} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Οδηγίες" }));
+    fireEvent.click(
+      screen.getByRole("checkbox", { name: "Να θυμάσαι την επιλογή μου" })
+    );
+    fireEvent.click(screen.getByRole("link", { name: /Waze/ }));
+
+    expect(
+      useNavigationPreferenceStore.getState().preferredProvider
+    ).toBe("waze");
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+    );
+    expect(screen.getByRole("link", { name: "Οδηγίες" })).toHaveAttribute(
+      "href",
+      expect.stringContaining("https://waze.com/ul")
+    );
+  });
+
+  it("bypasses the chooser when a valid provider is already saved", () => {
+    useNavigationPreferenceStore.setState({
+      preferredProvider: "apple-maps",
+      _hasHydrated: true,
+    });
+
+    render(<PharmacyNavigationDialog pharmacy={pharmacy} />);
+
+    expect(screen.getByRole("link", { name: "Οδηγίες" })).toHaveAttribute(
+      "href",
+      expect.stringContaining("https://maps.apple.com/")
+    );
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("falls back to the chooser when the saved provider has no URL", () => {
+    useNavigationPreferenceStore.setState({
+      preferredProvider: "google-maps",
+      _hasHydrated: true,
+    });
+
+    render(
+      <PharmacyNavigationDialog
+        pharmacy={{ ...pharmacy, latitude: null, longitude: null }}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Οδηγίες" }));
+
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("checkbox", { name: "Να θυμάσαι την επιλογή μου" })
+    ).not.toBeInTheDocument();
   });
 
   it("disables provider actions when coordinates are missing", () => {

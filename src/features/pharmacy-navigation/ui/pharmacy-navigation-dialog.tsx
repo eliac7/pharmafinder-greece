@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { Apple, Check, Copy, MapPinned, Navigation, Phone } from "lucide-react";
 import { toast } from "sonner";
 
@@ -16,8 +16,13 @@ import {
 } from "@/shared/ui/dialog";
 import {
   buildNavigationLinks,
+  getNavigationProviderUrl,
 } from "../lib/build-navigation-links";
-import type { NavigationPharmacy } from "../model/types";
+import type {
+  NavigationPharmacy,
+  NavigationProvider,
+} from "../model/types";
+import { useNavigationPreference } from "../model/use-navigation-preference";
 
 type ButtonVariant =
   | "default"
@@ -44,7 +49,15 @@ export function PharmacyNavigationDialog({
 }: PharmacyNavigationDialogProps) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [rememberSelection, setRememberSelection] = useState(false);
+  const rememberSelectionId = useId();
+  const { preferredProvider, setPreferredProvider } =
+    useNavigationPreference();
   const links = useMemo(() => buildNavigationLinks(pharmacy), [pharmacy]);
+  const directNavigationUrl =
+    preferredProvider === "ask"
+      ? null
+      : getNavigationProviderUrl(links, preferredProvider);
 
   const handleCopy = async () => {
     try {
@@ -60,27 +73,78 @@ export function PharmacyNavigationDialog({
 
   const providerLinks = [
     {
+      id: "google-maps",
       name: "Google Maps",
       icon: Navigation,
       url: links.googleMapsUrl,
       className: "hover:border-primary/40 hover:bg-primary/10",
     },
     {
+      id: "apple-maps",
       name: "Apple Maps",
       icon: Apple,
       url: links.appleMapsUrl,
       className: "hover:border-foreground/30 hover:bg-muted",
     },
     {
+      id: "waze",
       name: "Waze",
       icon: MapPinned,
       url: links.wazeUrl,
       className: "hover:border-sky-500/40 hover:bg-sky-500/10",
     },
-  ];
+  ] satisfies Array<{
+    id: NavigationProvider;
+    name: string;
+    icon: typeof Navigation;
+    url: string | null;
+    className: string;
+  }>;
+
+  const handleProviderClick = (provider: NavigationProvider) => {
+    if (rememberSelection) {
+      setPreferredProvider(provider);
+    }
+
+    setOpen(false);
+    setRememberSelection(false);
+  };
+
+  const triggerContent = (
+    <>
+      <Navigation className={compact ? "size-4" : "size-5"} />
+      {!compact && <span>{triggerLabel}</span>}
+    </>
+  );
+
+  if (directNavigationUrl) {
+    return (
+      <Button
+        variant={triggerVariant}
+        size={compact ? "icon" : "lg"}
+        className={cn(compact && "size-8 rounded-full", className)}
+        aria-label={compact ? triggerLabel : undefined}
+        asChild
+      >
+        <a
+          href={directNavigationUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {triggerContent}
+        </a>
+      </Button>
+    );
+  }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (!nextOpen) setRememberSelection(false);
+      }}
+    >
       <DialogTrigger asChild>
         <Button
           variant={triggerVariant}
@@ -88,8 +152,7 @@ export function PharmacyNavigationDialog({
           className={cn(compact && "size-8 rounded-full", className)}
           aria-label={compact ? triggerLabel : undefined}
         >
-          <Navigation className={compact ? "size-4" : "size-5"} />
-          {!compact && <span>{triggerLabel}</span>}
+          {triggerContent}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -122,6 +185,7 @@ export function PharmacyNavigationDialog({
                       href={provider.url}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => handleProviderClick(provider.id)}
                     >
                       <Icon className="size-5" />
                       <span>{provider.name}</span>
@@ -136,6 +200,24 @@ export function PharmacyNavigationDialog({
               );
             })}
           </div>
+
+          {links.hasCoordinates && (
+            <label
+              htmlFor={rememberSelectionId}
+              className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2.5 text-sm text-foreground"
+            >
+              <input
+                id={rememberSelectionId}
+                type="checkbox"
+                checked={rememberSelection}
+                onChange={(event) =>
+                  setRememberSelection(event.target.checked)
+                }
+                className="size-4 accent-primary"
+              />
+              <span>Να θυμάσαι την επιλογή μου</span>
+            </label>
+          )}
 
           {!links.hasCoordinates && (
             <p className="text-xs text-muted-foreground">

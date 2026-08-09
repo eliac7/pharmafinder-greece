@@ -6,6 +6,10 @@ export interface NavigationPharmacy {
   longitude?: number | string | null;
 }
 
+export type NavigationProvider = "google-maps" | "apple-maps" | "waze";
+
+export type NavigationPreference = NavigationProvider | "ask";
+
 export interface PharmacyNavigationLinks {
   hasCoordinates: boolean;
   googleMapsUrl: string | null;

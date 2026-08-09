@@ -2,7 +2,10 @@ export const revalidate = 3600;
 import { getPharmacyStatus, pharmacyApi } from "@/entities/pharmacy";
 import { ReportDialog, SharePharmacyDialog } from "@/features/pharmacy-detail";
 import { FavoriteButton } from "@/features/favorites";
-import { PharmacyNavigationDialog } from "@/features/pharmacy-navigation";
+import {
+  NavigationSettingsSheet,
+  PharmacyNavigationDialog,
+} from "@/features/pharmacy-navigation";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Map, MapMarker, MarkerContent } from "@/shared/ui/map";
@@ -57,10 +60,13 @@ export default async function PharmacyPage({ params }: Props) {
           <span className="md:hidden font-medium text-sm truncate max-w-50">
             {pharmacy.name}
           </span>
-          <SharePharmacyDialog
-            pharmacyName={pharmacy.name}
-            pharmacyAddress={pharmacy.address}
-          />
+          <div className="flex items-center gap-1">
+            <NavigationSettingsSheet className="rounded-full border-0 hover:bg-muted/50" />
+            <SharePharmacyDialog
+              pharmacyName={pharmacy.name}
+              pharmacyAddress={pharmacy.address}
+            />
+          </div>
         </header>
 
         <main className="px-6 pb-32 md:pb-10 max-w-2xl mx-auto w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">

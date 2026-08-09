@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { NavigationSettingsSheet } from "@/features/pharmacy-navigation";
 import { ThemeToggle } from "@/shared/ui/theme-toggle";
 import Link from "next/link";
 
@@ -50,7 +51,10 @@ export function SidebarCopyright() {
           </p>
         </div>
       </div>
-      <ThemeToggle />
+      <div className="flex shrink-0 items-center gap-2">
+        <NavigationSettingsSheet />
+        <ThemeToggle />
+      </div>
     </div>
   );
 }
