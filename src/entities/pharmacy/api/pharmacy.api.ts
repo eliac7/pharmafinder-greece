@@ -68,8 +68,8 @@ export const pharmacyApi = {
     lat?: number,
     lng?: number
   ) => {
-    let url = `/city?city_slug=${citySlug}&city_name=${citySlug}&time=${time}`;
-    if (lat && lng) {
+    let url = `/city?city_slug=${encodeURIComponent(citySlug)}&time=${time}`;
+    if (lat !== undefined && lng !== undefined) {
       url += `&latitude=${lat}&longitude=${lng}`;
     }
     const res = await fetchAPI<{ data: Pharmacy[] }>(url, {
@@ -112,7 +112,7 @@ export const pharmacyApi = {
   reportPharmacy: async (
     pharmacyId: number,
     data: {
-      report_type: string;
+      report_type: "closed" | "wrong_coords" | "wrong_info" | "other";
       description: string;
       turnstile_token: string;
     }
@@ -123,9 +123,7 @@ export const pharmacyApi = {
     });
   },
 
-  /**
-   * Sitemap Data (Lightweight)
-   */
+  /** Sitemap data. Server-side only; this route is not exposed by the browser proxy. */
   getSitemapData: async () => {
     const res = await fetchAPI<{ data: PharmacySitemapItem[] }>(
       "/pharmacies/sitemap",

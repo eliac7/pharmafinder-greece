@@ -6,7 +6,6 @@ import { Turnstile } from "@marsidev/react-turnstile";
 import { useTheme } from "next-themes";
 import { Loader2, Send, CheckCircle } from "lucide-react";
 import { Button } from "@/shared/ui/button";
-import { Input } from "@/shared/ui/input";
 
 import { cn } from "@/shared";
 import { useReportPharmacy } from "../model/use-report-pharmacy";
@@ -21,7 +20,9 @@ export function ReportPharmacyForm({
   onSuccess,
 }: ReportPharmacyFormProps) {
   const { resolvedTheme } = useTheme();
-  const [reportType, setReportType] = useState("");
+  const [reportType, setReportType] = useState<
+    "" | "closed" | "wrong_coords" | "wrong_info" | "other"
+  >("");
   const [description, setDescription] = useState("");
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -31,7 +32,7 @@ export function ReportPharmacyForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!turnstileToken) return;
+    if (!turnstileToken || !reportType) return;
 
     mutate(
       {
@@ -79,19 +80,34 @@ export function ReportPharmacyForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <Input
+        <select
           aria-label="Τύπος προβλήματος"
-          placeholder="Τύπος προβλήματος (π.χ. Λάθος ωράριο)"
           value={reportType}
-          onChange={(e) => setReportType(e.target.value)}
+          onChange={(e) =>
+            setReportType(
+              e.target.value as
+                | ""
+                | "closed"
+                | "wrong_coords"
+                | "wrong_info"
+                | "other"
+            )
+          }
           required
-          className="h-11 rounded-xl"
-        />
+          className="h-11 rounded-xl border border-input bg-transparent px-3 text-sm"
+        >
+          <option value="">Επιλέξτε τύπο προβλήματος</option>
+          <option value="closed">Το φαρμακείο είναι κλειστό</option>
+          <option value="wrong_coords">Λάθος τοποθεσία</option>
+          <option value="wrong_info">Λάθος πληροφορίες</option>
+          <option value="other">Άλλο</option>
+        </select>
         <textarea
           aria-label="Περιγραφή προβλήματος"
           placeholder="Περιγραφή (προαιρετικό)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          maxLength={500}
           className={cn(
             "flex min-h-[80px] w-full rounded-xl border border-input bg-transparent px-3 py-2 text-sm",
             "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",

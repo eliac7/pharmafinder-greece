@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { pharmacyApi } from "@/entities/pharmacy/api/pharmacy.api";
 
 interface ReportData {
-  report_type: string;
+  report_type: "closed" | "wrong_coords" | "wrong_info" | "other";
   description: string;
   turnstile_token: string;
 }

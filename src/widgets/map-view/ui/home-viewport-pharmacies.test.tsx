@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ApiError } from "@/shared/api/base";
 
 import {
   HomeViewportPharmacies,
@@ -153,6 +154,26 @@ describe("HomeViewportPharmacies", () => {
     fireEvent.click(screen.getByRole("button"));
 
     await waitFor(() => expect(mockToastError).toHaveBeenCalled());
+    expect(screen.getByRole("button")).toBeEnabled();
+    expect(screen.getByTestId("markers")).toHaveAttribute("data-count", "nearby");
+  });
+
+  it("shows the zoom remediation for a capped viewport without clearing markers", async () => {
+    mockGetViewportOnDuty.mockRejectedValueOnce(
+      new ApiError(422, "Unprocessable Entity", {
+        code: "RESULT_SET_TOO_LARGE",
+        endpoint: "viewport",
+      }),
+    );
+    renderViewport();
+    finishMove(new Event("pointerdown"));
+    fireEvent.click(screen.getByRole("button"));
+
+    await waitFor(() =>
+      expect(mockToastError).toHaveBeenCalledWith(
+        "Η περιοχή είναι πολύ μεγάλη. Κάντε μεγέθυνση και αναζητήστε ξανά.",
+      ),
+    );
     expect(screen.getByRole("button")).toBeEnabled();
     expect(screen.getByTestId("markers")).toHaveAttribute("data-count", "nearby");
   });

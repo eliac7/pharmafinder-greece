@@ -1,19 +1,28 @@
 import { act, render, screen } from "@testing-library/react";
 
 import type { Pharmacy } from "@/entities/pharmacy";
+import { ApiError } from "@/shared/api/base";
 import { useViewportPharmaciesStore } from "@/features/find-pharmacies";
 import { PharmacyList } from "./pharmacy-list";
 
 const nearbyPharmacy = { id: 1, name: "Nearby" };
 const viewportPharmacy = { id: 2, name: "Viewport" } as Pharmacy;
 
-const mockNearbyQuery = {
+const mockNearbyQuery: {
+  data: { count: number; data: Array<{ id: number }> };
+  isLoading: boolean;
+  error: Error | null;
+  refetch: jest.Mock;
+  isFetching: boolean;
+} = {
   data: { count: 1, data: [nearbyPharmacy] },
   isLoading: false,
   error: null,
   refetch: jest.fn(),
   isFetching: false,
 };
+const mockSetRadius = jest.fn();
+let mockRadius = 2;
 
 jest.mock("@/features/find-pharmacies", () => ({
   useNearbyPharmacies: () => mockNearbyQuery,
@@ -23,7 +32,8 @@ jest.mock("@/features/find-pharmacies", () => ({
 }));
 
 jest.mock("nuqs", () => ({
-  useQueryState: (key: string) => (key === "time" ? ["now"] : [2]),
+  useQueryState: (key: string) =>
+    key === "time" ? ["now"] : [mockRadius, mockSetRadius],
   parseAsStringLiteral: () => ({ withDefault: jest.fn() }),
   parseAsInteger: { withDefault: jest.fn() },
 }));
@@ -56,6 +66,9 @@ jest.mock("./pharmacy-list-content", () => ({
 
 describe("PharmacyList viewport synchronization", () => {
   beforeEach(() => {
+    mockRadius = 2;
+    mockSetRadius.mockClear();
+    mockNearbyQuery.error = null;
     act(() => useViewportPharmaciesStore.getState().reset());
   });
 
@@ -91,5 +104,19 @@ describe("PharmacyList viewport synchronization", () => {
         "Δεν υπάρχουν εφημερεύοντα φαρμακεία στην ορατή περιοχή του χάρτη."
       )
     ).toBeInTheDocument();
+  });
+
+  it("offers an explicit smaller radius on nearby overflow", () => {
+    mockRadius = 20;
+    mockNearbyQuery.error = new ApiError(422, "Unprocessable Entity", {
+      code: "RESULT_SET_TOO_LARGE",
+      endpoint: "nearby",
+      remediation: { kind: "reduce_radius", suggested_radius_km: 10 },
+    });
+    render(<PharmacyList />);
+
+    expect(screen.getByText("Η ακτίνα επιστρέφει πάρα πολλά αποτελέσματα.")).toBeInTheDocument();
+    act(() => screen.getByRole("button", { name: "Μείωση ακτίνας σε 10km" }).click());
+    expect(mockSetRadius).toHaveBeenCalledWith(10);
   });
 });

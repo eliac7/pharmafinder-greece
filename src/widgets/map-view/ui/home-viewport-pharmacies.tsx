@@ -23,6 +23,7 @@ import { Button } from "@/shared/ui/button";
 import { useMap } from "@/shared/ui/map";
 import { MapLoadingPill } from "./map-loading-pill";
 import { PharmacyMarkers } from "./pharmacy-markers";
+import { isResultSetTooLarge } from "@/shared/api/base";
 
 type MoveEvent = MapLibreGL.MapLibreEvent & { originalEvent?: Event };
 
@@ -158,9 +159,11 @@ export function HomeViewportPharmacies() {
       viewportQuery.error instanceof Error &&
       viewportQuery.error.message.includes("429");
     toast.error(
-      isRateLimited
-        ? "Έγιναν πολλές αναζητήσεις. Δοκιμάστε ξανά σε λίγο."
-        : "Η αναζήτηση στην περιοχή απέτυχε. Δοκιμάστε ξανά."
+      isResultSetTooLarge(viewportQuery.error, "viewport")
+        ? "Η περιοχή είναι πολύ μεγάλη. Κάντε μεγέθυνση και αναζητήστε ξανά."
+        : isRateLimited
+          ? "Έγιναν πολλές αναζητήσεις. Δοκιμάστε ξανά σε λίγο."
+          : "Η αναζήτηση στην περιοχή απέτυχε. Δοκιμάστε ξανά."
     );
   }, [committedBounds, viewportQuery.error, viewportQuery.isError]);
 

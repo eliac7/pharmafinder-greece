@@ -18,6 +18,7 @@ import {
 } from "@/entities/pharmacy";
 import { SystemStatusCard, QuickCityJump } from "@/widgets/sidebar";
 import { PharmacyListContent } from "./pharmacy-list-content";
+import { getResultSetTooLargeProblem } from "@/shared/api/base";
 
 export function PharmacyList() {
   const { data, isLoading, error, refetch, isFetching } = useNearbyPharmacies();
@@ -38,7 +39,7 @@ export function PharmacyList() {
     "time",
     parseAsStringLiteral(TIME_OPTIONS).withDefault("now")
   );
-  const [radius] = useQueryState(
+  const [radius, setRadius] = useQueryState(
     "radius",
     parseAsInteger.withDefault(DEFAULT_RADIUS)
   );
@@ -49,6 +50,14 @@ export function PharmacyList() {
       ) : null,
     [isEffectiveFetching]
   );
+  const nearbyOverflow = !isViewportMode
+    ? getResultSetTooLargeProblem(error, "nearby")
+    : undefined;
+  const suggestedRadius = nearbyOverflow?.remediation?.suggested_radius_km;
+  const canReduceRadius =
+    typeof suggestedRadius === "number" &&
+    [2, 5, 10, 20].includes(suggestedRadius) &&
+    suggestedRadius < radius;
 
   if (isLoading && !isViewportMode) {
     return (
@@ -67,6 +76,24 @@ export function PharmacyList() {
   }
 
   if (error && !isViewportMode) {
+    if (nearbyOverflow) {
+      return (
+        <div className="flex flex-col items-center gap-3 p-4 text-center">
+          <p className="text-sm text-destructive">Η ακτίνα επιστρέφει πάρα πολλά αποτελέσματα.</p>
+          <p className="text-xs text-muted-foreground">Μειώστε την ακτίνα για να εμφανίσετε τα εφημερεύοντα φαρμακεία.</p>
+          {canReduceRadius ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void setRadius(suggestedRadius)}
+              className="gap-2"
+            >
+              Μείωση ακτίνας σε {suggestedRadius}km
+            </Button>
+          ) : null}
+        </div>
+      );
+    }
     return (
       <div className="flex flex-col items-center gap-3 p-4 text-center">
         <p className="text-sm text-destructive">

@@ -20,10 +20,11 @@ global.fetch = jest.fn(() =>
 ) as jest.Mock;
 
 describe("Proxy Security", () => {
-  const createRequest = (method: string, url: string, headers: Record<string, string> = {}) => {
+  const createRequest = (method: string, url: string, headers: Record<string, string> = {}, body?: string) => {
     return new NextRequest(new URL(url, "http://localhost:3000"), {
       method,
       headers: new Headers(headers),
+      body,
     });
   };
 
@@ -40,7 +41,9 @@ describe("Proxy Security", () => {
   });
 
   it("should allow whitelisted POST endpoint (/pharmacies/123/report)", async () => {
-    const req = createRequest("POST", "http://localhost:3000/api/proxy/pharmacies/123/report");
+    const req = createRequest("POST", "http://localhost:3000/api/proxy/pharmacies/123/report", {
+      "content-type": "application/json",
+    }, JSON.stringify({ report_type: "other", description: "ok", turnstile_token: "token" }));
     const res = await POST(req, { params: createParams(["pharmacies", "123", "report"]) });
     expect(res.status).not.toBe(403);
     expect(res.status).not.toBe(405);
@@ -54,7 +57,7 @@ describe("Proxy Security", () => {
   });
 
   it("allows only GET access to the viewport endpoint", async () => {
-    const url = "http://localhost:3000/api/proxy/pharmacies/viewport/on_duty";
+    const url = "http://localhost:3000/api/proxy/pharmacies/viewport/on_duty?west=23&south=37&east=24&north=38&time=now";
     const params = { params: createParams(["pharmacies", "viewport", "on_duty"]) };
 
     const getResponse = await GET(createRequest("GET", url), params);
@@ -66,7 +69,7 @@ describe("Proxy Security", () => {
   it("overwrites the browser internal IP header with the trusted ingress IP", async () => {
     const req = createRequest(
       "GET",
-      "http://localhost:3000/api/proxy/pharmacies/viewport/on_duty",
+      "http://localhost:3000/api/proxy/pharmacies/viewport/on_duty?west=23&south=37&east=24&north=38&time=now",
       {
         "x-pharmafinder-client-ip": "198.51.100.99",
         "cf-connecting-ip": "203.0.113.7",
@@ -98,7 +101,7 @@ describe("Proxy Security", () => {
     const res = await GET(
       createRequest(
         "GET",
-        "http://localhost:3000/api/proxy/pharmacies/viewport/on_duty"
+        "http://localhost:3000/api/proxy/pharmacies/viewport/on_duty?west=23&south=37&east=24&north=38&time=now"
       ),
       { params: createParams(["pharmacies", "viewport", "on_duty"]) }
     );
@@ -106,5 +109,90 @@ describe("Proxy Security", () => {
     expect(res.status).toBe(429);
     expect(res.headers.get("retry-after")).toBe("42");
     expect(res.headers.get("x-ratelimit-remaining")).toBe("0");
+  });
+
+  it("forwards typed overflow problems without encrypting or adding partial data", async () => {
+    const problem = {
+      type: "https://pharmafinder.app/problems/result-set-too-large",
+      title: "Η περιοχή είναι πολύ μεγάλη",
+      status: 422,
+      code: "RESULT_SET_TOO_LARGE",
+      endpoint: "viewport",
+      limit: 500,
+      result_count_lower_bound: 501,
+      remediation: { kind: "zoom_in" },
+    };
+    (global.fetch as jest.Mock).mockResolvedValueOnce(
+      new Response(JSON.stringify(problem), {
+        status: 422,
+        headers: { "content-type": "application/problem+json" },
+      }),
+    );
+
+    const response = await GET(
+      createRequest(
+        "GET",
+        "http://localhost:3000/api/proxy/pharmacies/viewport/on_duty?west=23&south=37&east=24&north=38&time=now",
+      ),
+      { params: createParams(["pharmacies", "viewport", "on_duty"]) },
+    );
+
+    expect(response.status).toBe(422);
+    expect(response.headers.get("content-type")).toContain(
+      "application/problem+json",
+    );
+    expect(await response.json()).toEqual(problem);
+  });
+
+  it("removes public JSON sitemap and all-pharmacy nearby shortcuts", async () => {
+    const sitemap = await GET(createRequest("GET", "http://localhost:3000/api/proxy/pharmacies/sitemap"), { params: createParams(["pharmacies", "sitemap"]) });
+    const nearby = await GET(createRequest("GET", "http://localhost:3000/api/proxy/nearby_pharmacies"), { params: createParams(["nearby_pharmacies"]) });
+    expect(sitemap.status).toBe(403);
+    expect(nearby.status).toBe(403);
+  });
+
+  it("rejects unknown and duplicate query parameters", async () => {
+    const unknown = await GET(
+      createRequest("GET", "http://localhost:3000/api/proxy/pharmacies/viewport/on_duty?west=23&south=37&east=24&north=38&time=now&extra=1"),
+      { params: createParams(["pharmacies", "viewport", "on_duty"]) },
+    );
+    const duplicate = await GET(
+      createRequest("GET", "http://localhost:3000/api/proxy/pharmacies/viewport/on_duty?west=23&west=23.1&south=37&east=24&north=38&time=now"),
+      { params: createParams(["pharmacies", "viewport", "on_duty"]) },
+    );
+    expect(unknown.status).toBe(422);
+    expect(duplicate.status).toBe(422);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it("rejects blank numbers and oversized viewports", async () => {
+    const blank = await GET(
+      createRequest("GET", "http://localhost:3000/api/proxy/pharmacies/viewport/on_duty?west=&south=37&east=24&north=38&time=now"),
+      { params: createParams(["pharmacies", "viewport", "on_duty"]) },
+    );
+    const oversized = await GET(
+      createRequest("GET", "http://localhost:3000/api/proxy/pharmacies/viewport/on_duty?west=20&south=37&east=24&north=38&time=now"),
+      { params: createParams(["pharmacies", "viewport", "on_duty"]) },
+    );
+    expect(blank.status).toBe(422);
+    expect(oversized.status).toBe(422);
+  });
+
+  it("rejects unknown report fields before forwarding", async () => {
+    const response = await POST(
+      createRequest(
+        "POST",
+        "http://localhost:3000/api/proxy/pharmacies/123/report",
+        { "content-type": "application/json" },
+        JSON.stringify({
+          report_type: "other",
+          turnstile_token: "token",
+          unexpected: true,
+        }),
+      ),
+      { params: createParams(["pharmacies", "123", "report"]) },
+    );
+    expect(response.status).toBe(422);
+    expect(global.fetch).not.toHaveBeenCalled();
   });
 });
