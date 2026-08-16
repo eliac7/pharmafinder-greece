@@ -15,12 +15,18 @@ import {
   TIME_OPTIONS,
   DEFAULT_RADIUS,
   type TimeFilter,
+  PRODUCT_ACTION_APIS_ENABLED,
 } from "@/entities/pharmacy";
 import { SystemStatusCard, QuickCityJump } from "@/widgets/sidebar";
 import { PharmacyListContent } from "./pharmacy-list-content";
+import { ProductNearbyList } from "./product-nearby-list";
 import { getResultSetTooLargeProblem } from "@/shared/api/base";
 
 export function PharmacyList() {
+  return PRODUCT_ACTION_APIS_ENABLED ? <ProductNearbyList /> : <LegacyPharmacyList />;
+}
+
+function LegacyPharmacyList() {
   const { data, isLoading, error, refetch, isFetching } = useNearbyPharmacies();
   const viewportPharmacies = useViewportPharmaciesStore(
     (state) => state.pharmacies

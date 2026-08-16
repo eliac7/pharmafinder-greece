@@ -30,12 +30,6 @@ export async function POST(request: NextRequest) {
   }
 
   const existing = request.cookies.get(SESSION_COOKIE)?.value;
-  if (existing) {
-    return NextResponse.json(
-      { ready: true },
-      { headers: { "cache-control": "private, no-store" } },
-    );
-  }
 
   try {
     const response = await fetch(`${API_BASE_URL}/v1/sessions/anonymous`, {
@@ -43,6 +37,7 @@ export async function POST(request: NextRequest) {
       headers: {
         accept: "application/json",
         "x-bff-service-credential": BFF_SERVICE_CREDENTIAL,
+        ...(existing ? { "x-pharmafinder-session": existing } : {}),
       },
       cache: "no-store",
     });

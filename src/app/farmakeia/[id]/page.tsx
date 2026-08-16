@@ -1,5 +1,5 @@
 export const revalidate = 3600;
-import { getPharmacyStatus, getPharmacyCanonicalPath, getPharmacyReference, pharmacyApi } from "@/entities/pharmacy";
+import { getPharmacyStatus, getPharmacyCanonicalPath, getPharmacyReference, pharmacyApi, PRODUCT_ACTION_APIS_ENABLED } from "@/entities/pharmacy";
 import { ReportDialog, SharePharmacyDialog } from "@/features/pharmacy-detail";
 import { FavoriteButton } from "@/features/favorites";
 import {
@@ -16,6 +16,7 @@ import { PharmacyMapMarkerContent } from "./pharmacy-map-marker";
 import { PharmacyHours, PharmacyStatusBadge } from "@/features/pharmacy-detail";
 import { BackButton } from "./back-button";
 import { serializeJsonLd } from "@/shared";
+import { ProductPharmacyPage } from "./product-pharmacy-page";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -39,6 +40,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PharmacyPage({ params }: Props) {
   const { id } = await params;
+  if (PRODUCT_ACTION_APIS_ENABLED) {
+    return <ProductPharmacyPage requestedPath={id} />;
+  }
   const pharmacy = await pharmacyApi.getPharmacyDetails(id);
 
   if (!pharmacy || Object.keys(pharmacy).length === 0) {

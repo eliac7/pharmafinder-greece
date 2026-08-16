@@ -17,10 +17,19 @@ export { pharmacyApi } from "./api/pharmacy.api";
 // Hooks
 export { useCityPharmaciesStore } from "./model/use-city-pharmacies";
 export { useCityPharmacies } from "./model/use-city-pharmacies-query";
+export { useProductNearbyPharmacies } from "./model/use-product-nearby";
+export { useProductCityPharmacies } from "./model/use-product-city";
 export {
   fetchProductAction,
   queryMapAction,
+  drillMapAction,
+  queryNearbyAction,
+  queryCityAction,
+  querySearchAction,
   revealProductHandle,
+  getProductDetail,
+  reportProduct,
+  PRODUCT_ACTION_APIS_ENABLED,
 } from "./api/product-actions.api";
 export type {
   ActionCluster,
@@ -29,7 +38,14 @@ export type {
   DutyCoverage,
   MapActionResponse,
   NearbyActionItem,
+  ActionDutySummary,
+  ActionPharmacyListItem,
   NearbyActionResponse,
+  CityActionItem,
+  CityActionResponse,
+  SearchActionItem,
+  SearchActionResponse,
+  DutyTime,
 } from "./api/product-actions.api";
 export { usePharmacies } from "./model/use-pharmacies";
 export { getPharmacyCanonicalPath, getPharmacyReference } from "./lib/public-url";

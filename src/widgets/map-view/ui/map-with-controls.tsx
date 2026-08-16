@@ -7,11 +7,12 @@ import { PharmacyMarkers } from "./pharmacy-markers";
 import { MapUpdater } from "./map-updater";
 import { ManualLocationAdjuster } from "./manual-location-adjuster";
 import { MapLoadingPill } from "./map-loading-pill";
-import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
+import { PRODUCT_ACTION_APIS_ENABLED, type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
 import { useNearbyPharmacies } from "@/features/find-pharmacies";
 import type MapLibreGL from "maplibre-gl";
 import { useState } from "react";
 import { HomeViewportPharmacies } from "./home-viewport-pharmacies";
+import { ProductActionViewport } from "./product-action-viewport";
 
 interface MapWithControlsProps {
   center?: [number, number];
@@ -69,6 +70,8 @@ export function MapWithControls({
             timeFilter={timeFilter}
             citySlug={citySlug}
           />
+        ) : PRODUCT_ACTION_APIS_ENABLED ? (
+          <ProductActionViewport />
         ) : (
           <HomeViewportPharmacies />
         )}

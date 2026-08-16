@@ -27,6 +27,10 @@ import {
   pharmacyApi,
   getPharmacyCanonicalPath,
   getPharmacyReference,
+  PRODUCT_ACTION_APIS_ENABLED,
+  revealProductHandle,
+  useProductCityPharmacies,
+  type CityActionItem,
 } from "@/entities/pharmacy";
 import { useQueryState, parseAsStringLiteral } from "nuqs";
 import { useQueries } from "@tanstack/react-query";
@@ -36,6 +40,9 @@ import {
   type Pharmacy,
 } from "@/entities/pharmacy";
 import { useEffect, useMemo } from "react";
+import { toast } from "sonner";
+import { ProductActionPopupTarget } from "./product-action-popup";
+import { ProductActionMarkerContent } from "./product-action-marker";
 
 interface PharmacyMarkersProps {
   pharmacies?: Pharmacy[];
@@ -43,7 +50,7 @@ interface PharmacyMarkersProps {
   citySlug?: string;
 }
 
-export function PharmacyMarkers({
+function LegacyPharmacyMarkers({
   pharmacies: propPharmacies,
   timeFilter: propTimeFilter,
   citySlug,
@@ -52,6 +59,7 @@ export function PharmacyMarkers({
     citySlug: citySlug ?? "",
     timeFilter: propTimeFilter ?? "now",
     initialData: propPharmacies,
+    enabled: !PRODUCT_ACTION_APIS_ENABLED,
   });
 
   const { data: nearbyData } = useNearbyPharmacies();
@@ -362,4 +370,37 @@ export function PharmacyMarkers({
       )}
     </MapHybridClusterLayer>
   );
+}
+
+function ProductActionCityMarkers({ citySlug, timeFilter }: PharmacyMarkersProps) {
+  const setProductPopupTarget = useMapStore((state) => state.setProductPopupTarget);
+  const [queryTime] = useQueryState<TimeFilter>("time", parseAsStringLiteral(TIME_OPTIONS).withDefault("now"));
+  const { data } = useProductCityPharmacies(citySlug ?? "", timeFilter ?? queryTime);
+  if (!citySlug || !data) return null;
+
+  const open = async (handle: string) => {
+    try {
+      const detail = await revealProductHandle(handle);
+      const location = {
+        latitude: detail.location.latitude ?? null,
+        longitude: detail.location.longitude ?? null,
+      };
+      if (location.latitude == null || location.longitude == null) {
+        throw new Error("Pharmacy has no map coordinates");
+      }
+      setProductPopupTarget({
+        detail: { ...detail, location },
+        center: [location.longitude, location.latitude],
+        timeFilter: timeFilter ?? queryTime,
+      });
+    } catch {
+      toast.error("Δεν ήταν δυνατή η φόρτωση των στοιχείων.");
+    }
+  };
+
+  return <>{data.items.filter((item: CityActionItem) => item.latitude != null && item.longitude != null).map((item: CityActionItem) => <MapMarker key={item.handle} longitude={item.longitude!} latitude={item.latitude!}><MarkerContent><button type="button" onClick={() => void open(item.handle)} className="cursor-pointer border-0 bg-transparent p-0"><ProductActionMarkerContent publicId={item.public_id} status={(timeFilter ?? queryTime) === "now" ? "open" : "scheduled"} /><span className="sr-only">{item.name}</span></button></MarkerContent><MarkerTooltip className="rounded-xl bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground shadow-lg">{item.name}</MarkerTooltip></MapMarker>)}<ProductActionPopupTarget /></>;
+}
+
+export function PharmacyMarkers(props: PharmacyMarkersProps) {
+  return PRODUCT_ACTION_APIS_ENABLED ? <ProductActionCityMarkers {...props} /> : <LegacyPharmacyMarkers {...props} />;
 }

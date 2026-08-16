@@ -12,6 +12,7 @@ interface UseCityPharmaciesOptions {
   timeFilter: TimeFilter;
   initialData?: Pharmacy[];
   userLocation?: { lat: number; lng: number } | null;
+  enabled?: boolean;
 }
 
 export function useCityPharmacies({
@@ -19,6 +20,7 @@ export function useCityPharmacies({
   timeFilter,
   initialData,
   userLocation,
+  enabled = true,
 }: UseCityPharmaciesOptions) {
   return useQuery({
     queryKey: [
@@ -36,7 +38,7 @@ export function useCityPharmacies({
         userLocation?.lng
       ),
     initialData,
-    enabled: !!citySlug,
+    enabled: !!citySlug && enabled,
     refetchInterval: 1000 * 60 * 5,
     staleTime: 1000 * 60 * 1,
   });

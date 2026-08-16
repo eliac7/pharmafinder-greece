@@ -6,9 +6,22 @@ import { Turnstile } from "@marsidev/react-turnstile";
 import { useTheme } from "next-themes";
 import { Loader2, Send, CheckCircle } from "lucide-react";
 import { Button } from "@/shared/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/shared/ui/dropdown-menu";
 
 import { cn } from "@/shared";
 import { useReportPharmacy } from "../model/use-report-pharmacy";
+
+const REPORT_TYPES = [
+  ["closed", "Το φαρμακείο είναι κλειστό"],
+  ["wrong_coords", "Λάθος τοποθεσία"],
+  ["wrong_info", "Λάθος πληροφορίες"],
+  ["other", "Άλλο"],
+] as const;
 
 interface ReportPharmacyFormProps {
   pharmacyId: string;
@@ -80,28 +93,28 @@ export function ReportPharmacyForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <select
-          aria-label="Τύπος προβλήματος"
-          value={reportType}
-          onChange={(e) =>
-            setReportType(
-              e.target.value as
-                | ""
-                | "closed"
-                | "wrong_coords"
-                | "wrong_info"
-                | "other"
-            )
-          }
-          required
-          className="h-11 rounded-xl border border-input bg-transparent px-3 text-sm"
-        >
-          <option value="">Επιλέξτε τύπο προβλήματος</option>
-          <option value="closed">Το φαρμακείο είναι κλειστό</option>
-          <option value="wrong_coords">Λάθος τοποθεσία</option>
-          <option value="wrong_info">Λάθος πληροφορίες</option>
-          <option value="other">Άλλο</option>
-        </select>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            type="button"
+            aria-label="Τύπος προβλήματος"
+            className="flex h-11 w-full items-center justify-between rounded-xl border border-input bg-transparent px-3 text-left text-sm text-foreground outline-none transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {REPORT_TYPES.find(([value]) => value === reportType)?.[1] ??
+              "Επιλέξτε τύπο προβλήματος"}
+            <span aria-hidden="true" className="text-muted-foreground">⌄</span>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-72">
+            {REPORT_TYPES.map(([value, label]) => (
+              <DropdownMenuItem
+                key={value}
+                onSelect={() => setReportType(value)}
+                className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
+              >
+                {label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
         <textarea
           aria-label="Περιγραφή προβλήματος"
           placeholder="Περιγραφή (προαιρετικό)"

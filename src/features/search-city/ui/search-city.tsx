@@ -12,9 +12,17 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
+import { toast } from "sonner";
 
 import { useDebounce, searchApi } from "@/shared";
-import { getPharmacyCanonicalPath, getPharmacyReference } from "@/entities/pharmacy";
+import {
+  getPharmacyCanonicalPath,
+  getPharmacyReference,
+  PRODUCT_ACTION_APIS_ENABLED,
+  querySearchAction,
+  revealProductHandle,
+  type SearchActionItem,
+} from "@/entities/pharmacy";
 
 import {
   Command,
@@ -46,7 +54,7 @@ const ADDRESS_GROUP_HEADING = (
   </span>
 );
 
-export function SearchCity({
+function LegacySearchCity({
   onLocate,
   isLocating,
 }: {
@@ -211,4 +219,69 @@ export function SearchCity({
       </Command>
     </div>
   );
+}
+
+function ProductSearchCity({
+  onLocate,
+  isLocating,
+}: {
+  onLocate?: () => void;
+  isLocating?: boolean;
+}) {
+  const [open, setOpen] = React.useState(false);
+  const [inputValue, setInputValue] = React.useState("");
+  const { push } = useRouter();
+  const debouncedQuery = useDebounce(inputValue, 300);
+  const shouldSearch = debouncedQuery.length >= 3;
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["product-search", debouncedQuery],
+    queryFn: () => querySearchAction(debouncedQuery),
+    enabled: shouldSearch,
+    staleTime: 60_000,
+    retry: false,
+  });
+  const hasResults = Boolean(data && (data.cities.length || data.pharmacies.length || data.addresses.length));
+  const showLoading = isLoading || isFetching;
+
+  const openHandle = async (item: SearchActionItem) => {
+    try {
+      const detail = await revealProductHandle(item.handle);
+      push(detail.canonical_path);
+    } catch {
+      toast.error("Δεν ήταν δυνατή η φόρτωση των στοιχείων.");
+    } finally {
+      setOpen(false);
+      setInputValue("");
+    }
+  };
+
+  return (
+    <div className="relative w-full">
+      <Command className="overflow-visible bg-transparent" shouldFilter={false}>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverAnchor>
+            <div data-popover-anchor className="flex items-center w-full rounded-full h-12 bg-sidebar-accent border border-sidebar-border focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all duration-200 overflow-hidden px-3">
+              {showLoading ? <Loader2 className="size-5 shrink-0 text-muted-foreground mr-2 animate-spin" /> : <Search className="size-5 shrink-0 text-muted-foreground mr-2" />}
+              <CommandPrimitive.Input placeholder="Αναζήτηση πόλης, φαρμακείου..." className="h-full w-full border-none focus:ring-0 bg-transparent text-base outline-none placeholder:text-muted-foreground" value={inputValue} onValueChange={setInputValue} onFocus={() => setOpen(true)} />
+              {onLocate && <button type="button" onClick={onLocate} disabled={isLocating} className="ml-2 p-1.5 hover:bg-background rounded-full text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"><Crosshair className="size-5 shrink-0" /><span className="sr-only">Εντοπισμός</span></button>}
+            </div>
+          </PopoverAnchor>
+          <PopoverContent className="p-0 w-(--radix-popover-trigger-width)" align="start" onOpenAutoFocus={(event) => event.preventDefault()}>
+            <CommandList>
+              {!shouldSearch && <div className="py-6 text-center text-sm text-muted-foreground">Πληκτρολογήστε τουλάχιστον 3 χαρακτήρες...</div>}
+              {shouldSearch && !showLoading && !hasResults && <CommandEmpty>Δεν βρέθηκαν αποτελέσματα.</CommandEmpty>}
+              {data?.cities.length ? <CommandGroup heading={CITY_GROUP_HEADING}>{data.cities.map((city: SearchActionItem) => <CommandItem key={`city-${city.handle}`} value={`city-${city.slug ?? city.name}`} onSelect={() => { setOpen(false); setInputValue(""); if (city.slug) push(`/efimeries/${city.slug}`); }}>{city.name}</CommandItem>)}</CommandGroup> : null}
+              {data?.pharmacies.length ? <CommandGroup heading={PHARMACY_GROUP_HEADING}>{data.pharmacies.map((item: SearchActionItem) => <CommandItem key={`pharmacy-${item.handle}`} value={`pharmacy-${item.handle}`} onSelect={() => void openHandle(item)}><div className="flex flex-col"><span>{item.name}</span><span className="text-xs text-muted-foreground">{item.city}</span></div></CommandItem>)}</CommandGroup> : null}
+              {data?.addresses.length ? <CommandGroup heading={ADDRESS_GROUP_HEADING}>{data.addresses.map((item: SearchActionItem) => <CommandItem key={`address-${item.handle}`} value={`address-${item.handle}`} onSelect={() => void openHandle(item)}><div className="flex flex-col"><span>{item.text ?? item.name}</span><span className="text-xs text-muted-foreground">{item.name} - {item.city}</span></div></CommandItem>)}</CommandGroup> : null}
+              {data && Object.values(data.has_more).some(Boolean) && <div className="border-t px-3 py-2 text-xs text-muted-foreground">Εμφανίζονται τα πιο σχετικά αποτελέσματα.</div>}
+            </CommandList>
+          </PopoverContent>
+        </Popover>
+      </Command>
+    </div>
+  );
+}
+
+export function SearchCity(props: { onLocate?: () => void; isLocating?: boolean }) {
+  return PRODUCT_ACTION_APIS_ENABLED ? <ProductSearchCity {...props} /> : <LegacySearchCity {...props} />;
 }

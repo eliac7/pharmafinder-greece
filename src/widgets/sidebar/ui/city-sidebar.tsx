@@ -13,6 +13,7 @@ import {
   type Pharmacy,
   type TimeFilter,
   useCityPharmacies,
+  PRODUCT_ACTION_APIS_ENABLED,
 } from "@/entities/pharmacy";
 import {
   Sidebar,
@@ -25,6 +26,7 @@ import {
 } from "@/shared/ui/sidebar";
 import {
   CityPharmacyList,
+  ProductCityList,
   SidebarBranding,
   SidebarCopyright,
 } from "@/widgets/sidebar";
@@ -76,6 +78,7 @@ export function CitySidebar({
     citySlug,
     timeFilter: activeTime,
     initialData: initialPharmacies,
+    enabled: !PRODUCT_ACTION_APIS_ENABLED,
   });
 
   const displayPharmacies = pharmacies ?? initialPharmacies;
@@ -199,11 +202,15 @@ export function CitySidebar({
                 Φαρμακεια ({displayPharmacies.length})
               </span>
             </div>
-            <CityPharmacyList
-              pharmacies={displayPharmacies}
-              count={displayPharmacies.length}
-              timeFilter={activeTime}
-            />
+            {PRODUCT_ACTION_APIS_ENABLED ? (
+              <ProductCityList citySlug={citySlug} time={activeTime} />
+            ) : (
+              <CityPharmacyList
+                pharmacies={displayPharmacies}
+                count={displayPharmacies.length}
+                timeFilter={activeTime}
+              />
+            )}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
