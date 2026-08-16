@@ -2,28 +2,20 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Command as CommandPrimitive } from "cmdk";
-import {
-  Crosshair,
-  Loader2,
-  MapPin,
-  MapPinHouse,
-  Pill,
-  Search,
-} from "lucide-react";
+import { Crosshair, Loader2, MapPin, MapPinHouse, Pill, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
 
-import { useDebounce, searchApi } from "@/shared";
+import { useDebounce } from "@/shared";
+import { useRevealWithChallenge } from "@/features/pharmacy-detail/model/use-reveal-with-challenge";
+import { DetailChallenge } from "@/features/pharmacy-detail/ui/detail-challenge";
 import {
-  getPharmacyCanonicalPath,
-  getPharmacyReference,
-  PRODUCT_ACTION_APIS_ENABLED,
   querySearchAction,
   revealProductHandle,
   type SearchActionItem,
 } from "@/entities/pharmacy";
-
+import { useMapStore } from "@/shared/model/use-map-store";
 import {
   Command,
   CommandEmpty,
@@ -33,28 +25,11 @@ import {
 } from "@/shared/ui/command";
 import { Popover, PopoverAnchor, PopoverContent } from "@/shared/ui/popover";
 
-const CITY_GROUP_HEADING = (
-  <span className="flex items-center gap-1.5">
-    <MapPin className="size-3.5" />
-    Πόλεις
-  </span>
-);
+const CITY_GROUP_HEADING = <span className="flex items-center gap-1.5"><MapPin className="size-3.5" />Πόλεις</span>;
+const PHARMACY_GROUP_HEADING = <span className="flex items-center gap-1.5"><Pill className="size-3.5" />Φαρμακεία</span>;
+const ADDRESS_GROUP_HEADING = <span className="flex items-center gap-1.5"><MapPinHouse className="size-3.5" />Διευθύνσεις</span>;
 
-const PHARMACY_GROUP_HEADING = (
-  <span className="flex items-center gap-1.5">
-    <Pill className="size-3.5" />
-    Φαρμακεία
-  </span>
-);
-
-const ADDRESS_GROUP_HEADING = (
-  <span className="flex items-center gap-1.5">
-    <MapPinHouse className="size-3.5" />
-    Διευθύνσεις
-  </span>
-);
-
-function LegacySearchCity({
+export function SearchCity({
   onLocate,
   isLocating,
 }: {
@@ -64,173 +39,8 @@ function LegacySearchCity({
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
   const { push } = useRouter();
-
-  const debouncedQuery = useDebounce(inputValue, 300);
-
-  const shouldSearch = debouncedQuery.length >= 3;
-
-  const { data, isLoading, isFetching } = useQuery({
-    queryKey: ["unified-search", debouncedQuery],
-    queryFn: () => searchApi.unifiedSearch({ q: debouncedQuery }),
-    enabled: shouldSearch,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
-
-  const hasResults =
-    data &&
-    (data.cities.length > 0 ||
-      data.pharmacies.length > 0 ||
-      data.addresses.length > 0);
-
-  const showLoading = isLoading || isFetching;
-
-  return (
-    <div className="relative w-full">
-      <Command className="overflow-visible bg-transparent" shouldFilter={false}>
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverAnchor>
-            <div
-              data-popover-anchor
-              className="flex items-center w-full rounded-full h-12 bg-sidebar-accent border border-sidebar-border focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all duration-200 overflow-hidden px-3"
-            >
-              {showLoading ? (
-                <Loader2 className="size-5 shrink-0 text-muted-foreground mr-2 animate-spin" />
-              ) : (
-                <Search className="size-5 shrink-0 text-muted-foreground mr-2" />
-              )}
-              <CommandPrimitive.Input
-                placeholder="Αναζήτηση πόλης, φαρμακείου..."
-                className="h-full w-full border-none focus:ring-0 bg-transparent text-base outline-none placeholder:text-muted-foreground"
-                value={inputValue}
-                onValueChange={setInputValue}
-                onFocus={() => setOpen(true)}
-              />
-              {onLocate && (
-                <button
-                  type="button"
-                  onClick={onLocate}
-                  disabled={isLocating}
-                  className="ml-2 p-1.5 hover:bg-background rounded-full text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
-                >
-                  {isLocating ? (
-                    <Loader2 className="size-5 shrink-0 animate-spin" />
-                  ) : (
-                    <Crosshair className="size-5 shrink-0" />
-                  )}
-                  <span className="sr-only">Εντοπισμός</span>
-                </button>
-              )}
-            </div>
-          </PopoverAnchor>
-          <PopoverContent
-            className="p-0 w-(--radix-popover-trigger-width)"
-            align="start"
-            onOpenAutoFocus={(e) => e.preventDefault()}
-            onInteractOutside={(event) => {
-              const target = event.target as HTMLElement | null;
-              if (target?.closest("[data-popover-anchor]")) {
-                event.preventDefault();
-              }
-            }}
-          >
-            <CommandList>
-              {!shouldSearch && (
-                <div className="py-6 text-center text-sm text-muted-foreground">
-                  Πληκτρολογήστε τουλάχιστον 3 χαρακτήρες...
-                </div>
-              )}
-
-              {shouldSearch && !showLoading && !hasResults && (
-                <CommandEmpty>Δεν βρέθηκαν αποτελέσματα.</CommandEmpty>
-              )}
-
-              {data && data.cities.length > 0 && (
-                <CommandGroup
-                  heading={CITY_GROUP_HEADING}
-                >
-                  {data.cities.map((city) => (
-                    <CommandItem
-                      key={`city-${city.id}`}
-                      value={`city-${city.slug}`}
-                      onSelect={() => {
-                        setOpen(false);
-                        setInputValue("");
-                        push(`/efimeries/${city.slug}`);
-                      }}
-                    >
-                      {city.name}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-
-              {data && data.pharmacies.length > 0 && (
-                <CommandGroup
-                  heading={PHARMACY_GROUP_HEADING}
-                >
-                  {data.pharmacies.map((pharmacy) => (
-                    <CommandItem
-                      key={`pharmacy-${getPharmacyReference(pharmacy)}`}
-                      value={`pharmacy-${getPharmacyReference(pharmacy)}`}
-                      onSelect={() => {
-                        setOpen(false);
-                        setInputValue("");
-                        push(getPharmacyCanonicalPath(pharmacy));
-                      }}
-                    >
-                      <div className="flex flex-col">
-                        <span>{pharmacy.name}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {pharmacy.city}
-                        </span>
-                      </div>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-
-              {data && data.addresses.length > 0 && (
-                <CommandGroup
-                  heading={ADDRESS_GROUP_HEADING}
-                >
-                  {data.addresses.map((pharmacy) => (
-                    <CommandItem
-                      key={`address-${getPharmacyReference(pharmacy)}`}
-                      value={`address-${getPharmacyReference(pharmacy)}-${pharmacy.address}`}
-                      onSelect={() => {
-                        setOpen(false);
-                        setInputValue("");
-                        push(getPharmacyCanonicalPath(pharmacy));
-                      }}
-                    >
-                      <div className="flex flex-col">
-                        <span>{pharmacy.address}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {pharmacy.name} - {pharmacy.city}
-                        </span>
-                      </div>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-            </CommandList>
-          </PopoverContent>
-        </Popover>
-      </Command>
-    </div>
-  );
-}
-
-function ProductSearchCity({
-  onLocate,
-  isLocating,
-}: {
-  onLocate?: () => void;
-  isLocating?: boolean;
-}) {
-  const [open, setOpen] = React.useState(false);
-  const [inputValue, setInputValue] = React.useState("");
-  const { push } = useRouter();
+  const setProductPopupTarget = useMapStore((state) => state.setProductPopupTarget);
+  const { challenge, challengeError, reveal, verifyChallenge } = useRevealWithChallenge();
   const debouncedQuery = useDebounce(inputValue, 300);
   const shouldSearch = debouncedQuery.length >= 3;
   const { data, isLoading, isFetching } = useQuery({
@@ -243,10 +53,22 @@ function ProductSearchCity({
   const hasResults = Boolean(data && (data.cities.length || data.pharmacies.length || data.addresses.length));
   const showLoading = isLoading || isFetching;
 
+  const openPopup = (detail: Awaited<ReturnType<typeof revealProductHandle>>) => {
+    const { latitude, longitude } = detail.location;
+    if (latitude == null || longitude == null) throw new Error("Pharmacy has no map coordinates");
+    setProductPopupTarget({
+      detail,
+      center: [longitude, latitude],
+      timeFilter: "now",
+    });
+  };
+
   const openHandle = async (item: SearchActionItem) => {
     try {
-      const detail = await revealProductHandle(item.handle);
-      push(detail.canonical_path);
+      const detail = await reveal(item.handle);
+      // Search results use the same reveal/popup interaction as map results;
+      // the canonical URL remains available from the popup itself.
+      if (detail) openPopup(detail);
     } catch {
       toast.error("Δεν ήταν δυνατή η φόρτωση των στοιχείων.");
     } finally {
@@ -278,10 +100,18 @@ function ProductSearchCity({
           </PopoverContent>
         </Popover>
       </Command>
+      {challenge && (
+        <div className="mt-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 text-center">
+          <p className="text-sm font-medium">Απαιτείται επιβεβαίωση για την προβολή στοιχείων.</p>
+          <DetailChallenge
+            errorMessage={challengeError}
+            onVerified={async (providerToken) => {
+              const detail = await verifyChallenge(providerToken);
+              if (detail) openPopup(detail);
+            }}
+          />
+        </div>
+      )}
     </div>
   );
-}
-
-export function SearchCity(props: { onLocate?: () => void; isLocating?: boolean }) {
-  return PRODUCT_ACTION_APIS_ENABLED ? <ProductSearchCity {...props} /> : <LegacySearchCity {...props} />;
 }

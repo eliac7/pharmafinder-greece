@@ -1,14 +1,10 @@
-import { ApiError, ApiProblem } from "@/shared/api/base";
+import { ApiError, parseApiProblem, type ApiProblem } from "@/shared/api/base";
 import { decryptPayload } from "@/shared/lib/crypto";
 
 const CLIENT_ENCRYPTION_SECRET = process.env.NEXT_PUBLIC_ENCRYPTION_SECRET || "";
 const CLIENT_ENCRYPTION_SALT = process.env.NEXT_PUBLIC_ENCRYPTION_SALT || "";
 
 export type DutyTime = "now" | "today" | "tomorrow";
-
-/** Deployment-selected client rollout switch. Never derive this from user input. */
-export const PRODUCT_ACTION_APIS_ENABLED =
-  process.env.NEXT_PUBLIC_PRODUCT_ACTION_APIS_ENABLED === "true";
 
 export interface DutyCoverage {
   status: "fresh" | "partial" | "stale" | "unknown";
@@ -126,7 +122,7 @@ async function ensureSession() {
         sessionRequest = undefined;
         let problem: ApiProblem | undefined;
         try {
-          problem = (await response.json()) as ApiProblem;
+          problem = parseApiProblem(await response.json());
         } catch {
           // Preserve the typed transport error when the BFF has no JSON body.
         }
@@ -153,7 +149,7 @@ export async function fetchProductAction<T>(
   if (!response.ok) {
     let problem: ApiProblem | undefined;
     try {
-      problem = (await response.json()) as ApiProblem;
+      problem = parseApiProblem(await response.json());
     } catch {
       // The caller still receives the status even for a non-JSON failure.
     }
@@ -242,6 +238,19 @@ export function getProductDetail(publicId: string) {
   return fetchProductAction<ActionPublicDetail>(
     `/v1/pharmacies/${encodeURIComponent(publicId)}`,
   );
+}
+
+export function completeProductChallenge(
+  requestToken: string,
+  turnstileToken: string,
+) {
+  return fetchProductAction<{ success: boolean }>("/v1/challenges/turnstile", {
+    method: "POST",
+    body: JSON.stringify({
+      request_token: requestToken,
+      turnstile_token: turnstileToken,
+    }),
+  });
 }
 
 export function reportProduct(

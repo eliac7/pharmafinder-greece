@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MapPin, Phone } from "lucide-react";
 
 import {
   getPharmacyStatus,
+  completeProductChallenge,
   getProductDetail,
   type ActionPublicDetail,
   type PharmacyHour,
@@ -18,10 +19,12 @@ import {
 import {
   PharmacyHours,
   PharmacyStatusBadge,
+  DetailChallenge,
+  getChallengeErrorMessage,
+  getChallengeRequestToken,
   ReportDialog,
   SharePharmacyDialog,
 } from "@/features/pharmacy-detail";
-import { ApiError } from "@/shared/api/base";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Map, MapMarker, MarkerContent } from "@/shared/ui/map";
@@ -32,24 +35,50 @@ export function ProductPharmacyPage({ requestedPath }: { requestedPath: string }
   const router = useRouter();
   const [pharmacy, setPharmacy] = useState<ActionPublicDetail | null>(null);
   const [error, setError] = useState(false);
-  const [challengeRequired, setChallengeRequired] = useState(false);
+  const [challengeRequestToken, setChallengeRequestToken] = useState<string | null>(null);
+  const [challengeError, setChallengeError] = useState<string | null>(null);
   const publicId = requestedPath.split("--").at(-1) ?? requestedPath;
 
-  useEffect(() => {
+  const loadDetail = useCallback(() => {
+    setError(false);
+    setChallengeError(null);
     let active = true;
     void getProductDetail(publicId).then((value) => {
       if (!active) return;
       setPharmacy(value);
+      setChallengeRequestToken(null);
       if (value.canonical_path !== `/farmakeia/${requestedPath}`) {
         router.replace(value.canonical_path);
       }
     }).catch((reason: unknown) => {
       if (!active) return;
-      if (reason instanceof ApiError && reason.status === 428) setChallengeRequired(true);
-      else setError(true);
+      const requestToken = getChallengeRequestToken(reason);
+      if (requestToken) {
+        setChallengeRequestToken(requestToken);
+        setChallengeError(null);
+      } else if (reason instanceof Error && "status" in reason && (reason as { status?: number }).status === 428) {
+        setChallengeError(getChallengeErrorMessage(reason));
+      } else {
+        setError(true);
+      }
     });
     return () => { active = false; };
   }, [publicId, requestedPath, router]);
+
+  useEffect(() => loadDetail(), [loadDetail]);
+
+  const handleChallengeVerified = useCallback(async (turnstileToken: string) => {
+    if (!challengeRequestToken) return;
+    try {
+      await completeProductChallenge(challengeRequestToken, turnstileToken);
+      setChallengeRequestToken(null);
+      setChallengeError(null);
+      loadDetail();
+    } catch (reason) {
+      setChallengeError(getChallengeErrorMessage(reason));
+      throw reason;
+    }
+  }, [challengeRequestToken, loadDetail]);
 
   const hours = useMemo<PharmacyHour[]>(
     () => pharmacy?.duty.periods.map((period) => ({
@@ -60,7 +89,7 @@ export function ProductPharmacyPage({ requestedPath }: { requestedPath: string }
     [pharmacy],
   );
 
-  if (challengeRequired) return <div className="grid min-h-screen place-items-center p-6 text-center"><div><p className="text-base font-semibold">Απαιτείται επιβεβαίωση</p><p className="mt-2 text-sm text-muted-foreground">Η προβολή πολλών διαφορετικών στοιχείων απαιτεί πρόσθετο έλεγχο. Η επιβεβαίωση δεν είναι ενεργοποιημένη σε αυτό το περιβάλλον.</p></div></div>;
+  if (challengeRequestToken || challengeError) return <div className="grid min-h-screen place-items-center p-6 text-center"><div><p className="text-base font-semibold">Απαιτείται επιβεβαίωση</p><p className="mt-2 text-sm text-muted-foreground">Η προβολή πολλών διαφορετικών στοιχείων απαιτεί πρόσθετο έλεγχο.</p>{challengeRequestToken ? <DetailChallenge errorMessage={challengeError} onVerified={handleChallengeVerified} /> : <p className="mt-3 text-sm text-destructive">{challengeError}</p>}</div></div>;
   if (error) return <div className="grid min-h-screen place-items-center p-6"><p className="text-sm text-destructive">Το φαρμακείο δεν βρέθηκε ή η υπηρεσία δεν είναι διαθέσιμη.</p></div>;
   if (!pharmacy) return <div className="grid min-h-screen place-items-center p-6"><p className="text-sm text-muted-foreground">Φόρτωση στοιχείων...</p></div>;
 

@@ -20,30 +20,21 @@ const ALLOWED_ENDPOINTS = [
   { pattern: /^\/v1\/map\/clusters\/[A-Za-z0-9_-]{21,256}\/drill$/, methods: ["POST"] },
   { pattern: /^\/v1\/pharmacies\/nearby$/, methods: ["POST"] },
   { pattern: /^\/v1\/pharmacies\/reveal$/, methods: ["POST"] },
+  { pattern: /^\/v1\/challenges\/turnstile$/, methods: ["POST"] },
   { pattern: /^\/v1\/pharmacies\/[A-Za-z0-9_-]{21}[AQgw]$/, methods: ["GET"] },
   { pattern: /^\/v1\/pharmacies\/[A-Za-z0-9_-]{21}[AQgw]\/reports$/, methods: ["POST"] },
   { pattern: /^\/v1\/duty\/cities\/[a-z0-9]+(?:-[a-z0-9]+)*$/, methods: ["GET"] },
   { pattern: /^\/v1\/search\/suggestions$/, methods: ["GET"] },
-  { pattern: /^\/pharmacies\/(?:\d+|[A-Za-z0-9_-]{21}[AQgw])\/is-on-duty$/, methods: ["GET"] },
-  { pattern: /^\/pharmacies\/search$/, methods: ["GET"] },
-  { pattern: /^\/pharmacies\/viewport\/on_duty$/, methods: ["GET"] },
-  { pattern: /^\/pharmacies\/(?:\d+|[A-Za-z0-9_-]{21}[AQgw])$/, methods: ["GET"] },
-  { pattern: /^\/pharmacies\/(?:\d+|[A-Za-z0-9_-]{21}[AQgw])\/report$/, methods: ["POST"] },
-  { pattern: /^\/nearby_pharmacies\/on_duty$/, methods: ["GET"] },
-  { pattern: /^\/city$/, methods: ["GET"] },
   { pattern: /^\/statistics$/, methods: ["GET"] },
   { pattern: /^\/locations\/cities\/[^/]+$/, methods: ["GET"] },
   { pattern: /^\/locations\/cities$/, methods: ["GET"] },
   { pattern: /^\/locations\/prefectures$/, methods: ["GET"] },
-  { pattern: /^\/search$/, methods: ["GET"] },
 ];
 
 const ALLOWED_HEADERS = ["content-type", "accept", "user-agent"];
 const INTERNAL_CLIENT_IP_HEADER = "x-pharmafinder-client-ip";
 const INTERNAL_EDGE_REQUEST_ID_HEADER = "x-pharmafinder-edge-request-id";
 const TIME_VALUES = new Set(["now", "today", "tomorrow"]);
-const RADIUS_VALUES = new Set(["2", "5", "10", "20"]);
-const CONTROL_CHARACTERS = /[\u0000-\u001f\u007f-\u009f]/;
 
 function invalidQuery(message: string) {
   return NextResponse.json(
@@ -65,32 +56,9 @@ function validateOrigin(request: NextRequest) {
   return null;
 }
 
-function finite(value: string | null): value is string {
-  return value !== null && value.trim() !== "" && Number.isFinite(Number(value));
-}
-
-function coordinatesAreValid(latitude: string | null, longitude: string | null) {
-  if (!finite(latitude) || !finite(longitude)) return false;
-  const lat = Number(latitude);
-  const lng = Number(longitude);
-  return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
-}
-
 function validateQuery(pathStr: string, searchParams: URLSearchParams) {
   let allowed: Set<string> | undefined;
-  if (pathStr === "/pharmacies/viewport/on_duty") {
-    allowed = new Set(["west", "south", "east", "north", "time"]);
-  } else if (pathStr === "/nearby_pharmacies/on_duty") {
-    allowed = new Set(["latitude", "longitude", "radius", "time"]);
-  } else if (pathStr === "/pharmacies/search" || pathStr === "/search") {
-    allowed = new Set(["q", "latitude", "longitude"]);
-  } else if (pathStr === "/city") {
-    allowed = new Set(["city_slug", "time", "latitude", "longitude"]);
-  } else if (/^\/pharmacies\/\d+\/is-on-duty$/.test(pathStr)) {
-    allowed = new Set(["date"]);
-  } else {
-    allowed = new Set();
-  }
+  allowed = new Set();
 
   if (pathStr === "/v1/duty/cities/" || /^\/v1\/duty\/cities\//.test(pathStr)) {
     allowed = new Set(["time", "cursor"]);
@@ -111,49 +79,33 @@ function validateQuery(pathStr: string, searchParams: URLSearchParams) {
 
   const time = searchParams.get("time");
   if (time !== null && !TIME_VALUES.has(time)) return invalidQuery("Invalid time filter.");
-  if (pathStr === "/pharmacies/viewport/on_duty") {
-    const values = ["west", "south", "east", "north"].map((key) => searchParams.get(key));
-    if (values.some((value) => !finite(value))) return invalidQuery("Viewport bounds must be finite numbers.");
-    const [west, south, east, north] = values.map(Number);
-    if (west < -180 || west > 180 || east < -180 || east > 180 || south < -90 || south > 90 || north < -90 || north > 90 || west >= east || south >= north || east - west > 3 || north - south > 3) {
-      return invalidQuery("Invalid viewport bounds.");
-    }
-  }
-  if (pathStr === "/nearby_pharmacies/on_duty") {
-    if (!["latitude", "longitude", "radius"].every((key) => searchParams.has(key))) return invalidQuery("Nearby coordinates and radius are required.");
-    if (!finite(searchParams.get("latitude")) || !finite(searchParams.get("longitude")) || !RADIUS_VALUES.has(searchParams.get("radius")!)) return invalidQuery("Invalid nearby parameters.");
-    const lat = Number(searchParams.get("latitude"));
-    const lng = Number(searchParams.get("longitude"));
-    if (lat < 34 || lat > 42.5 || lng < 18 || lng > 30.5) return invalidQuery("Coordinates are outside the supported service area.");
-  }
-  if (pathStr === "/pharmacies/search" || pathStr === "/search") {
-    const q = searchParams.get("q")?.trim() ?? "";
-    if (q.length < 3 || q.length > 80 || CONTROL_CHARACTERS.test(q)) return invalidQuery("Invalid search query.");
-    if (searchParams.has("latitude") !== searchParams.has("longitude") || (searchParams.has("latitude") && !coordinatesAreValid(searchParams.get("latitude"), searchParams.get("longitude")))) return invalidQuery("Coordinates must be supplied as a valid pair.");
-  }
-  if (pathStr === "/city") {
-    const slug = searchParams.get("city_slug") ?? "";
-    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || slug.length > 100) return invalidQuery("Invalid city slug.");
-    if (searchParams.has("latitude") !== searchParams.has("longitude")) return invalidQuery("Coordinates must be supplied as a valid pair.");
-    if (searchParams.has("latitude") && !coordinatesAreValid(searchParams.get("latitude"), searchParams.get("longitude"))) return invalidQuery("Coordinates must be a valid geographic pair.");
-  }
-  if (/^\/pharmacies\/\d+\/is-on-duty$/.test(pathStr)) {
-    const date = searchParams.get("date");
-    if (date !== null && !/^\d{4}-\d{2}-\d{2}$/.test(date)) return invalidQuery("Invalid date.");
-  }
   return null;
 }
 
 async function validateBody(pathStr: string, request: NextRequest) {
-  if (!/^\/pharmacies\/\d+\/report$/.test(pathStr)) return null;
-  try {
-    const body = await request.clone().json();
-    if (body === null || typeof body !== "object" || Array.isArray(body)) return invalidQuery("Invalid report body.");
-    const keys = Object.keys(body);
-    if (keys.some((key) => !["description", "report_type", "turnstile_token"].includes(key)) || !keys.includes("report_type") || !keys.includes("turnstile_token")) return invalidQuery("Invalid report body.");
-    if (!["closed", "wrong_coords", "wrong_info", "other"].includes(body.report_type) || typeof body.turnstile_token !== "string" || !body.turnstile_token.trim() || (body.description !== undefined && body.description !== null && (typeof body.description !== "string" || body.description.length > 500))) return invalidQuery("Invalid report body.");
-  } catch {
-    return invalidQuery("Invalid report body.");
+  if (pathStr === "/v1/challenges/turnstile") {
+    try {
+      const body = await request.clone().json();
+      if (
+        body === null ||
+        typeof body !== "object" ||
+        Array.isArray(body)
+      ) return invalidQuery("Invalid challenge body.");
+      const keys = Object.keys(body);
+      if (
+        keys.length !== 2 ||
+        !keys.every((key) => ["request_token", "turnstile_token"].includes(key)) ||
+        typeof body.request_token !== "string" ||
+        !body.request_token.trim() ||
+        body.request_token.length > 512 ||
+        typeof body.turnstile_token !== "string" ||
+        !body.turnstile_token.trim() ||
+        body.turnstile_token.length > 4096
+      ) return invalidQuery("Invalid challenge body.");
+    } catch {
+      return invalidQuery("Invalid challenge body.");
+    }
+    return null;
   }
   return null;
 }

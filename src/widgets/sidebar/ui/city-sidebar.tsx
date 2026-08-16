@@ -12,8 +12,6 @@ import { useLocationStore } from "@/features/locate-user";
 import {
   type Pharmacy,
   type TimeFilter,
-  useCityPharmacies,
-  PRODUCT_ACTION_APIS_ENABLED,
 } from "@/entities/pharmacy";
 import {
   Sidebar,
@@ -25,7 +23,6 @@ import {
   SidebarSeparator,
 } from "@/shared/ui/sidebar";
 import {
-  CityPharmacyList,
   ProductCityList,
   SidebarBranding,
   SidebarCopyright,
@@ -74,14 +71,7 @@ export function CitySidebar({
     });
   };
 
-  const { data: pharmacies } = useCityPharmacies({
-    citySlug,
-    timeFilter: activeTime,
-    initialData: initialPharmacies,
-    enabled: !PRODUCT_ACTION_APIS_ENABLED,
-  });
-
-  const displayPharmacies = pharmacies ?? initialPharmacies;
+  const displayPharmacies = initialPharmacies;
 
   return (
     <Sidebar {...props}>
@@ -202,15 +192,7 @@ export function CitySidebar({
                 Φαρμακεια ({displayPharmacies.length})
               </span>
             </div>
-            {PRODUCT_ACTION_APIS_ENABLED ? (
-              <ProductCityList citySlug={citySlug} time={activeTime} />
-            ) : (
-              <CityPharmacyList
-                pharmacies={displayPharmacies}
-                count={displayPharmacies.length}
-                timeFilter={activeTime}
-              />
-            )}
+            <ProductCityList citySlug={citySlug} time={activeTime} />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

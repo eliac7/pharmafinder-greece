@@ -6,6 +6,8 @@ import { toast } from "sonner";
 
 import { FavoriteButton } from "@/features/favorites";
 import { PharmacyNavigationDialog } from "@/features/pharmacy-navigation";
+import { useRevealWithChallenge } from "@/features/pharmacy-detail/model/use-reveal-with-challenge";
+import { DetailChallenge } from "@/features/pharmacy-detail/ui/detail-challenge";
 import {
   formatPharmacyHours,
   getPharmacyStatus,
@@ -35,6 +37,12 @@ export function ActionPharmacyCard({
 }) {
   const flyTo = useMapStore((state) => state.flyTo);
   const setProductPopupTarget = useMapStore((state) => state.setProductPopupTarget);
+  const {
+    challenge,
+    challengeError,
+    reveal,
+    verifyChallenge,
+  } = useRevealWithChallenge();
   const [isOpening, setIsOpening] = useState(false);
   const dataHours = toPharmacyHours(item);
   const { status, statusColor, minutesUntilClose } = getPharmacyStatus(
@@ -47,24 +55,28 @@ export function ActionPharmacyCard({
   const isClosingSoon = status === "closing-soon";
   const isScheduled = status === "scheduled";
 
+  const openPopup = (detail: Awaited<ReturnType<typeof revealProductHandle>>) => {
+    const location = {
+      latitude: detail.location.latitude ?? item.latitude,
+      longitude: detail.location.longitude ?? item.longitude,
+    };
+    if (location.latitude == null || location.longitude == null) {
+      throw new Error("Pharmacy has no map coordinates");
+    }
+    setProductPopupTarget({
+      detail: { ...detail, location },
+      center: [location.longitude, location.latitude],
+      timeFilter,
+    });
+    flyTo([location.longitude, location.latitude], 16, item.public_id ?? undefined);
+  };
+
   const openDetails = async () => {
     if (isOpening) return;
     setIsOpening(true);
     try {
-      const detail = await revealProductHandle(item.handle);
-      const location = {
-        latitude: detail.location.latitude ?? item.latitude,
-        longitude: detail.location.longitude ?? item.longitude,
-      };
-      if (location.latitude == null || location.longitude == null) {
-        throw new Error("Pharmacy has no map coordinates");
-      }
-      setProductPopupTarget({
-        detail: { ...detail, location },
-        center: [location.longitude, location.latitude],
-        timeFilter,
-      });
-      flyTo([location.longitude, location.latitude], 16, item.public_id ?? undefined);
+      const detail = await reveal(item.handle);
+      if (detail) openPopup(detail);
     } catch {
       toast.error("Δεν ήταν δυνατή η φόρτωση των στοιχείων.");
     } finally {
@@ -73,13 +85,14 @@ export function ActionPharmacyCard({
   };
 
   return (
-    <div
-      className={cn(
-        "group flex rounded-xl border border-border bg-card p-3",
-        "transition-all duration-200 shadow-sm hover:border-primary/40 hover:bg-accent/50",
-        isClosingSoon && "border-amber-500/40",
-      )}
-    >
+    <>
+      <div
+        className={cn(
+          "group flex rounded-xl border border-border bg-card p-3",
+          "transition-all duration-200 shadow-sm hover:border-primary/40 hover:bg-accent/50",
+          isClosingSoon && "border-amber-500/40",
+        )}
+      >
       <button
         type="button"
         onClick={() => void openDetails()}
@@ -175,6 +188,19 @@ export function ActionPharmacyCard({
           className="text-muted-foreground transition-all hover:bg-primary/20 hover:text-primary"
         />
       </div>
-    </div>
+      </div>
+      {challenge && (
+        <div className="mt-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3">
+          <p className="text-sm font-medium">Απαιτείται επιβεβαίωση για την προβολή στοιχείων.</p>
+          <DetailChallenge
+            errorMessage={challengeError}
+            onVerified={async (providerToken) => {
+              const detail = await verifyChallenge(providerToken);
+              if (detail) openPopup(detail);
+            }}
+          />
+        </div>
+      )}
+    </>
   );
 }

@@ -6,12 +6,9 @@ import { UserLocationMarker } from "./user-location-marker";
 import { PharmacyMarkers } from "./pharmacy-markers";
 import { MapUpdater } from "./map-updater";
 import { ManualLocationAdjuster } from "./manual-location-adjuster";
-import { MapLoadingPill } from "./map-loading-pill";
-import { PRODUCT_ACTION_APIS_ENABLED, type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
-import { useNearbyPharmacies } from "@/features/find-pharmacies";
+import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
 import type MapLibreGL from "maplibre-gl";
 import { useState } from "react";
-import { HomeViewportPharmacies } from "./home-viewport-pharmacies";
 import { ProductActionViewport } from "./product-action-viewport";
 
 interface MapWithControlsProps {
@@ -37,7 +34,6 @@ export function MapWithControls({
   citySlug,
 }: MapWithControlsProps) {
   const [isAdjusting, setIsAdjusting] = useState(false);
-  const { isFetching } = useNearbyPharmacies();
   const isHomeMap =
     citySlug === undefined &&
     pharmacies === undefined &&
@@ -45,7 +41,6 @@ export function MapWithControls({
 
   return (
     <div className="relative w-full h-full">
-      <MapLoadingPill isLoading={!isHomeMap && isFetching} />
       <Map
         center={center}
         zoom={zoom}
@@ -66,14 +61,11 @@ export function MapWithControls({
         <UserLocationMarker />
         {!isHomeMap ? (
           <PharmacyMarkers
-            pharmacies={pharmacies}
             timeFilter={timeFilter}
             citySlug={citySlug}
           />
-        ) : PRODUCT_ACTION_APIS_ENABLED ? (
-          <ProductActionViewport />
         ) : (
-          <HomeViewportPharmacies />
+          <ProductActionViewport />
         )}
         <MapControls
           isAdjusting={isAdjusting}

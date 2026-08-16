@@ -1,33 +1,37 @@
 "use client";
 
 import { Heart, RefreshCw } from "lucide-react";
-import { useEffect } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { useQueryState, parseAsStringLiteral } from "nuqs";
-import { pharmacyApi } from "@/entities/pharmacy/api/pharmacy.api";
 import {
+  getProductDetail,
   PharmacyCard,
   getPharmacyReference,
   TIME_OPTIONS,
   type TimeFilter,
   getPharmacyStatus,
 } from "@/entities/pharmacy";
+import type { Pharmacy } from "@/entities/pharmacy";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { Button } from "@/shared/ui/button";
 import { useFavoritesStore } from "../model/use-favorites-store";
 
 export function FavoritesList() {
-  const { favoriteIds, migrateLegacyFavorite } = useFavoritesStore();
+  const { favoriteIds } = useFavoritesStore();
   const [timeFilter] = useQueryState<TimeFilter>(
     "time",
     parseAsStringLiteral(TIME_OPTIONS).withDefault("now")
   );
 
+  const publicFavoriteIds = favoriteIds.filter(
+    (id): id is string =>
+      typeof id === "string" && /^[A-Za-z0-9_-]{21}[AQgw]$/.test(id),
+  );
   const pharmacyQueries = useQueries({
-    queries: favoriteIds.map((id) => ({
-      queryKey: ["pharmacy", id],
-      queryFn: () => pharmacyApi.getPharmacyDetails(id),
+    queries: publicFavoriteIds.map((id) => ({
+      queryKey: ["product-pharmacy", id],
+      queryFn: () => getProductDetail(id),
       staleTime: 1000 * 60 * 5,
       refetchInterval: 1000 * 60 * 5,
     })),
@@ -36,18 +40,6 @@ export function FavoritesList() {
   const isLoading = pharmacyQueries.some((q) => q.isLoading);
   const isFetching = pharmacyQueries.some((q) => q.isFetching);
   const hasError = pharmacyQueries.some((q) => q.isError);
-
-  useEffect(() => {
-    favoriteIds.forEach((favoriteId, index) => {
-      const pharmacy = pharmacyQueries[index]?.data;
-      if (
-        (typeof favoriteId === "number" || /^\d+$/.test(favoriteId)) &&
-        pharmacy?.public_id
-      ) {
-        migrateLegacyFavorite(favoriteId, getPharmacyReference(pharmacy));
-      }
-    });
-  }, [favoriteIds, migrateLegacyFavorite, pharmacyQueries]);
 
   const refetchAll = () => {
     pharmacyQueries.forEach((q) => q.refetch());
@@ -108,10 +100,30 @@ export function FavoritesList() {
     );
   }
 
-  const pharmacies = pharmacyQueries.reduce<NonNullable<(typeof pharmacyQueries)[number]["data"]>[]>(
+  const pharmacies = pharmacyQueries.reduce<Pharmacy[]>(
     (acc, query) => {
-      const pharmacy = query.data;
-      if (!pharmacy) return acc;
+      const detail = query.data;
+      if (!detail) return acc;
+
+      const pharmacy: Pharmacy = {
+        public_id: detail.public_id,
+        canonical_slug: detail.canonical_path.split("/").pop()?.split("--")[0] ?? null,
+        name: detail.name,
+        address: detail.address,
+        city: detail.city,
+        prefecture: detail.prefecture,
+        prefecture_english: "",
+        phone: detail.phone ?? "",
+        latitude: detail.location.latitude,
+        longitude: detail.location.longitude,
+        distance_km: null,
+        data_hours: detail.duty.periods.map((period) => ({
+          date: period.date ?? null,
+          open_time: period.opens_at,
+          close_time: period.closes_at,
+        })),
+        is_frequent_duty: detail.is_frequent_duty,
+      };
 
       const statusResult = getPharmacyStatus(
         pharmacy.data_hours,
@@ -128,7 +140,7 @@ export function FavoritesList() {
     []
   );
 
-  if (favoriteIds.length > 0 && pharmacies.length === 0 && !isLoading) {
+  if (publicFavoriteIds.length > 0 && pharmacies.length === 0 && !isLoading) {
     return (
       <ScrollArea className="flex-1">
         <div className="flex items-center justify-between py-3 px-1">
@@ -141,8 +153,8 @@ export function FavoritesList() {
                 0 εφημερεύοντα
               </span>
               <span className="text-xs text-muted-foreground">
-                από {favoriteIds.length}{" "}
-                {favoriteIds.length === 1 ? "αγαπημένο" : "αγαπημένα"}
+                από {publicFavoriteIds.length}{" "}
+                {publicFavoriteIds.length === 1 ? "αγαπημένο" : "αγαπημένα"}
               </span>
             </div>
           </div>

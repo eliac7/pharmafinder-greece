@@ -17,6 +17,14 @@ export interface ApiProblem {
   limit?: number;
   result_count_lower_bound?: number;
   remediation?: { kind: string; suggested_radius_km?: number };
+  challenge?: { type?: string; request_token?: string | null };
+}
+
+export function parseApiProblem(payload: unknown): ApiProblem | undefined {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return undefined;
+  }
+  return payload as ApiProblem;
 }
 
 export class ApiError extends Error {
@@ -77,7 +85,7 @@ export async function fetchAPI<T>(
     let problem: ApiProblem | undefined;
     try {
       const errorText = await res.text();
-      problem = errorText ? (JSON.parse(errorText) as ApiProblem) : undefined;
+        problem = errorText ? parseApiProblem(JSON.parse(errorText)) : undefined;
     } catch {
       problem = undefined;
     }

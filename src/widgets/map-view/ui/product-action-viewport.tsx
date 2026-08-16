@@ -18,6 +18,8 @@ import {
   type NearbyActionItem,
   type ViewportBounds,
 } from "@/entities/pharmacy";
+import { useRevealWithChallenge } from "@/features/pharmacy-detail/model/use-reveal-with-challenge";
+import { DetailChallenge } from "@/features/pharmacy-detail/ui/detail-challenge";
 import { Button } from "@/shared/ui/button";
 import { MapMarker, MarkerContent, MarkerTooltip, useMap } from "@/shared/ui/map";
 import { useMapStore } from "@/shared/model/use-map-store";
@@ -38,21 +40,32 @@ function roundBounds(bounds: ViewportBounds): ViewportBounds {
 function ActionLayer({ response, timeFilter, onDrill }: { response: MapActionResponse; timeFilter: DutyTime; onDrill: (next: MapActionResponse) => void }) {
   const { map } = useMap();
   const setProductPopupTarget = useMapStore((state) => state.setProductPopupTarget);
+  const { challenge, challengeError, reveal, verifyChallenge } = useRevealWithChallenge();
+  const [pendingCenter, setPendingCenter] = useState<[number, number] | null>(null);
+
+  const openPopup = (
+    detail: Awaited<ReturnType<typeof revealProductHandle>>,
+    fallbackCenter?: [number, number],
+  ) => {
+    const location = {
+      latitude: detail.location.latitude ?? fallbackCenter?.[1] ?? null,
+      longitude: detail.location.longitude ?? fallbackCenter?.[0] ?? null,
+    };
+    if (location.latitude == null || location.longitude == null) {
+      throw new Error("Pharmacy has no map coordinates");
+    }
+    setProductPopupTarget({
+      detail: { ...detail, location },
+      center: [location.longitude, location.latitude],
+      timeFilter,
+    });
+  };
+
   const open = async (handle: string, fallbackCenter?: [number, number]) => {
+    setPendingCenter(fallbackCenter ?? null);
     try {
-      const detail = await revealProductHandle(handle);
-      const location = {
-        latitude: detail.location.latitude ?? fallbackCenter?.[1] ?? null,
-        longitude: detail.location.longitude ?? fallbackCenter?.[0] ?? null,
-      };
-      if (location.latitude == null || location.longitude == null) {
-        throw new Error("Pharmacy has no map coordinates");
-      }
-      setProductPopupTarget({
-        detail: { ...detail, location },
-        center: [location.longitude, location.latitude],
-        timeFilter,
-      });
+      const detail = await reveal(handle);
+      if (detail) openPopup(detail, fallbackCenter);
     } catch {
       toast.error("Δεν ήταν δυνατή η φόρτωση των στοιχείων.");
     }
@@ -67,7 +80,24 @@ function ActionLayer({ response, timeFilter, onDrill }: { response: MapActionRes
     }
   };
 
-  return <>{response.mode === "clusters" ? response.clusters.map((cluster) => <MapMarker key={cluster.handle} longitude={cluster.center.longitude} latitude={cluster.center.latitude}><MarkerContent><button type="button" onClick={() => void drill(cluster.handle)} className="flex size-10 items-center justify-center rounded-full border-2 border-primary bg-primary text-xs font-bold text-primary-foreground shadow-lg">{cluster.count}</button></MarkerContent><MarkerTooltip>{cluster.count} φαρμακεία</MarkerTooltip></MapMarker>) : response.markers.map((marker) => <MapMarker key={marker.handle} longitude={marker.longitude} latitude={marker.latitude}><MarkerContent><button type="button" onClick={() => void open(marker.handle, [marker.longitude, marker.latitude])} className="cursor-pointer border-0 bg-transparent p-0"><ProductActionMarkerContent publicId={marker.public_id} status={timeFilter === "now" ? "open" : "scheduled"} /><span className="sr-only">{marker.name}</span></button></MarkerContent><MarkerTooltip className="rounded-xl bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground shadow-lg">{marker.name}</MarkerTooltip></MapMarker>)}<ProductActionPopupTarget /></>;
+  return <>
+    {challenge && (
+      <div className="absolute left-1/2 top-5 z-30 w-[min(22rem,calc(100%-2rem))] -translate-x-1/2 rounded-xl border bg-background/95 p-4 text-center shadow-xl backdrop-blur">
+        <p className="text-sm font-medium">Απαιτείται επιβεβαίωση για την προβολή στοιχείων.</p>
+        <DetailChallenge
+          errorMessage={challengeError}
+          onVerified={async (providerToken) => {
+            const detail = await verifyChallenge(providerToken);
+            if (detail) {
+              openPopup(detail, pendingCenter ?? undefined);
+              setPendingCenter(null);
+            }
+          }}
+        />
+      </div>
+    )}
+    {response.mode === "clusters" ? response.clusters.map((cluster) => <MapMarker key={cluster.handle} longitude={cluster.center.longitude} latitude={cluster.center.latitude}><MarkerContent><button type="button" onClick={() => void drill(cluster.handle)} className="flex size-10 items-center justify-center rounded-full border-2 border-primary bg-primary text-xs font-bold text-primary-foreground shadow-lg">{cluster.count}</button></MarkerContent><MarkerTooltip>{cluster.count} φαρμακεία</MarkerTooltip></MapMarker>) : response.markers.map((marker) => <MapMarker key={marker.handle} longitude={marker.longitude} latitude={marker.latitude}><MarkerContent><button type="button" onClick={() => void open(marker.handle, [marker.longitude, marker.latitude])} className="cursor-pointer border-0 bg-transparent p-0"><ProductActionMarkerContent publicId={marker.public_id} status={timeFilter === "now" ? "open" : "scheduled"} /><span className="sr-only">{marker.name}</span></button></MarkerContent><MarkerTooltip className="rounded-xl bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground shadow-lg">{marker.name}</MarkerTooltip></MapMarker>)}<ProductActionPopupTarget />
+  </>;
 }
 
 export function ProductActionViewport() {
