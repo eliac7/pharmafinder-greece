@@ -14,11 +14,11 @@ const CLIENT_ENCRYPTION_SECRET =
 const CLIENT_ENCRYPTION_SALT = process.env.NEXT_PUBLIC_ENCRYPTION_SALT || "";
 
 const ALLOWED_ENDPOINTS = [
-  { pattern: /^\/pharmacies\/\d+\/is-on-duty$/, methods: ["GET"] },
+  { pattern: /^\/pharmacies\/(?:\d+|[A-Za-z0-9_-]{21}[AQgw])\/is-on-duty$/, methods: ["GET"] },
   { pattern: /^\/pharmacies\/search$/, methods: ["GET"] },
   { pattern: /^\/pharmacies\/viewport\/on_duty$/, methods: ["GET"] },
-  { pattern: /^\/pharmacies\/\d+$/, methods: ["GET"] },
-  { pattern: /^\/pharmacies\/\d+\/report$/, methods: ["POST"] },
+  { pattern: /^\/pharmacies\/(?:\d+|[A-Za-z0-9_-]{21}[AQgw])$/, methods: ["GET"] },
+  { pattern: /^\/pharmacies\/(?:\d+|[A-Za-z0-9_-]{21}[AQgw])\/report$/, methods: ["POST"] },
   { pattern: /^\/nearby_pharmacies\/on_duty$/, methods: ["GET"] },
   { pattern: /^\/city$/, methods: ["GET"] },
   { pattern: /^\/statistics$/, methods: ["GET"] },

@@ -5,6 +5,7 @@ import { MapPin } from "lucide-react";
 import { Virtuoso } from "react-virtuoso";
 import {
   getPharmacyStatus,
+  getPharmacyReference,
   type Pharmacy,
   type TimeFilter,
   PharmacyCard,
@@ -61,7 +62,7 @@ export function PharmacyListContent({
         className="h-full"
         data={visiblePharmacies}
         overscan={400}
-        computeItemKey={(_, pharmacy) => pharmacy.id}
+        computeItemKey={(_, pharmacy) => getPharmacyReference(pharmacy)}
         components={{
           Header: () => (
             <div className="flex items-center justify-between py-3 px-1 pr-3">

@@ -40,6 +40,18 @@ describe("Proxy Security", () => {
     expect(res.status).toBe(403);
   });
 
+  it("does not expose the internal pharmacy route resolver to browsers", async () => {
+    const path = ["internal", "pharmacies", "route", "123"];
+    const req = createRequest(
+      "GET",
+      "http://localhost:3000/api/proxy/internal/pharmacies/route/123"
+    );
+    const res = await GET(req, { params: createParams(path) });
+
+    expect(res.status).toBe(403);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
   it("should allow whitelisted POST endpoint (/pharmacies/123/report)", async () => {
     const req = createRequest("POST", "http://localhost:3000/api/proxy/pharmacies/123/report", {
       "content-type": "application/json",
@@ -54,6 +66,31 @@ describe("Proxy Security", () => {
       const req = createRequest("GET", "http://localhost:3000/api/proxy/locations/cities/a/b");
       const res = await GET(req, { params: createParams(["locations", "cities", "a", "b"]) });
       expect(res.status).toBe(403);
+  });
+
+  it("allows strict compact public IDs for detail, duty, and report routes", async () => {
+    const publicId = "jVLkgJjOTbik43IeIBvHcg";
+    const detail = await GET(
+      createRequest("GET", `http://localhost:3000/api/proxy/pharmacies/${publicId}`),
+      { params: createParams(["pharmacies", publicId]) }
+    );
+    const duty = await GET(
+      createRequest("GET", `http://localhost:3000/api/proxy/pharmacies/${publicId}/is-on-duty`),
+      { params: createParams(["pharmacies", publicId, "is-on-duty"]) }
+    );
+    const report = await POST(
+      createRequest(
+        "POST",
+        `http://localhost:3000/api/proxy/pharmacies/${publicId}/report`,
+        { "content-type": "application/json" },
+        JSON.stringify({ report_type: "other", description: "ok", turnstile_token: "token" })
+      ),
+      { params: createParams(["pharmacies", publicId, "report"]) }
+    );
+
+    expect(detail.status).not.toBe(403);
+    expect(duty.status).not.toBe(403);
+    expect(report.status).not.toBe(403);
   });
 
   it("allows only GET access to the viewport endpoint", async () => {

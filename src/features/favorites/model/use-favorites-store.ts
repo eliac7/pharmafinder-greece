@@ -5,13 +5,15 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { useSyncExternalStore } from "react";
 
 interface FavoritesState {
-  favoriteIds: number[];
+  /** Numbers can exist only as persisted Phase-0 aliases until resolved once. */
+  favoriteIds: Array<string | number>;
   _hasHydrated: boolean;
   setHasHydrated: (hasHydrated: boolean) => void;
-  addFavorite: (id: number) => void;
-  removeFavorite: (id: number) => void;
-  isFavorite: (id: number) => boolean;
-  toggleFavorite: (id: number) => void;
+  addFavorite: (id: string) => void;
+  removeFavorite: (id: string) => void;
+  isFavorite: (id: string) => boolean;
+  toggleFavorite: (id: string) => void;
+  migrateLegacyFavorite: (legacyId: number | string, publicId: string) => void;
 }
 
 export const useFavoritesStore = create<FavoritesState>()(
@@ -39,6 +41,14 @@ export const useFavoritesStore = create<FavoritesState>()(
           set({ favoriteIds: [...favoriteIds, id] });
         }
       },
+      migrateLegacyFavorite: (legacyId, publicId) =>
+        set((state) => ({
+          favoriteIds: Array.from(
+            new Set(
+              state.favoriteIds.map((id) => (id === legacyId ? publicId : id))
+            )
+          ),
+        })),
     }),
     {
       name: "pharmacy-favorites",

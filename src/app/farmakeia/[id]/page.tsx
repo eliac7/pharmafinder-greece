@@ -1,5 +1,5 @@
 export const revalidate = 3600;
-import { getPharmacyStatus, pharmacyApi } from "@/entities/pharmacy";
+import { getPharmacyStatus, getPharmacyCanonicalPath, getPharmacyReference, pharmacyApi } from "@/entities/pharmacy";
 import { ReportDialog, SharePharmacyDialog } from "@/features/pharmacy-detail";
 import { FavoriteButton } from "@/features/favorites";
 import {
@@ -11,10 +11,11 @@ import { Button } from "@/shared/ui/button";
 import { Map, MapMarker, MarkerContent } from "@/shared/ui/map";
 import { MapPin, Phone, Star } from "lucide-react";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { PharmacyMapMarkerContent } from "./pharmacy-map-marker";
 import { PharmacyHours, PharmacyStatusBadge } from "@/features/pharmacy-detail";
 import { BackButton } from "./back-button";
+import { serializeJsonLd } from "@/shared";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -22,7 +23,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const pharmacy = await pharmacyApi.getPharmacyDetails(Number(id));
+  const pharmacy = await pharmacyApi.getPharmacyDetails(id);
 
   if (!pharmacy || Object.keys(pharmacy).length === 0) {
     return { title: "Φαρμακείο Δεν Βρέθηκε" };
@@ -31,16 +32,39 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${pharmacy.name} | Φαρμακείο ${pharmacy.city}`,
     description: `Τηλέφωνο: ${pharmacy.phone}. ${pharmacy.address}.`,
+    alternates: { canonical: `${process.env.NEXT_PUBLIC_APP_URL}${getPharmacyCanonicalPath(pharmacy)}` },
+    openGraph: { url: `${process.env.NEXT_PUBLIC_APP_URL}${getPharmacyCanonicalPath(pharmacy)}` },
   };
 }
 
 export default async function PharmacyPage({ params }: Props) {
   const { id } = await params;
-  const pharmacy = await pharmacyApi.getPharmacyDetails(Number(id));
+  const pharmacy = await pharmacyApi.getPharmacyDetails(id);
 
   if (!pharmacy || Object.keys(pharmacy).length === 0) {
     notFound();
   }
+
+  const canonicalPath = getPharmacyCanonicalPath(pharmacy);
+  const pharmacyReference = getPharmacyReference(pharmacy);
+  if (id !== canonicalPath.split("/farmakeia/")[1]) {
+    permanentRedirect(canonicalPath);
+  }
+
+  const canonicalUrl = `${process.env.NEXT_PUBLIC_APP_URL}${canonicalPath}`;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Pharmacy",
+    "@id": `${canonicalUrl}#pharmacy`,
+    name: pharmacy.name,
+    url: canonicalUrl,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: pharmacy.address,
+      addressLocality: pharmacy.city,
+      addressCountry: "GR",
+    },
+  };
 
   const statusResult = getPharmacyStatus(
     pharmacy.data_hours,
@@ -54,6 +78,7 @@ export default async function PharmacyPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col md:flex-row">
+      <script type="application/ld+json">{serializeJsonLd(jsonLd)}</script>
       <div className="flex-1 flex flex-col min-h-[50vh] md:h-screen md:overflow-y-auto relative z-10 bg-background">
         <header className="sticky top-0 z-50 p-6 bg-background/80 backdrop-blur-xl border-b md:border-none flex items-center justify-between">
           <BackButton />
@@ -71,6 +96,12 @@ export default async function PharmacyPage({ params }: Props) {
 
         <main className="px-6 pb-32 md:pb-10 max-w-2xl mx-auto w-full space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="space-y-4 pt-2">
+            <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
+              <a href="/" className="hover:underline">Αρχική</a> /{" "}
+              <a href={canonicalPath} aria-current="page" className="hover:underline">
+                {pharmacy.name}
+              </a>
+            </nav>
             {isFrequentDuty && (
               <Badge
                 variant="secondary"
@@ -84,7 +115,7 @@ export default async function PharmacyPage({ params }: Props) {
               <h1 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight">
                 {pharmacy.name}
               </h1>
-              <FavoriteButton pharmacyId={pharmacy.id} />
+              <FavoriteButton pharmacyId={pharmacyReference} />
             </div>
             <div className="flex items-start gap-2">
               <MapPin className="size-5 text-muted-foreground shrink-0 mt-1" />
@@ -156,7 +187,7 @@ export default async function PharmacyPage({ params }: Props) {
 
             <div className="pt-4 flex justify-center">
               <ReportDialog
-                pharmacyId={pharmacy.id}
+                pharmacyId={pharmacyReference}
                 pharmacyName={pharmacy.name}
               />
             </div>
@@ -178,7 +209,7 @@ export default async function PharmacyPage({ params }: Props) {
             >
               <MarkerContent>
                 <PharmacyMapMarkerContent
-                  pharmacyId={pharmacy.id}
+                  pharmacyId={pharmacyReference}
                   pharmacyName={pharmacy.name}
                 />
               </MarkerContent>

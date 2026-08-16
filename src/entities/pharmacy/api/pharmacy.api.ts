@@ -97,8 +97,8 @@ export const pharmacyApi = {
   /**
    * Details
    */
-  getPharmacyDetails: async (id: number) => {
-    return fetchAPI<Pharmacy>(`/pharmacies/${id}`, {
+  getPharmacyDetails: async (id: number | string) => {
+    return fetchAPI<Pharmacy>(`/pharmacies/${encodeURIComponent(String(id))}`, {
       next: {
         revalidate: 0,
         tags: [`pharmacy-${id}`]
@@ -110,14 +110,14 @@ export const pharmacyApi = {
    * Report a pharmacy issue
    */
   reportPharmacy: async (
-    pharmacyId: number,
+    pharmacyId: string,
     data: {
       report_type: "closed" | "wrong_coords" | "wrong_info" | "other";
       description: string;
       turnstile_token: string;
     }
   ) => {
-    return fetchAPI<{ success: boolean }>(`/pharmacies/${pharmacyId}/report`, {
+    return fetchAPI<{ success: boolean }>(`/pharmacies/${encodeURIComponent(pharmacyId)}/report`, {
       method: "POST",
       body: JSON.stringify(data),
     });

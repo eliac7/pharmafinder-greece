@@ -11,7 +11,7 @@ import { cn } from "@/shared";
 import { useReportPharmacy } from "../model/use-report-pharmacy";
 
 interface ReportPharmacyFormProps {
-  pharmacyId: number;
+  pharmacyId: string;
   onSuccess?: () => void;
 }
 

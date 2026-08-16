@@ -9,7 +9,7 @@ interface ReportData {
 }
 
 interface ReportVariables {
-  pharmacyId: number;
+  pharmacyId: string;
   data: ReportData;
 }
 

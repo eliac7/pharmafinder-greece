@@ -8,6 +8,7 @@ import { useMapStore } from "@/shared/model/use-map-store";
 import { Badge } from "@/shared/ui/badge";
 import {
   getPharmacyStatus,
+  getPharmacyReference,
   formatPharmacyHours,
   type Pharmacy,
   type TimeFilter,
@@ -25,6 +26,7 @@ export function PharmacyCard({
   onClick,
 }: PharmacyCardProps) {
   const flyTo = useMapStore((state) => state.flyTo);
+  const pharmacyReference = getPharmacyReference(pharmacy);
 
   const { status, statusColor, minutesUntilClose } = getPharmacyStatus(
     pharmacy.data_hours,
@@ -42,7 +44,7 @@ export function PharmacyCard({
   const handleCardClick = () => {
     onClick?.();
     if (pharmacy.latitude && pharmacy.longitude) {
-      flyTo([pharmacy.longitude, pharmacy.latitude], 16, pharmacy.id);
+      flyTo([pharmacy.longitude, pharmacy.latitude], 16, pharmacyReference);
     }
   };
 
@@ -138,7 +140,7 @@ export function PharmacyCard({
       </button>
 
       <div className="flex flex-col gap-1 shrink-0 self-center ml-1">
-        <FavoriteButton pharmacyId={pharmacy.id} size="sm" />
+        <FavoriteButton pharmacyId={pharmacyReference} size="sm" />
         <PharmacyNavigationDialog
           pharmacy={pharmacy}
           compact

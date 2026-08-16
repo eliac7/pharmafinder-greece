@@ -31,7 +31,10 @@ export interface PharmacyHour {
  * Basic pharmacy info (used in search results, nearby pharmacies)
  */
 export interface PharmacyBasic {
-  id: number;
+  /** Transitional only: present when the frontend is deployed before Phase-1 backend cutover. */
+  id?: number;
+  public_id?: string | null;
+  canonical_slug?: string | null;
   name: string;
   address: string;
   city: string;
@@ -47,7 +50,10 @@ export interface PharmacyBasic {
  * Full pharmacy with hours (used in city duty lists)
  */
 export interface Pharmacy {
-  id: number;
+  /** Transitional only: present when the frontend is deployed before Phase-1 backend cutover. */
+  id?: number;
+  public_id?: string | null;
+  canonical_slug?: string | null;
   name: string;
   address: string;
   city: string;
@@ -81,6 +87,7 @@ export interface PharmacyDutyStatus {
 }
 
 export interface PharmacySitemapItem {
-  id: number;
-  updated_at?: string;
+  public_id: string;
+  canonical_slug: string;
+  public_content_updated_at?: string | null;
 }

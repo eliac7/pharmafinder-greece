@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import { useDebounce, searchApi } from "@/shared";
+import { getPharmacyCanonicalPath, getPharmacyReference } from "@/entities/pharmacy";
 
 import {
   Command,
@@ -161,12 +162,12 @@ export function SearchCity({
                 >
                   {data.pharmacies.map((pharmacy) => (
                     <CommandItem
-                      key={`pharmacy-${pharmacy.id}`}
-                      value={`pharmacy-${pharmacy.id}`}
+                      key={`pharmacy-${getPharmacyReference(pharmacy)}`}
+                      value={`pharmacy-${getPharmacyReference(pharmacy)}`}
                       onSelect={() => {
                         setOpen(false);
                         setInputValue("");
-                        push(`/farmakeia/${pharmacy.id}`);
+                        push(getPharmacyCanonicalPath(pharmacy));
                       }}
                     >
                       <div className="flex flex-col">
@@ -186,12 +187,12 @@ export function SearchCity({
                 >
                   {data.addresses.map((pharmacy) => (
                     <CommandItem
-                      key={`address-${pharmacy.id}`}
-                      value={`address-${pharmacy.id}-${pharmacy.address}`}
+                      key={`address-${getPharmacyReference(pharmacy)}`}
+                      value={`address-${getPharmacyReference(pharmacy)}-${pharmacy.address}`}
                       onSelect={() => {
                         setOpen(false);
                         setInputValue("");
-                        push(`/farmakeia/${pharmacy.id}`);
+                        push(getPharmacyCanonicalPath(pharmacy));
                       }}
                     >
                       <div className="flex flex-col">

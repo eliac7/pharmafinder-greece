@@ -1,11 +1,13 @@
 "use client";
 
 import { Heart, RefreshCw } from "lucide-react";
+import { useEffect } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { useQueryState, parseAsStringLiteral } from "nuqs";
 import { pharmacyApi } from "@/entities/pharmacy/api/pharmacy.api";
 import {
   PharmacyCard,
+  getPharmacyReference,
   TIME_OPTIONS,
   type TimeFilter,
   getPharmacyStatus,
@@ -16,7 +18,7 @@ import { Button } from "@/shared/ui/button";
 import { useFavoritesStore } from "../model/use-favorites-store";
 
 export function FavoritesList() {
-  const { favoriteIds } = useFavoritesStore();
+  const { favoriteIds, migrateLegacyFavorite } = useFavoritesStore();
   const [timeFilter] = useQueryState<TimeFilter>(
     "time",
     parseAsStringLiteral(TIME_OPTIONS).withDefault("now")
@@ -34,6 +36,18 @@ export function FavoritesList() {
   const isLoading = pharmacyQueries.some((q) => q.isLoading);
   const isFetching = pharmacyQueries.some((q) => q.isFetching);
   const hasError = pharmacyQueries.some((q) => q.isError);
+
+  useEffect(() => {
+    favoriteIds.forEach((favoriteId, index) => {
+      const pharmacy = pharmacyQueries[index]?.data;
+      if (
+        (typeof favoriteId === "number" || /^\d+$/.test(favoriteId)) &&
+        pharmacy?.public_id
+      ) {
+        migrateLegacyFavorite(favoriteId, getPharmacyReference(pharmacy));
+      }
+    });
+  }, [favoriteIds, migrateLegacyFavorite, pharmacyQueries]);
 
   const refetchAll = () => {
     pharmacyQueries.forEach((q) => q.refetch());
@@ -188,7 +202,7 @@ export function FavoritesList() {
       <div className="flex flex-col gap-3 pb-2">
         {pharmacies.map((pharmacy) => (
           <PharmacyCard
-            key={pharmacy.id}
+            key={getPharmacyReference(pharmacy)}
             pharmacy={pharmacy}
             timeFilter={timeFilter}
           />

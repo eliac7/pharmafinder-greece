@@ -3,17 +3,17 @@ import { create } from "zustand";
 interface FlyToTarget {
   center: [number, number];
   zoom?: number;
-  pharmacyId?: number;
+  pharmacyId?: string;
 }
 
 interface MapStore {
   flyToTarget: FlyToTarget | null;
-  popupTargetId: number | null;
-  selectedPharmacyId: number | null;
-  flyTo: (center: [number, number], zoom?: number, pharmacyId?: number) => void;
+  popupTargetId: string | null;
+  selectedPharmacyId: string | null;
+  flyTo: (center: [number, number], zoom?: number, pharmacyId?: string) => void;
   clearFlyToTarget: () => void;
-  setPopupTargetId: (id: number | null) => void;
-  setSelectedPharmacyId: (id: number | null) => void;
+  setPopupTargetId: (id: string | null) => void;
+  setSelectedPharmacyId: (id: string | null) => void;
 }
 
 export const useMapStore = create<MapStore>((set) => ({

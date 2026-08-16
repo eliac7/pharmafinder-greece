@@ -5,11 +5,17 @@ import { ApiError } from "@/shared/api/base";
 import { useViewportPharmaciesStore } from "@/features/find-pharmacies";
 import { PharmacyList } from "./pharmacy-list";
 
-const nearbyPharmacy = { id: 1, name: "Nearby" };
-const viewportPharmacy = { id: 2, name: "Viewport" } as Pharmacy;
+const nearbyPharmacy = {
+  public_id: "jVLkgJjOTbik43IeIBvHcg",
+  name: "Nearby",
+} as Pharmacy;
+const viewportPharmacy = {
+  public_id: "AAAAAAAAQACAAAAAAAAAAA",
+  name: "Viewport",
+} as Pharmacy;
 
 const mockNearbyQuery: {
-  data: { count: number; data: Array<{ id: number }> };
+  data: { count: number; data: Pharmacy[] };
   isLoading: boolean;
   error: Error | null;
   refetch: jest.Mock;
@@ -52,12 +58,12 @@ jest.mock("./pharmacy-list-content", () => ({
     pharmacies,
     subtitle,
   }: {
-    pharmacies: Array<{ id: number }>;
+    pharmacies: Array<Pick<Pharmacy, "public_id">>;
     subtitle: string;
   }) => (
     <div>
       <span data-testid="pharmacy-ids">
-        {pharmacies.map((pharmacy) => pharmacy.id).join(",")}
+        {pharmacies.map((pharmacy) => pharmacy.public_id).join(",")}
       </span>
       <span>{subtitle}</span>
     </div>
@@ -79,7 +85,7 @@ describe("PharmacyList viewport synchronization", () => {
   it("switches between nearby and committed viewport pharmacies", () => {
     render(<PharmacyList />);
 
-    expect(screen.getByTestId("pharmacy-ids")).toHaveTextContent("1");
+    expect(screen.getByTestId("pharmacy-ids")).toHaveTextContent("jVLkgJjOTbik43IeIBvHcg");
     expect(screen.getByText("Σε ακτίνα 2km")).toBeInTheDocument();
 
     act(() => {
@@ -88,11 +94,11 @@ describe("PharmacyList viewport synchronization", () => {
         .setPharmacies([viewportPharmacy]);
     });
 
-    expect(screen.getByTestId("pharmacy-ids")).toHaveTextContent("2");
+    expect(screen.getByTestId("pharmacy-ids")).toHaveTextContent("AAAAAAAAQACAAAAAAAAAAA");
     expect(screen.getByText("Στην περιοχή του χάρτη")).toBeInTheDocument();
 
     act(() => useViewportPharmaciesStore.getState().reset());
-    expect(screen.getByTestId("pharmacy-ids")).toHaveTextContent("1");
+    expect(screen.getByTestId("pharmacy-ids")).toHaveTextContent("jVLkgJjOTbik43IeIBvHcg");
   });
 
   it("shows a viewport-specific empty message", () => {

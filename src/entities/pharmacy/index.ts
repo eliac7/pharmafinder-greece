@@ -18,6 +18,7 @@ export { pharmacyApi } from "./api/pharmacy.api";
 export { useCityPharmaciesStore } from "./model/use-city-pharmacies";
 export { useCityPharmacies } from "./model/use-city-pharmacies-query";
 export { usePharmacies } from "./model/use-pharmacies";
+export { getPharmacyCanonicalPath, getPharmacyReference } from "./lib/public-url";
 
 // UI
 export { PharmacyCard } from "./ui/pharmacy-card";

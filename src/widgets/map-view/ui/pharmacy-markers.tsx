@@ -25,6 +25,8 @@ import {
   formatPharmacyHours,
   useCityPharmacies,
   pharmacyApi,
+  getPharmacyCanonicalPath,
+  getPharmacyReference,
 } from "@/entities/pharmacy";
 import { useQueryState, parseAsStringLiteral } from "nuqs";
 import { useQueries } from "@tanstack/react-query";
@@ -33,7 +35,7 @@ import {
   type TimeFilter,
   type Pharmacy,
 } from "@/entities/pharmacy";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 interface PharmacyMarkersProps {
   pharmacies?: Pharmacy[];
@@ -70,12 +72,14 @@ export function PharmacyMarkers({
       : propPharmacies ?? nearbyData?.data ?? [];
   }, [citySlug, cityPharmacies, propPharmacies, nearbyData?.data]);
 
-  const { favoriteIds } = useFavorites();
+  const { favoriteIds, migrateLegacyFavorite } = useFavorites();
 
   // Find favorites that are not already in the base pharmacies list
   const missingFavoriteIds = useMemo(() => {
-    const baseIds = new Set(basePharmacies.map((p) => p.id));
-    return favoriteIds.filter((id) => !baseIds.has(id));
+    const baseIds = new Set(basePharmacies.map(getPharmacyReference));
+    return favoriteIds.filter(
+      (id) => typeof id === "number" || !baseIds.has(id)
+    );
   }, [favoriteIds, basePharmacies]);
 
   // Fetch missing favorite pharmacies
@@ -87,20 +91,32 @@ export function PharmacyMarkers({
     })),
   });
 
+  useEffect(() => {
+    missingFavoriteIds.forEach((favoriteId, index) => {
+      const pharmacy = favoriteQueries[index]?.data;
+      if (
+        (typeof favoriteId === "number" || /^\d+$/.test(favoriteId)) &&
+        pharmacy?.public_id
+      ) {
+        migrateLegacyFavorite(favoriteId, getPharmacyReference(pharmacy));
+      }
+    });
+  }, [favoriteQueries, migrateLegacyFavorite, missingFavoriteIds]);
+
   // Merge base pharmacies with fetched favorites
   const pharmaciesToRender = useMemo(() => {
     const fetchedFavorites = favoriteQueries
       .map((q) => q.data)
       .filter((p): p is Pharmacy => p !== undefined && p !== null);
   
-    const pharmacyMap = new Map<number, Pharmacy>();
+    const pharmacyMap = new Map<string, Pharmacy>();
     
     basePharmacies.forEach((pharmacy) => {
-      pharmacyMap.set(pharmacy.id, pharmacy);
+      pharmacyMap.set(getPharmacyReference(pharmacy), pharmacy);
     });
     
     fetchedFavorites.forEach((pharmacy) => {
-      pharmacyMap.set(pharmacy.id, pharmacy);
+      pharmacyMap.set(getPharmacyReference(pharmacy), pharmacy);
     });
     
     return Array.from(pharmacyMap.values());
@@ -117,17 +133,18 @@ export function PharmacyMarkers({
       >;
 
     const featureMap = new Map<
-      number,
+      string,
       GeoJSON.Feature<GeoJSON.Point, Pharmacy & GeoJSON.GeoJsonProperties>
     >();
 
     for (const pharmacy of pharmaciesToRender) {
       if (!pharmacy.latitude || !pharmacy.longitude) continue;
-      if (featureMap.has(pharmacy.id)) continue;
+      const pharmacyReference = getPharmacyReference(pharmacy);
+      if (featureMap.has(pharmacyReference)) continue;
 
-      featureMap.set(pharmacy.id, {
+      featureMap.set(pharmacyReference, {
         type: "Feature",
-        id: pharmacy.id,
+        id: pharmacyReference,
         geometry: {
           type: "Point",
           coordinates: [pharmacy.longitude, pharmacy.latitude],
@@ -162,6 +179,7 @@ export function PharmacyMarkers({
         <>
           {features.map((feature) => {
             const pharmacy = feature.properties as Pharmacy;
+            const pharmacyReference = getPharmacyReference(pharmacy);
             const coordinates = (feature.geometry as GeoJSON.Point).coordinates;
 
             let dataHours = pharmacy.data_hours;
@@ -191,11 +209,11 @@ export function PharmacyMarkers({
             const isScheduled = status === "scheduled";
             const isOpen = status === "open" || isScheduled;
             const isClosingSoon = status === "closing-soon";
-            const isFavorite = favoriteIds.includes(pharmacy.id);
+            const isFavorite = favoriteIds.includes(pharmacyReference);
 
             return (
               <MapMarker
-                key={pharmacy.id}
+                key={pharmacyReference}
                 longitude={coordinates[0]}
                 latitude={coordinates[1]}
               >
@@ -249,7 +267,7 @@ export function PharmacyMarkers({
                 </MarkerTooltip>
 
                 <MarkerPopup
-                  forceOpen={popupTargetId === pharmacy.id}
+                  forceOpen={popupTargetId === pharmacyReference}
                   focusAfterOpen={false}
                 >
                   <div className="flex flex-col gap-3 min-w-65 max-w-[320px] p-0.5">
@@ -313,7 +331,7 @@ export function PharmacyMarkers({
 
                     <div className="flex items-center justify-between pt-3 border-t border-border mt-1 gap-2">
                       <a
-                        href={`/farmakeia/${pharmacy.id}`}
+                        href={getPharmacyCanonicalPath(pharmacy)}
                         className="text-sm font-medium text-primary hover:underline transition-colors"
                       >
                         Λεπτομέρειες
