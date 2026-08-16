@@ -7,6 +7,8 @@ import { isIP } from "node:net";
 
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:8000";
 const API_SECRET_KEY = process.env.API_SECRET_KEY || "";
+const BFF_SERVICE_CREDENTIAL = process.env.BFF_SERVICE_CREDENTIAL || "";
+const SESSION_COOKIE = "pf_session";
 const ENCRYPTION_SECRET = process.env.ENCRYPTION_SECRET || "";
 const ENCRYPTION_SALT = process.env.ENCRYPTION_SALT || "";
 const CLIENT_ENCRYPTION_SECRET =
@@ -14,6 +16,14 @@ const CLIENT_ENCRYPTION_SECRET =
 const CLIENT_ENCRYPTION_SALT = process.env.NEXT_PUBLIC_ENCRYPTION_SALT || "";
 
 const ALLOWED_ENDPOINTS = [
+  { pattern: /^\/v1\/map\/query$/, methods: ["POST"] },
+  { pattern: /^\/v1\/map\/clusters\/[A-Za-z0-9_-]{21,256}\/drill$/, methods: ["POST"] },
+  { pattern: /^\/v1\/pharmacies\/nearby$/, methods: ["POST"] },
+  { pattern: /^\/v1\/pharmacies\/reveal$/, methods: ["POST"] },
+  { pattern: /^\/v1\/pharmacies\/[A-Za-z0-9_-]{21}[AQgw]$/, methods: ["GET"] },
+  { pattern: /^\/v1\/pharmacies\/[A-Za-z0-9_-]{21}[AQgw]\/reports$/, methods: ["POST"] },
+  { pattern: /^\/v1\/duty\/cities\/[a-z0-9]+(?:-[a-z0-9]+)*$/, methods: ["GET"] },
+  { pattern: /^\/v1\/search\/suggestions$/, methods: ["GET"] },
   { pattern: /^\/pharmacies\/(?:\d+|[A-Za-z0-9_-]{21}[AQgw])\/is-on-duty$/, methods: ["GET"] },
   { pattern: /^\/pharmacies\/search$/, methods: ["GET"] },
   { pattern: /^\/pharmacies\/viewport\/on_duty$/, methods: ["GET"] },
@@ -42,6 +52,19 @@ function invalidQuery(message: string) {
   );
 }
 
+function validateOrigin(request: NextRequest) {
+  const origin = request.headers.get("origin");
+  if (!origin) return null;
+  try {
+    if (origin !== new URL(process.env.NEXT_PUBLIC_APP_URL || request.url).origin) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+  } catch {
+    return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+  }
+  return null;
+}
+
 function finite(value: string | null): value is string {
   return value !== null && value.trim() !== "" && Number.isFinite(Number(value));
 }
@@ -66,6 +89,14 @@ function validateQuery(pathStr: string, searchParams: URLSearchParams) {
   } else if (/^\/pharmacies\/\d+\/is-on-duty$/.test(pathStr)) {
     allowed = new Set(["date"]);
   } else {
+    allowed = new Set();
+  }
+
+  if (pathStr === "/v1/duty/cities/" || /^\/v1\/duty\/cities\//.test(pathStr)) {
+    allowed = new Set(["time", "cursor"]);
+  } else if (pathStr === "/v1/search/suggestions") {
+    allowed = new Set(["q", "latitude", "longitude"]);
+  } else if (pathStr.startsWith("/v1/")) {
     allowed = new Set();
   }
 
@@ -168,6 +199,9 @@ async function handleRequest(
     );
   }
 
+  const originError = validateOrigin(request);
+  if (originError) return originError;
+
   const queryError = validateQuery(pathStr, request.nextUrl.searchParams);
   if (queryError) return queryError;
   const bodyError = await validateBody(pathStr, request);
@@ -188,7 +222,13 @@ async function handleRequest(
       }
     });
 
-    headers.set("x-secret-key", API_SECRET_KEY);
+    if (BFF_SERVICE_CREDENTIAL) {
+      headers.set("x-bff-service-credential", BFF_SERVICE_CREDENTIAL);
+      const session = request.cookies.get(SESSION_COOKIE)?.value;
+      if (session) headers.set("x-pharmafinder-session", session);
+    } else {
+      headers.set("x-secret-key", API_SECRET_KEY);
+    }
     const clientIp = getTrustedClientIp(request.headers);
     if (clientIp) {
       headers.set(INTERNAL_CLIENT_IP_HEADER, clientIp);

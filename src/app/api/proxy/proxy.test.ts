@@ -232,4 +232,23 @@ describe("Proxy Security", () => {
     expect(response.status).toBe(422);
     expect(global.fetch).not.toHaveBeenCalled();
   });
+
+  it("allows only the explicit versioned product-action routes", async () => {
+    const map = await POST(
+      createRequest("POST", "http://localhost:3000/api/proxy/v1/map/query", {
+        "content-type": "application/json",
+      }, JSON.stringify({
+        bbox: { west: 23, south: 37, east: 24, north: 38 },
+        zoom: 14,
+        duty_time: "now",
+      })),
+      { params: createParams(["v1", "map", "query"]) },
+    );
+    const internal = await GET(
+      createRequest("GET", "http://localhost:3000/api/proxy/internal/v1/seo/pharmacies/jVLkgJjOTbik43IeIBvHcg"),
+      { params: createParams(["internal", "v1", "seo", "pharmacies", "jVLkgJjOTbik43IeIBvHcg"]) },
+    );
+    expect(map.status).not.toBe(403);
+    expect(internal.status).toBe(403);
+  });
 });

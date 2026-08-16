@@ -17,6 +17,20 @@ export { pharmacyApi } from "./api/pharmacy.api";
 // Hooks
 export { useCityPharmaciesStore } from "./model/use-city-pharmacies";
 export { useCityPharmacies } from "./model/use-city-pharmacies-query";
+export {
+  fetchProductAction,
+  queryMapAction,
+  revealProductHandle,
+} from "./api/product-actions.api";
+export type {
+  ActionCluster,
+  ActionMarker,
+  ActionPublicDetail,
+  DutyCoverage,
+  MapActionResponse,
+  NearbyActionItem,
+  NearbyActionResponse,
+} from "./api/product-actions.api";
 export { usePharmacies } from "./model/use-pharmacies";
 export { getPharmacyCanonicalPath, getPharmacyReference } from "./lib/public-url";
 
