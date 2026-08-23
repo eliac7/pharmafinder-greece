@@ -18,6 +18,49 @@ describe('Pharmacy Status Logic', () => {
       ];
       expect(formatPharmacyHours(hours)).toBe('08:00 - 14:00, 17:00 - 21:00');
     });
+
+    it('should merge overnight slots into one range annotated as next-day', () => {
+      const hours = [
+        { open_time: '17:00:00', close_time: '23:59:00', date: null },
+        { open_time: '00:00:00', close_time: '08:00:00', date: null },
+      ];
+      expect(formatPharmacyHours(hours)).toBe('17:00 - 08:00 (επόμενης)');
+    });
+
+    it('should merge overnight slots whose dates are consecutive days', () => {
+      const hours = [
+        { open_time: '17:00:00', close_time: '23:59:00', date: '2026-08-23' },
+        { open_time: '00:00:00', close_time: '08:00:00', date: '2026-08-24' },
+      ];
+      expect(formatPharmacyHours(hours)).toBe('17:00 - 08:00 (επόμενης)');
+    });
+
+    it('should not merge overnight-shaped slots on non-consecutive dates', () => {
+      const hours = [
+        { open_time: '17:00:00', close_time: '23:59:00', date: '2026-08-23' },
+        { open_time: '00:00:00', close_time: '08:00:00', date: '2026-08-25' },
+      ];
+      expect(formatPharmacyHours(hours)).toBe('17:00 - 23:59, 00:00 - 08:00');
+    });
+
+    it('should merge overnight slots when only one of the dates is known', () => {
+      const hours = [
+        { open_time: '17:00:00', close_time: '23:59:00', date: '2026-08-23' },
+        { open_time: '00:00:00', close_time: '08:00:00', date: null },
+      ];
+      expect(formatPharmacyHours(hours)).toBe('17:00 - 08:00 (επόμενης)');
+    });
+
+    it('should keep non-adjacent slots unmerged around an overnight pair', () => {
+      const hours = [
+        { open_time: '08:00:00', close_time: '14:00:00', date: null },
+        { open_time: '17:00:00', close_time: '23:59:00', date: null },
+        { open_time: '00:00:00', close_time: '08:00:00', date: null },
+      ];
+      expect(formatPharmacyHours(hours)).toBe(
+        '08:00 - 14:00, 17:00 - 08:00 (επόμενης)'
+      );
+    });
   });
 
   describe('getPharmacyStatus', () => {
