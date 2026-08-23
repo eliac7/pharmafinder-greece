@@ -13,7 +13,7 @@ import {
   getDutySummaryStatus,
 } from "@/entities/pharmacy";
 import { useRevealWithChallenge } from "@/features/pharmacy-detail/model/use-reveal-with-challenge";
-import { DetailChallenge } from "@/features/pharmacy-detail/ui/detail-challenge";
+import { RevealChallengeBanner } from "@/features/pharmacy-detail/ui/reveal-challenge-banner";
 import { useMapStore } from "@/shared/model/use-map-store";
 import {
   MapMarker,
@@ -69,21 +69,18 @@ export function PharmacyMarkers({ citySlug, timeFilter }: PharmacyMarkersProps) 
 
   return (
     <>
-      {challenge && (
-        <div className="absolute left-1/2 top-5 z-30 w-[min(22rem,calc(100%-2rem))] -translate-x-1/2 rounded-xl border bg-background/95 p-4 text-center shadow-xl backdrop-blur">
-          <p className="text-sm font-medium">Απαιτείται επιβεβαίωση για την προβολή στοιχείων.</p>
-          <DetailChallenge
-            errorMessage={challengeError}
-            onVerified={async (providerToken) => {
-              const detail = await verifyChallenge(providerToken);
-              if (detail) {
-                openPopup(detail, pendingCenter ?? undefined);
-                setPendingCenter(null);
-              }
-            }}
-          />
-        </div>
-      )}
+      <RevealChallengeBanner
+        challenge={challenge}
+        challengeError={challengeError}
+        variant="overlay"
+        onVerified={async (providerToken) => {
+          const detail = await verifyChallenge(providerToken);
+          if (detail) {
+            openPopup(detail, pendingCenter ?? undefined);
+            setPendingCenter(null);
+          }
+        }}
+      />
       {data.items
         .filter(
           (item: CityActionItem) =>

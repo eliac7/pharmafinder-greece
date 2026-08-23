@@ -20,6 +20,9 @@ jest.mock("@/entities/pharmacy", () => ({
   TIME_OPTIONS: ["now", "today", "tomorrow"],
   drillMapAction: mockDrillMapAction,
   queryMapAction: jest.fn(),
+}));
+
+jest.mock("@/features/find-pharmacies", () => ({
   useProductNearbyPharmacies: () => ({ data: undefined }),
 }));
 

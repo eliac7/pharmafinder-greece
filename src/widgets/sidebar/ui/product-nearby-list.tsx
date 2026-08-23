@@ -3,8 +3,9 @@
 import { MapPin, RefreshCw } from "lucide-react";
 import { useQueryState, parseAsInteger, parseAsStringLiteral } from "nuqs";
 
-import { useProductNearbyPharmacies, TIME_OPTIONS, normalizeRadius, type TimeFilter } from "@/entities/pharmacy";
+import { TIME_OPTIONS, normalizeRadius, type TimeFilter } from "@/entities/pharmacy";
 import { DEFAULT_RADIUS } from "@/entities/pharmacy";
+import { useProductNearbyPharmacies } from "@/features/find-pharmacies";
 import { useLocateMe } from "@/features/locate-user/model/use-locate-me";
 import { useLocationStore } from "@/features/locate-user";
 import { ScrollArea } from "@/shared/ui/scroll-area";

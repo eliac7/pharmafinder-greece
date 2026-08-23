@@ -15,7 +15,6 @@ export { TIME_OPTIONS, RADIUS_OPTIONS, DEFAULT_RADIUS, normalizeRadius } from ".
 export { pharmacyApi } from "./api/pharmacy.api";
 
 // Hooks
-export { useProductNearbyPharmacies } from "./model/use-product-nearby";
 export { useProductCityPharmacies } from "./model/use-product-city";
 export {
   fetchProductAction,
@@ -46,10 +45,12 @@ export type {
   DutyTime,
 } from "./api/product-actions.api";
 export { getPharmacyCanonicalPath, getPharmacyReference } from "./lib/public-url";
+export { PUBLIC_ID_PATTERN, PUBLIC_ID_SOURCE, isPublicPharmacyId } from "./lib/public-url";
+export { actionDetailToPharmacy } from "./lib/action-detail-mapper";
 
 // UI
 export { PharmacyCard } from "./ui/pharmacy-card";
 
 // Lib
-export { getPharmacyStatus, formatPharmacyHours, getDutySummaryStatus } from "./lib/status";
+export { getPharmacyStatus, formatPharmacyHours, getDutySummaryStatus, dutyPeriodsToPharmacyHours } from "./lib/status";
 export { radiusToZoom } from "./lib/radius-to-zoom";

@@ -2,14 +2,21 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Command as CommandPrimitive } from "cmdk";
-import { Crosshair, Loader2, MapPin, MapPinHouse, Pill, Search } from "lucide-react";
+import {
+  Crosshair,
+  Loader2,
+  MapPin,
+  MapPinHouse,
+  Pill,
+  Search,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
 
 import { useDebounce } from "@/shared";
 import { useRevealWithChallenge } from "@/features/pharmacy-detail/model/use-reveal-with-challenge";
-import { DetailChallenge } from "@/features/pharmacy-detail/ui/detail-challenge";
+import { RevealChallengeBanner } from "@/features/pharmacy-detail/ui/reveal-challenge-banner";
 import {
   querySearchAction,
   revealProductHandle,
@@ -25,9 +32,26 @@ import {
 } from "@/shared/ui/command";
 import { Popover, PopoverAnchor, PopoverContent } from "@/shared/ui/popover";
 
-const CITY_GROUP_HEADING = <span className="flex items-center gap-1.5"><MapPin className="size-3.5" />Πόλεις</span>;
-const PHARMACY_GROUP_HEADING = <span className="flex items-center gap-1.5"><Pill className="size-3.5" />Φαρμακεία</span>;
-const ADDRESS_GROUP_HEADING = <span className="flex items-center gap-1.5"><MapPinHouse className="size-3.5" />Διευθύνσεις</span>;
+const CITY_GROUP_HEADING = (
+  <span className="flex items-center gap-1.5">
+    <MapPin className="size-3.5" />
+    Πόλεις
+  </span>
+);
+
+const PHARMACY_GROUP_HEADING = (
+  <span className="flex items-center gap-1.5">
+    <Pill className="size-3.5" />
+    Φαρμακεία
+  </span>
+);
+
+const ADDRESS_GROUP_HEADING = (
+  <span className="flex items-center gap-1.5">
+    <MapPinHouse className="size-3.5" />
+    Διευθύνσεις
+  </span>
+);
 
 export function SearchCity({
   onLocate,
@@ -42,8 +66,10 @@ export function SearchCity({
   const setProductPopupTarget = useMapStore((state) => state.setProductPopupTarget);
   const mapActive = useMapStore((state) => state.mapActive);
   const { challenge, challengeError, reveal, verifyChallenge } = useRevealWithChallenge();
+
   const debouncedQuery = useDebounce(inputValue, 300);
   const shouldSearch = debouncedQuery.length >= 3;
+
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["product-search", debouncedQuery],
     queryFn: () => querySearchAction(debouncedQuery),
@@ -51,7 +77,12 @@ export function SearchCity({
     staleTime: 60_000,
     retry: false,
   });
-  const hasResults = Boolean(data && (data.cities.length || data.pharmacies.length || data.addresses.length));
+
+  const hasResults =
+    data &&
+    (data.cities.length > 0 ||
+      data.pharmacies.length > 0 ||
+      data.addresses.length > 0);
   const showLoading = isLoading || isFetching;
 
   const openPopup = (detail: Awaited<ReturnType<typeof revealProductHandle>>) => {
@@ -112,18 +143,14 @@ export function SearchCity({
           </PopoverContent>
         </Popover>
       </Command>
-      {challenge && (
-        <div className="mt-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 text-center">
-          <p className="text-sm font-medium">Απαιτείται επιβεβαίωση για την προβολή στοιχείων.</p>
-          <DetailChallenge
-            errorMessage={challengeError}
-            onVerified={async (providerToken) => {
-              const detail = await verifyChallenge(providerToken);
-              if (detail) openDetail(detail);
-            }}
-          />
-        </div>
-      )}
+      <RevealChallengeBanner
+        challenge={challenge}
+        challengeError={challengeError}
+        onVerified={async (providerToken) => {
+          const detail = await verifyChallenge(providerToken);
+          if (detail) openDetail(detail);
+        }}
+      />
     </div>
   );
 }

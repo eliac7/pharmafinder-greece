@@ -16,7 +16,7 @@ const eslintConfig = defineConfig([
   ]),
   {
     // OG images are rendered to static SVG via Satori, where next/image does not apply.
-    files: ["src/features/opengraph/**"],
+    files: ["src/features/opengraph/**", "src/app/**/opengraph-image.tsx"],
     rules: {
       "@next/next/no-img-element": "off",
     },

@@ -4,23 +4,15 @@ import { Clock, Cross, Eye, MapPin, Phone } from "lucide-react";
 
 import { PharmacyNavigationDialog } from "@/features/pharmacy-navigation";
 import {
+  dutyPeriodsToPharmacyHours,
   formatPharmacyHours,
   getPharmacyStatus,
   type ActionPublicDetail,
-  type PharmacyHour,
   type TimeFilter,
 } from "@/entities/pharmacy";
 import { cn } from "@/shared";
 import { MapPopup } from "@/shared/ui/map";
 import { useMapStore } from "@/shared/model/use-map-store";
-
-function toPharmacyHours(detail: ActionPublicDetail): PharmacyHour[] {
-  return detail.duty.periods.map((period) => ({
-    open_time: period.opens_at,
-    close_time: period.closes_at,
-    date: period.date ?? null,
-  }));
-}
 
 export function ProductActionPopup({
   detail,
@@ -42,7 +34,7 @@ export function ProductActionPopup({
     latitude,
     longitude,
   };
-  const dataHours = toPharmacyHours(detail);
+  const dataHours = dutyPeriodsToPharmacyHours(detail.duty.periods);
   const status = getPharmacyStatus(dataHours, null, null, timeFilter);
   const hasConfirmedDuty = detail.duty.data_status === "fresh" || detail.duty.data_status === "partial";
   const statusLabel = hasConfirmedDuty

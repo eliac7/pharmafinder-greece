@@ -3,12 +3,13 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { decryptPayload, encryptPayload } from "@/shared/lib/crypto";
 import { logger } from "@/shared/lib/logger";
+import { getBackendBaseUrl, isSameOrigin, SESSION_COOKIE } from "@/shared/lib/request-origin";
+import { PUBLIC_ID_SOURCE } from "@/entities/pharmacy/lib/public-url";
 import { isIP } from "node:net";
 
-const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:8000";
+const API_BASE_URL = getBackendBaseUrl();
 const API_SECRET_KEY = process.env.API_SECRET_KEY || "";
 const BFF_SERVICE_CREDENTIAL = process.env.BFF_SERVICE_CREDENTIAL || "";
-const SESSION_COOKIE = "pf_session";
 const ENCRYPTION_SECRET = process.env.ENCRYPTION_SECRET || "";
 const ENCRYPTION_SALT = process.env.ENCRYPTION_SALT || "";
 const CLIENT_ENCRYPTION_SECRET =
@@ -24,9 +25,14 @@ const ALLOWED_ENDPOINTS = [
   { pattern: /^\/v1\/pharmacies\/nearby$/, methods: ["POST"] },
   { pattern: /^\/v1\/pharmacies\/reveal$/, methods: ["POST"] },
   { pattern: /^\/v1\/challenges\/turnstile$/, methods: ["POST"] },
-  { pattern: /^\/v1\/pharmacies\/[A-Za-z0-9_-]{21}[AQgw]$/, methods: ["GET"] },
   {
-    pattern: /^\/v1\/pharmacies\/[A-Za-z0-9_-]{21}[AQgw]\/reports$/,
+    pattern: new RegExp(`^\\/v1\\/pharmacies\\/${PUBLIC_ID_SOURCE}$`),
+    methods: ["GET"],
+  },
+  {
+    pattern: new RegExp(
+      `^\\/v1\\/pharmacies\\/${PUBLIC_ID_SOURCE}\\/reports$`,
+    ),
     methods: ["POST"],
   },
   {
@@ -36,9 +42,8 @@ const ALLOWED_ENDPOINTS = [
   { pattern: /^\/v1\/search\/suggestions$/, methods: ["GET"] },
 
   { pattern: /^\/statistics$/, methods: ["GET"] },
-  { pattern: /^\/locations\/cities\/[^/]+$/, methods: ["GET"] },
   { pattern: /^\/locations\/cities$/, methods: ["GET"] },
-  { pattern: /^\/locations\/prefectures$/, methods: ["GET"] },
+  { pattern: /^\/locations\/cities\/[^/]+$/, methods: ["GET"] },
 ];
 
 const ALLOWED_HEADERS = ["content-type", "accept", "user-agent"];
@@ -60,30 +65,23 @@ function invalidQuery(message: string) {
 
 function validateOrigin(request: NextRequest) {
   const origin = request.headers.get("origin");
-  if (!origin) return null;
-  try {
-    if (
-      origin !== new URL(process.env.NEXT_PUBLIC_APP_URL || request.url).origin
-    ) {
-      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
-    }
-  } catch {
-    return NextResponse.json({ message: "Forbidden" }, { status: 403 });
-  }
-  return null;
+  if (!origin || isSameOrigin(origin, request.url)) return null;
+  return NextResponse.json({ message: "Forbidden" }, { status: 403 });
 }
 
-function validateQuery(pathStr: string, searchParams: URLSearchParams) {
-  let allowed: Set<string> | undefined;
-  allowed = new Set();
+const QUERY_PARAM_ALLOWLIST: { pattern: RegExp; params: string[] }[] = [
+  { pattern: /^\/v1\/duty\/cities\//, params: ["time", "cursor"] },
+  {
+    pattern: /^\/v1\/search\/suggestions$/,
+    params: ["q", "latitude", "longitude"],
+  },
+];
 
-  if (pathStr === "/v1/duty/cities/" || /^\/v1\/duty\/cities\//.test(pathStr)) {
-    allowed = new Set(["time", "cursor"]);
-  } else if (pathStr === "/v1/search/suggestions") {
-    allowed = new Set(["q", "latitude", "longitude"]);
-  } else if (pathStr.startsWith("/v1/")) {
-    allowed = new Set();
-  }
+function validateQuery(pathStr: string, searchParams: URLSearchParams) {
+  const matchedRule = QUERY_PARAM_ALLOWLIST.find((rule) =>
+    rule.pattern.test(pathStr),
+  );
+  const allowed = new Set(matchedRule ? matchedRule.params : []);
 
   const seen = new Set<string>();
   for (const key of searchParams.keys()) {
@@ -141,6 +139,21 @@ function getTrustedClientIp(headers: Headers): string | null {
   }
 
   return null;
+}
+
+function classifyRoute(pathStr: string): string {
+  if (/^\/v1\/map\/query$/.test(pathStr)) return "map-query";
+  if (/^\/v1\/map\/clusters\/.+\/drill$/.test(pathStr)) return "clusters-drill";
+  if (/^\/v1\/pharmacies\/nearby$/.test(pathStr)) return "nearby";
+  if (/^\/v1\/pharmacies\/reveal$/.test(pathStr)) return "reveal";
+  if (/^\/v1\/challenges\//.test(pathStr)) return "challenges";
+  if (/^\/v1\/pharmacies\/[^/]+\/reports$/.test(pathStr)) return "report";
+  if (/^\/v1\/duty\/cities\//.test(pathStr)) return "duty-cities";
+  if (/^\/v1\/search\//.test(pathStr)) return "search";
+  if (/^\/v1\/pharmacies\//.test(pathStr)) return "pharmacy";
+  if (/^\/statistics$/.test(pathStr)) return "statistics";
+  if (/^\/locations\//.test(pathStr)) return "locations";
+  return "other";
 }
 
 async function handleRequest(
@@ -234,17 +247,7 @@ async function handleRequest(
     }
     logger.info(
       {
-        route_class: pathStr.includes("viewport")
-          ? "viewport"
-          : pathStr.includes("nearby")
-            ? "nearby"
-            : pathStr.includes("search")
-              ? "search"
-              : pathStr === "/city"
-                ? "city"
-                : pathStr.endsWith("/reports")
-                  ? "report"
-                  : "other",
+        route_class: classifyRoute(pathStr),
         status: response.status,
         problem_code: problemCode,
         request_duration_ms: Date.now() - started,

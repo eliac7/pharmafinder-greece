@@ -7,8 +7,9 @@ import { toast } from "sonner";
 import { FavoriteButton } from "@/features/favorites";
 import { PharmacyNavigationDialog } from "@/features/pharmacy-navigation";
 import { useRevealWithChallenge } from "@/features/pharmacy-detail/model/use-reveal-with-challenge";
-import { DetailChallenge } from "@/features/pharmacy-detail/ui/detail-challenge";
+import { RevealChallengeBanner } from "@/features/pharmacy-detail/ui/reveal-challenge-banner";
 import {
+  dutyPeriodsToPharmacyHours,
   formatPharmacyHours,
   getDutySummaryStatus,
   revealProductHandle,
@@ -37,11 +38,7 @@ export function ActionPharmacyCard({
     verifyChallenge,
   } = useRevealWithChallenge();
   const [isOpening, setIsOpening] = useState(false);
-  const dataHours = item.duty_summary.periods.map((period) => ({
-    open_time: period.opens_at,
-    close_time: period.closes_at,
-    date: period.date ?? null,
-  }));
+  const dataHours = dutyPeriodsToPharmacyHours(item.duty_summary.periods);
   const { status, statusColor, minutesUntilClose } = getDutySummaryStatus(item.duty_summary, timeFilter);
   const hasConfirmedDuty = item.duty_summary.data_status === "fresh" || item.duty_summary.data_status === "partial";
   const isOpen = hasConfirmedDuty && (status === "open" || status === "scheduled");
@@ -185,18 +182,14 @@ export function ActionPharmacyCard({
         />
       </div>
       </div>
-      {challenge && (
-        <div className="mt-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3">
-          <p className="text-sm font-medium">Απαιτείται επιβεβαίωση για την προβολή στοιχείων.</p>
-          <DetailChallenge
-            errorMessage={challengeError}
-            onVerified={async (providerToken) => {
-              const detail = await verifyChallenge(providerToken);
-              if (detail) openPopup(detail);
-            }}
-          />
-        </div>
-      )}
+      <RevealChallengeBanner
+        challenge={challenge}
+        challengeError={challengeError}
+        onVerified={async (providerToken) => {
+          const detail = await verifyChallenge(providerToken);
+          if (detail) openPopup(detail);
+        }}
+      />
     </>
   );
 }

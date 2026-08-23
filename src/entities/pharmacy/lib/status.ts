@@ -14,6 +14,16 @@ export interface DutySummaryLike {
   }>;
 }
 
+export function dutyPeriodsToPharmacyHours(
+  periods: DutySummaryLike["periods"],
+): PharmacyHour[] {
+  return periods.map((period) => ({
+    open_time: period.opens_at,
+    close_time: period.closes_at,
+    date: period.date ?? null,
+  }));
+}
+
 /**
  * Format pharmacy hours for display
  * @param hours - Array of operating hour slots
@@ -53,7 +63,7 @@ export function getPharmacyStatus(
   hours: PharmacyHour[],
   openUntilTomorrow: boolean | null,
   nextDayCloseTime: string | null,
-  timeFilter: TimeFilter = "now"
+  timeFilter: TimeFilter = "now",
 ): PharmacyStatusResult {
   const CLOSED_COLOR = "bg-muted text-muted-foreground border border-border";
   const OPEN_COLOR =
@@ -185,16 +195,15 @@ export function getDutySummaryStatus(
   summary: DutySummaryLike | null | undefined,
   timeFilter: TimeFilter = "now",
 ): PharmacyStatusResult {
-  if (!summary || (summary.data_status !== "fresh" && summary.data_status !== "partial")) {
+  if (
+    !summary ||
+    (summary.data_status !== "fresh" && summary.data_status !== "partial")
+  ) {
     return getPharmacyStatus([], null, null, timeFilter);
   }
 
   return getPharmacyStatus(
-    summary.periods.map((period) => ({
-      open_time: period.opens_at,
-      close_time: period.closes_at,
-      date: period.date ?? null,
-    })),
+    dutyPeriodsToPharmacyHours(summary.periods),
     null,
     null,
     timeFilter,

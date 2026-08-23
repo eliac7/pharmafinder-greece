@@ -1,4 +1,5 @@
 import { fetchAPI } from "@/shared/api/base";
+import { PUBLIC_ID_SOURCE } from "../lib/public-url";
 
 export type PharmacyRouteResolution =
   | { outcome: "canonical"; canonical_path: string }
@@ -6,7 +7,9 @@ export type PharmacyRouteResolution =
   | { outcome: "gone"; canonical_path: null }
   | { outcome: "not_found"; canonical_path: null };
 
-const CANONICAL_PATH = /^\/farmakeia\/[a-z0-9]+(?:-[a-z0-9]+)*--[A-Za-z0-9_-]{21}[AQgw]$/;
+const CANONICAL_PATH = new RegExp(
+  `^\\/farmakeia\\/[a-z0-9]+(?:-[a-z0-9]+)*--${PUBLIC_ID_SOURCE}$`,
+);
 const RESOLVER_TIMEOUT_MS = 3_000;
 
 export async function resolvePharmacyRoute(

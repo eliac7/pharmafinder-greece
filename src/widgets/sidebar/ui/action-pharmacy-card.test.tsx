@@ -7,6 +7,7 @@ const mockFlyTo = jest.fn();
 const mockSetProductPopupTarget = jest.fn();
 
 jest.mock("@/entities/pharmacy", () => ({
+  ...jest.requireActual("@/entities/pharmacy/lib/status"),
   revealProductHandle: mockRevealProductHandle,
   completeProductChallenge: mockCompleteProductChallenge,
   formatPharmacyHours: () => "08:00 - 20:00",

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { MapPin, Phone } from "lucide-react";
 
 import {
+  dutyPeriodsToPharmacyHours,
   getPharmacyStatus,
   completeProductChallenge,
   getProductDetail,
@@ -80,11 +81,7 @@ export function ProductPharmacyPage({ requestedPath }: { requestedPath: string }
   }, [challengeRequestToken, loadDetail]);
 
   const hours = useMemo<PharmacyHour[]>(
-    () => pharmacy?.duty.periods.map((period) => ({
-      date: period.date ?? null,
-      open_time: period.opens_at,
-      close_time: period.closes_at,
-    })) ?? [],
+    () => (pharmacy ? dutyPeriodsToPharmacyHours(pharmacy.duty.periods) : []),
     [pharmacy],
   );
 
@@ -114,7 +111,7 @@ export function ProductPharmacyPage({ requestedPath }: { requestedPath: string }
           <div className="flex items-center gap-1">
             <NavigationSettingsSheet className="rounded-full border-0 hover:bg-muted/50" />
             <SharePharmacyDialog pharmacyName={pharmacy.name} pharmacyAddress={pharmacy.address} />
-            <FavoriteButton pharmacyId={pharmacy.public_id} />
+            <FavoriteButton pharmacyId={pharmacy.public_id} className="text-foreground hover:text-rose-500" />
           </div>
         </header>
 
@@ -145,7 +142,7 @@ export function ProductPharmacyPage({ requestedPath }: { requestedPath: string }
 
           <div className="hidden grid-cols-2 gap-3 md:grid">
             {pharmacy.phone ? (
-              <Button size="lg" className="h-14 rounded-2xl text-lg shadow-sm transition-transform hover:scale-[1.02] md:h-20" asChild>
+              <Button size="lg" className="h-14 flex-col items-center justify-center gap-1 rounded-2xl text-lg shadow-sm transition-transform hover:scale-[1.02] md:h-20" asChild>
                 <a href={`tel:${pharmacy.phone}`}>
                   <div className="flex items-center gap-2"><Phone className="size-5" /><span>Κλήση</span></div>
                   <span className="hidden text-xs font-normal opacity-80 md:block">{pharmacy.phone}</span>
@@ -158,7 +155,7 @@ export function ProductPharmacyPage({ requestedPath }: { requestedPath: string }
               pharmacy={navigationPharmacy}
               triggerVariant="secondary"
               triggerLabel="Οδηγίες"
-              className="h-14 rounded-2xl border border-transparent bg-muted/50 text-lg transition-all hover:scale-[1.02] hover:border-border hover:bg-muted md:h-20"
+              className="h-14 flex-col items-center justify-center gap-1 rounded-2xl border border-transparent bg-muted/50 text-lg transition-all hover:scale-[1.02] hover:border-border hover:bg-muted md:h-20"
             />
           </div>
 

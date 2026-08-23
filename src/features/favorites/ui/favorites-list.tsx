@@ -4,9 +4,11 @@ import { Heart, RefreshCw } from "lucide-react";
 import { useQueries } from "@tanstack/react-query";
 import { useQueryState, parseAsStringLiteral } from "nuqs";
 import {
+  actionDetailToPharmacy,
   getProductDetail,
   PharmacyCard,
   getPharmacyReference,
+  isPublicPharmacyId,
   TIME_OPTIONS,
   type TimeFilter,
   getPharmacyStatus,
@@ -24,13 +26,8 @@ export function FavoritesList() {
     parseAsStringLiteral(TIME_OPTIONS).withDefault("now")
   );
 
-  const publicFavoriteIds = favoriteIds.filter(
-    (id): id is string =>
-      typeof id === "string" && /^[A-Za-z0-9_-]{21}[AQgw]$/.test(id),
-  );
-  const legacyFavoriteCount = favoriteIds.filter(
-    (id) => typeof id === "number" || (typeof id === "string" && !/^[A-Za-z0-9_-]{21}[AQgw]$/.test(id)),
-  ).length;
+  const publicFavoriteIds = favoriteIds.filter(isPublicPharmacyId);
+  const legacyFavoriteCount = favoriteIds.length - publicFavoriteIds.length;
   const pharmacyQueries = useQueries({
     queries: publicFavoriteIds.map((id) => ({
       queryKey: ["product-pharmacy", id],
@@ -126,25 +123,7 @@ export function FavoritesList() {
       const detail = query.data;
       if (!detail) return acc;
 
-      const pharmacy: Pharmacy = {
-        public_id: detail.public_id,
-        canonical_slug: detail.canonical_path.split("/").pop()?.split("--")[0] ?? null,
-        name: detail.name,
-        address: detail.address,
-        city: detail.city,
-        prefecture: detail.prefecture,
-        prefecture_english: "",
-        phone: detail.phone ?? "",
-        latitude: detail.location.latitude,
-        longitude: detail.location.longitude,
-        distance_km: null,
-        data_hours: detail.duty.periods.map((period) => ({
-          date: period.date ?? null,
-          open_time: period.opens_at,
-          close_time: period.closes_at,
-        })),
-        is_frequent_duty: detail.is_frequent_duty,
-      };
+      const pharmacy = actionDetailToPharmacy(detail);
 
       const statusResult = getPharmacyStatus(
         pharmacy.data_hours,

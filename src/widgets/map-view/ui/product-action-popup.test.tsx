@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 const mockClearProductPopup = jest.fn();
 
 jest.mock("@/entities/pharmacy", () => ({
+  ...jest.requireActual("@/entities/pharmacy/lib/status"),
   formatPharmacyHours: () => "08:00 - 20:00",
   getPharmacyStatus: () => ({ status: "open", minutesUntilClose: null }),
 }));

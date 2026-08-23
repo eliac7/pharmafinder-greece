@@ -39,6 +39,7 @@ const detail = {
 };
 
 jest.mock("@/entities/pharmacy", () => ({
+  ...jest.requireActual("@/entities/pharmacy/lib/status"),
   DEFAULT_RADIUS: 2,
   normalizeRadius: (value: number) => ([2, 5, 10, 20].includes(value) ? value : 2),
   TIME_OPTIONS: ["now", "today", "tomorrow"],
@@ -46,9 +47,12 @@ jest.mock("@/entities/pharmacy", () => ({
   getPharmacyStatus: () => ({ status: "open", statusColor: "", minutesUntilClose: null }),
   getDutySummaryStatus: () => ({ status: "open", statusColor: "", minutesUntilClose: null }),
   revealProductHandle: mockRevealProductHandle,
-  useProductNearbyPharmacies: () => mockNearbyQuery(),
   useProductCityPharmacies: () => mockCityQuery(),
   queryCityAction: jest.fn(),
+}));
+
+jest.mock("@/features/find-pharmacies", () => ({
+  useProductNearbyPharmacies: () => mockNearbyQuery(),
 }));
 
 jest.mock("nuqs", () => ({
