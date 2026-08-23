@@ -1,7 +1,5 @@
-import type { MouseEvent } from "react";
-
 export function Turnstile({ onSuccess }: { onSuccess?: (token: string) => void }) {
-  const handleClick = (_event: MouseEvent<HTMLButtonElement>) => {
+  const handleClick = () => {
     onSuccess?.("test-turnstile-token");
   };
 

@@ -131,7 +131,11 @@ export function ProductActionViewport() {
     return () => { map.off("movestart", start); map.off("moveend", end); };
   }, [isLoaded, map]);
 
-  useEffect(() => { setDrilledResponse(null); }, [time]);
+  const [prevTime, setPrevTime] = useState(time);
+  if (prevTime !== time) {
+    setPrevTime(time);
+    setDrilledResponse(null);
+  }
 
   const nearbyResponse: MapActionResponse | undefined = nearbyQuery.data
     ? {

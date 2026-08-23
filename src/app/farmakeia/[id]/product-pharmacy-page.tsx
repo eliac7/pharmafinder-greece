@@ -40,12 +40,11 @@ export function ProductPharmacyPage({ requestedPath }: { requestedPath: string }
   const publicId = requestedPath.split("--").at(-1) ?? requestedPath;
 
   const loadDetail = useCallback(() => {
-    setError(false);
-    setChallengeError(null);
     let active = true;
     void getProductDetail(publicId).then((value) => {
       if (!active) return;
       setPharmacy(value);
+      setError(false);
       setChallengeRequestToken(null);
       if (value.canonical_path !== `/farmakeia/${requestedPath}`) {
         router.replace(value.canonical_path);

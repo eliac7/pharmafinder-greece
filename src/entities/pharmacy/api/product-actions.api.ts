@@ -59,7 +59,7 @@ export interface ActionPharmacyListItem {
   duty_summary: ActionDutySummary;
 }
 
-export interface NearbyActionItem extends ActionPharmacyListItem {}
+export type NearbyActionItem = ActionPharmacyListItem;
 
 export interface CityActionItem extends ActionPharmacyListItem {
   latitude: number | null;

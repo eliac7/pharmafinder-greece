@@ -51,7 +51,8 @@ export default async function Image({ params }: Props) {
     })),
   ]);
 
-  const dateString = getDateForTime(time as any) || undefined;
+  const dateString =
+    getDateForTime(time as keyof typeof TIME_TRANSLATIONS) || undefined;
   const timeLabel =
     TIME_TRANSLATIONS[time as keyof typeof TIME_TRANSLATIONS] || time;
 
