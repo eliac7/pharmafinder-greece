@@ -18,11 +18,13 @@ interface MapStore {
   popupTargetId: string | null;
   selectedPharmacyId: string | null;
   productPopupTarget: ProductPopupTarget | null;
+  mapActive: boolean;
   flyTo: (center: [number, number], zoom?: number, pharmacyId?: string) => void;
   clearFlyToTarget: () => void;
   setPopupTargetId: (id: string | null) => void;
   setSelectedPharmacyId: (id: string | null) => void;
   setProductPopupTarget: (target: ProductPopupTarget | null) => void;
+  setMapActive: (active: boolean) => void;
 }
 
 export const useMapStore = create<MapStore>((set) => ({
@@ -30,6 +32,7 @@ export const useMapStore = create<MapStore>((set) => ({
   popupTargetId: null,
   selectedPharmacyId: null,
   productPopupTarget: null,
+  mapActive: false,
   flyTo: (center, zoom, pharmacyId) =>
     set({ 
       flyToTarget: { center, zoom, pharmacyId },
@@ -39,4 +42,5 @@ export const useMapStore = create<MapStore>((set) => ({
   setPopupTargetId: (id) => set({ popupTargetId: id }),
   setSelectedPharmacyId: (id) => set({ selectedPharmacyId: id }),
   setProductPopupTarget: (target) => set({ productPopupTarget: target }),
+  setMapActive: (active) => set({ mapActive: active }),
 }));

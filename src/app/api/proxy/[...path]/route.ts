@@ -17,14 +17,24 @@ const CLIENT_ENCRYPTION_SALT = process.env.NEXT_PUBLIC_ENCRYPTION_SALT || "";
 
 const ALLOWED_ENDPOINTS = [
   { pattern: /^\/v1\/map\/query$/, methods: ["POST"] },
-  { pattern: /^\/v1\/map\/clusters\/[A-Za-z0-9_-]{21,256}\/drill$/, methods: ["POST"] },
+  {
+    pattern: /^\/v1\/map\/clusters\/[A-Za-z0-9_-]{21,256}\/drill$/,
+    methods: ["POST"],
+  },
   { pattern: /^\/v1\/pharmacies\/nearby$/, methods: ["POST"] },
   { pattern: /^\/v1\/pharmacies\/reveal$/, methods: ["POST"] },
   { pattern: /^\/v1\/challenges\/turnstile$/, methods: ["POST"] },
   { pattern: /^\/v1\/pharmacies\/[A-Za-z0-9_-]{21}[AQgw]$/, methods: ["GET"] },
-  { pattern: /^\/v1\/pharmacies\/[A-Za-z0-9_-]{21}[AQgw]\/reports$/, methods: ["POST"] },
-  { pattern: /^\/v1\/duty\/cities\/[a-z0-9]+(?:-[a-z0-9]+)*$/, methods: ["GET"] },
+  {
+    pattern: /^\/v1\/pharmacies\/[A-Za-z0-9_-]{21}[AQgw]\/reports$/,
+    methods: ["POST"],
+  },
+  {
+    pattern: /^\/v1\/duty\/cities\/[a-z0-9]+(?:-[a-z0-9]+)*$/,
+    methods: ["GET"],
+  },
   { pattern: /^\/v1\/search\/suggestions$/, methods: ["GET"] },
+
   { pattern: /^\/statistics$/, methods: ["GET"] },
   { pattern: /^\/locations\/cities\/[^/]+$/, methods: ["GET"] },
   { pattern: /^\/locations\/cities$/, methods: ["GET"] },
@@ -38,7 +48,12 @@ const TIME_VALUES = new Set(["now", "today", "tomorrow"]);
 
 function invalidQuery(message: string) {
   return NextResponse.json(
-    { type: "about:blank", title: "Invalid request", status: 422, detail: message },
+    {
+      type: "about:blank",
+      title: "Invalid request",
+      status: 422,
+      detail: message,
+    },
     { status: 422, headers: { "content-type": "application/problem+json" } },
   );
 }
@@ -47,7 +62,9 @@ function validateOrigin(request: NextRequest) {
   const origin = request.headers.get("origin");
   if (!origin) return null;
   try {
-    if (origin !== new URL(process.env.NEXT_PUBLIC_APP_URL || request.url).origin) {
+    if (
+      origin !== new URL(process.env.NEXT_PUBLIC_APP_URL || request.url).origin
+    ) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
   } catch {
@@ -70,7 +87,8 @@ function validateQuery(pathStr: string, searchParams: URLSearchParams) {
 
   const seen = new Set<string>();
   for (const key of searchParams.keys()) {
-    if (!allowed.has(key)) return invalidQuery(`Unknown query parameter: ${key}`);
+    if (!allowed.has(key))
+      return invalidQuery(`Unknown query parameter: ${key}`);
     if (seen.has(key) || searchParams.getAll(key).length !== 1) {
       return invalidQuery(`Duplicate query parameter: ${key}`);
     }
@@ -78,7 +96,8 @@ function validateQuery(pathStr: string, searchParams: URLSearchParams) {
   }
 
   const time = searchParams.get("time");
-  if (time !== null && !TIME_VALUES.has(time)) return invalidQuery("Invalid time filter.");
+  if (time !== null && !TIME_VALUES.has(time))
+    return invalidQuery("Invalid time filter.");
   return null;
 }
 
@@ -86,22 +105,22 @@ async function validateBody(pathStr: string, request: NextRequest) {
   if (pathStr === "/v1/challenges/turnstile") {
     try {
       const body = await request.clone().json();
-      if (
-        body === null ||
-        typeof body !== "object" ||
-        Array.isArray(body)
-      ) return invalidQuery("Invalid challenge body.");
+      if (body === null || typeof body !== "object" || Array.isArray(body))
+        return invalidQuery("Invalid challenge body.");
       const keys = Object.keys(body);
       if (
         keys.length !== 2 ||
-        !keys.every((key) => ["request_token", "turnstile_token"].includes(key)) ||
+        !keys.every((key) =>
+          ["request_token", "turnstile_token"].includes(key),
+        ) ||
         typeof body.request_token !== "string" ||
         !body.request_token.trim() ||
         body.request_token.length > 512 ||
         typeof body.turnstile_token !== "string" ||
         !body.turnstile_token.trim() ||
         body.turnstile_token.length > 4096
-      ) return invalidQuery("Invalid challenge body.");
+      )
+        return invalidQuery("Invalid challenge body.");
     } catch {
       return invalidQuery("Invalid challenge body.");
     }
@@ -126,13 +145,13 @@ function getTrustedClientIp(headers: Headers): string | null {
 
 async function handleRequest(
   request: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> }
+  { params }: { params: Promise<{ path: string[] }> },
 ) {
   const { path } = await params;
   const pathStr = "/" + path.join("/");
 
   const matchedEndpoint = ALLOWED_ENDPOINTS.find((endpoint) =>
-    endpoint.pattern.test(pathStr)
+    endpoint.pattern.test(pathStr),
   );
 
   if (!matchedEndpoint) {
@@ -143,11 +162,11 @@ async function handleRequest(
   if (!matchedEndpoint.methods.includes(request.method)) {
     logger.warn(
       { path: pathStr, method: request.method },
-      "Blocked proxy attempt with invalid method"
+      "Blocked proxy attempt with invalid method",
     );
     return NextResponse.json(
       { message: "Method Not Allowed" },
-      { status: 405 }
+      { status: 405 },
     );
   }
 
@@ -202,7 +221,10 @@ async function handleRequest(
       duplex: body ? "half" : undefined,
     });
     let problemCode: string | undefined;
-    if (!response.ok && response.headers.get("content-type")?.includes("json")) {
+    if (
+      !response.ok &&
+      response.headers.get("content-type")?.includes("json")
+    ) {
       try {
         const problem = (await response.clone().json()) as { code?: unknown };
         if (typeof problem.code === "string") problemCode = problem.code;
@@ -220,7 +242,7 @@ async function handleRequest(
               ? "search"
               : pathStr === "/city"
                 ? "city"
-                : pathStr.endsWith("/report")
+                : pathStr.endsWith("/reports")
                   ? "report"
                   : "other",
         status: response.status,
@@ -230,14 +252,21 @@ async function handleRequest(
         deployment:
           process.env.VERCEL_GIT_COMMIT_SHA ?? process.env.VERCEL_DEPLOYMENT_ID,
       },
-      "proxy_request"
+      "proxy_request",
     );
 
     const responseHeaders = new Headers();
     response.headers.forEach((value, key) => {
-        if (!['content-length', 'content-encoding', 'transfer-encoding', 'connection'].includes(key.toLowerCase())) {
-             responseHeaders.set(key, value);
-        }
+      if (
+        ![
+          "content-length",
+          "content-encoding",
+          "transfer-encoding",
+          "connection",
+        ].includes(key.toLowerCase())
+      ) {
+        responseHeaders.set(key, value);
+      }
     });
 
     if (!response.ok) {
@@ -267,7 +296,7 @@ async function handleRequest(
             const decrypted = await decryptPayload(
               json.encrypted,
               ENCRYPTION_SECRET,
-              ENCRYPTION_SALT
+              ENCRYPTION_SALT,
             );
             if (decrypted) {
               dataToEncrypt = decrypted;
@@ -284,25 +313,25 @@ async function handleRequest(
         // Enforce re-encryption for the client
         if (!CLIENT_ENCRYPTION_SECRET || !CLIENT_ENCRYPTION_SALT) {
           logger.error(
-            "Missing NEXT_PUBLIC_ENCRYPTION_SECRET or NEXT_PUBLIC_ENCRYPTION_SALT. Cannot securely serve data."
+            "Missing NEXT_PUBLIC_ENCRYPTION_SECRET or NEXT_PUBLIC_ENCRYPTION_SALT. Cannot securely serve data.",
           );
           return NextResponse.json(
             { message: "Server Configuration Error: Missing Encryption Keys" },
-            { status: 500 }
+            { status: 500 },
           );
         }
 
         const clientEncrypted = await encryptPayload(
           dataToEncrypt,
           CLIENT_ENCRYPTION_SECRET,
-          CLIENT_ENCRYPTION_SALT
+          CLIENT_ENCRYPTION_SALT,
         );
 
         if (!clientEncrypted) {
           logger.error("Failed to re-encrypt data for client.");
           return NextResponse.json(
             { message: "Internal Server Error: Encryption Failed" },
-            { status: 500 }
+            { status: 500 },
           );
         }
 
@@ -311,7 +340,7 @@ async function handleRequest(
           {
             status: response.status,
             headers: responseHeaders,
-          }
+          },
         );
       } catch (error: unknown) {
         logger.error({ err: error }, "Proxy processing error");
@@ -331,7 +360,7 @@ async function handleRequest(
     logger.error({ err: error }, "Proxy error");
     return NextResponse.json(
       { message: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

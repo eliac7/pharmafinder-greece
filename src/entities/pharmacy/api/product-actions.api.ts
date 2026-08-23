@@ -19,6 +19,7 @@ export interface ActionMarker {
   latitude: number;
   longitude: number;
   city: string;
+  duty_summary?: ActionDutySummary;
 }
 
 export interface ActionCluster {
@@ -128,6 +129,10 @@ async function ensureSession() {
         }
         throw new ApiError(response.status, response.statusText, problem);
       }
+    }).catch((error) => {
+      // Do not permanently cache a transient bootstrap/network failure.
+      sessionRequest = undefined;
+      throw error;
     });
   }
   return sessionRequest;
@@ -147,6 +152,11 @@ export async function fetchProductAction<T>(
     },
   });
   if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      // The anonymous session is no longer accepted by the backend; drop the
+      // cached bootstrap so the next request mints a fresh one.
+      sessionRequest = undefined;
+    }
     let problem: ApiProblem | undefined;
     try {
       problem = parseApiProblem(await response.json());

@@ -8,8 +8,9 @@ import { MapUpdater } from "./map-updater";
 import { ManualLocationAdjuster } from "./manual-location-adjuster";
 import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
 import type MapLibreGL from "maplibre-gl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ProductActionViewport } from "./product-action-viewport";
+import { useMapStore } from "@/shared/model/use-map-store";
 
 interface MapWithControlsProps {
   center?: [number, number];
@@ -34,10 +35,21 @@ export function MapWithControls({
   citySlug,
 }: MapWithControlsProps) {
   const [isAdjusting, setIsAdjusting] = useState(false);
+  const setProductPopupTarget = useMapStore((state) => state.setProductPopupTarget);
+  const setMapActive = useMapStore((state) => state.setMapActive);
   const isHomeMap =
     citySlug === undefined &&
     pharmacies === undefined &&
     timeFilter === undefined;
+
+  useEffect(() => {
+    setMapActive(true);
+    return () => setMapActive(false);
+  }, [setMapActive]);
+
+  useEffect(() => {
+    setProductPopupTarget(null);
+  }, [citySlug, isHomeMap, setProductPopupTarget, timeFilter]);
 
   return (
     <div className="relative w-full h-full">

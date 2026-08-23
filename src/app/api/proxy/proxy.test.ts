@@ -114,4 +114,23 @@ describe("Proxy Security", () => {
     );
     expect(response.status).not.toBe(403);
   });
+
+  it("classifies the plural v1 report route as a report request", async () => {
+    const path = ["v1", "pharmacies", "SVFNK9i0QHKA7JBxOGOVKQ", "reports"];
+    const response = await POST(
+      createRequest(
+        "POST",
+        "http://localhost:3000/api/proxy/v1/pharmacies/SVFNK9i0QHKA7JBxOGOVKQ/reports",
+        { "content-type": "application/json" },
+        JSON.stringify({ report_type: "other", turnstile_token: "provider" }),
+      ),
+      { params: createParams(path) },
+    );
+
+    expect(response.status).not.toBe(403);
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/v1/pharmacies/SVFNK9i0QHKA7JBxOGOVKQ/reports"),
+      expect.objectContaining({ headers: expect.any(Headers) }),
+    );
+  });
 });

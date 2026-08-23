@@ -5,6 +5,15 @@ import {
 } from "../model/types";
 import { getAthensDateTimeParts } from "@/shared/lib/formatters";
 
+export interface DutySummaryLike {
+  data_status: "fresh" | "partial" | "stale" | "unknown";
+  periods: Array<{
+    opens_at: string;
+    closes_at: string;
+    date?: string | null;
+  }>;
+}
+
 /**
  * Format pharmacy hours for display
  * @param hours - Array of operating hour slots
@@ -169,4 +178,25 @@ export function getPharmacyStatus(
     closingTime: null,
     minutesUntilClose: null,
   };
+}
+
+/** Convert a bounded v1 duty summary into the existing status presentation. */
+export function getDutySummaryStatus(
+  summary: DutySummaryLike | null | undefined,
+  timeFilter: TimeFilter = "now",
+): PharmacyStatusResult {
+  if (!summary || (summary.data_status !== "fresh" && summary.data_status !== "partial")) {
+    return getPharmacyStatus([], null, null, timeFilter);
+  }
+
+  return getPharmacyStatus(
+    summary.periods.map((period) => ({
+      open_time: period.opens_at,
+      close_time: period.closes_at,
+      date: period.date ?? null,
+    })),
+    null,
+    null,
+    timeFilter,
+  );
 }

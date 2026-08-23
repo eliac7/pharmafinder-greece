@@ -6,6 +6,7 @@ const mockSetProductPopupTarget = jest.fn();
 jest.mock("@/entities/pharmacy", () => ({
   TIME_OPTIONS: ["now", "today", "tomorrow"],
   revealProductHandle: mockRevealProductHandle,
+  getDutySummaryStatus: () => ({ status: "open", statusColor: "", minutesUntilClose: null }),
   useProductCityPharmacies: () => ({
     data: {
       items: [

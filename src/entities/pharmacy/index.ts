@@ -9,7 +9,7 @@ export type {
   PharmacyStatusResult,
   ViewportBounds,
 } from "./model/types";
-export { TIME_OPTIONS, RADIUS_OPTIONS, DEFAULT_RADIUS } from "./model/types";
+export { TIME_OPTIONS, RADIUS_OPTIONS, DEFAULT_RADIUS, normalizeRadius } from "./model/types";
 
 // API
 export { pharmacyApi } from "./api/pharmacy.api";
@@ -51,5 +51,5 @@ export { getPharmacyCanonicalPath, getPharmacyReference } from "./lib/public-url
 export { PharmacyCard } from "./ui/pharmacy-card";
 
 // Lib
-export { getPharmacyStatus, formatPharmacyHours } from "./lib/status";
+export { getPharmacyStatus, formatPharmacyHours, getDutySummaryStatus } from "./lib/status";
 export { radiusToZoom } from "./lib/radius-to-zoom";

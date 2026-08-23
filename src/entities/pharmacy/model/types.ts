@@ -5,6 +5,12 @@ export const RADIUS_OPTIONS = [2, 5, 10, 20] as const;
 export type RadiusOption = (typeof RADIUS_OPTIONS)[number];
 export const DEFAULT_RADIUS: RadiusOption = 2;
 
+export function normalizeRadius(value: number | null | undefined): RadiusOption {
+  return RADIUS_OPTIONS.includes(value as RadiusOption)
+    ? (value as RadiusOption)
+    : DEFAULT_RADIUS;
+}
+
 export interface ViewportBounds {
   west: number;
   south: number;

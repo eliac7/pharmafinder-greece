@@ -47,10 +47,12 @@ export function CitySidebar({
   cityName,
   citySlug,
   activeTime,
-  pharmacies: initialPharmacies,
+  pharmacies: _initialPharmacies,
   nearbyRadius,
   ...props
 }: CitySidebarProps) {
+  // Retained for the server compatibility boundary; ProductCityList owns the live count.
+  void _initialPharmacies;
   const { locate, isLoading } = useLocateMe();
   const { latitude, longitude } = useLocationStore();
   const router = useRouter();
@@ -70,8 +72,6 @@ export function CitySidebar({
       router.push(nearbyUrl);
     });
   };
-
-  const displayPharmacies = initialPharmacies;
 
   return (
     <Sidebar {...props}>
@@ -187,11 +187,6 @@ export function CitySidebar({
       <SidebarContent className="px-4">
         <SidebarGroup className="group-data-[collapsible=icon]:hidden pt-0 flex-1 min-h-0">
           <SidebarGroupContent className="flex flex-1 min-h-0 flex-col">
-            <div className="flex items-center justify-between mb-2 px-1">
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Φαρμακεια ({displayPharmacies.length})
-              </span>
-            </div>
             <ProductCityList citySlug={citySlug} time={activeTime} />
           </SidebarGroupContent>
         </SidebarGroup>

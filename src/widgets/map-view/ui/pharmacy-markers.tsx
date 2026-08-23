@@ -10,6 +10,7 @@ import {
   useProductCityPharmacies,
   type CityActionItem,
   type TimeFilter,
+  getDutySummaryStatus,
 } from "@/entities/pharmacy";
 import { useRevealWithChallenge } from "@/features/pharmacy-detail/model/use-reveal-with-challenge";
 import { DetailChallenge } from "@/features/pharmacy-detail/ui/detail-challenge";
@@ -102,7 +103,7 @@ export function PharmacyMarkers({ citySlug, timeFilter }: PharmacyMarkersProps) 
               >
                 <ProductActionMarkerContent
                   publicId={item.public_id}
-                  status={activeTime === "now" ? "open" : "scheduled"}
+                  status={getDutySummaryStatus(item.duty_summary, activeTime).status}
                 />
                 <span className="sr-only">{item.name}</span>
               </button>

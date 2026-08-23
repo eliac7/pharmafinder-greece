@@ -13,6 +13,7 @@ import {
   revealProductHandle,
   TIME_OPTIONS,
   useProductNearbyPharmacies,
+  getDutySummaryStatus,
   type DutyTime,
   type MapActionResponse,
   type NearbyActionItem,
@@ -35,6 +36,10 @@ function roundBounds(bounds: ViewportBounds): ViewportBounds {
     east: Number(bounds.east.toFixed(4)),
     north: Number(bounds.north.toFixed(4)),
   };
+}
+
+function sameBounds(left: ViewportBounds, right: ViewportBounds): boolean {
+  return left.west === right.west && left.south === right.south && left.east === right.east && left.north === right.north;
 }
 
 function ActionLayer({ response, timeFilter, onDrill }: { response: MapActionResponse; timeFilter: DutyTime; onDrill: (next: MapActionResponse) => void }) {
@@ -96,7 +101,7 @@ function ActionLayer({ response, timeFilter, onDrill }: { response: MapActionRes
         />
       </div>
     )}
-    {response.mode === "clusters" ? response.clusters.map((cluster) => <MapMarker key={cluster.handle} longitude={cluster.center.longitude} latitude={cluster.center.latitude}><MarkerContent><button type="button" onClick={() => void drill(cluster.handle)} className="flex size-10 items-center justify-center rounded-full border-2 border-primary bg-primary text-xs font-bold text-primary-foreground shadow-lg">{cluster.count}</button></MarkerContent><MarkerTooltip>{cluster.count} φαρμακεία</MarkerTooltip></MapMarker>) : response.markers.map((marker) => <MapMarker key={marker.handle} longitude={marker.longitude} latitude={marker.latitude}><MarkerContent><button type="button" onClick={() => void open(marker.handle, [marker.longitude, marker.latitude])} className="cursor-pointer border-0 bg-transparent p-0"><ProductActionMarkerContent publicId={marker.public_id} status={timeFilter === "now" ? "open" : "scheduled"} /><span className="sr-only">{marker.name}</span></button></MarkerContent><MarkerTooltip className="rounded-xl bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground shadow-lg">{marker.name}</MarkerTooltip></MapMarker>)}<ProductActionPopupTarget />
+    {response.mode === "clusters" ? response.clusters.map((cluster) => <MapMarker key={cluster.handle} longitude={cluster.center.longitude} latitude={cluster.center.latitude}><MarkerContent><button type="button" onClick={() => void drill(cluster.handle)} className="flex size-10 items-center justify-center rounded-full border-2 border-primary bg-primary text-xs font-bold text-primary-foreground shadow-lg">{cluster.count}</button></MarkerContent><MarkerTooltip>{cluster.count} φαρμακεία</MarkerTooltip></MapMarker>) : response.markers.map((marker) => <MapMarker key={marker.handle} longitude={marker.longitude} latitude={marker.latitude}><MarkerContent><button type="button" onClick={() => void open(marker.handle, [marker.longitude, marker.latitude])} className="cursor-pointer border-0 bg-transparent p-0"><ProductActionMarkerContent publicId={marker.public_id} status={marker.duty_summary ? getDutySummaryStatus(marker.duty_summary, timeFilter).status : timeFilter === "now" ? "open" : "scheduled"} /><span className="sr-only">{marker.name}</span></button></MarkerContent><MarkerTooltip className="rounded-xl bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground shadow-lg">{marker.name}</MarkerTooltip></MapMarker>)}<ProductActionPopupTarget />
   </>;
 }
 
@@ -109,7 +114,12 @@ export function ProductActionViewport() {
   const movementRef = useRef(false);
   const query = useQuery({
     queryKey: ["product-map", committedBounds, time],
-    queryFn: () => queryMapAction(committedBounds!, Math.floor(map?.getZoom() ?? 12), time),
+    queryFn: async () => {
+      const requestedBounds = committedBounds!;
+      const result = await queryMapAction(requestedBounds, Math.floor(map?.getZoom() ?? 12), time);
+      setPendingBounds((current) => current && sameBounds(current, requestedBounds) ? null : current);
+      return result;
+    },
     enabled: committedBounds !== null,
     staleTime: 30_000,
     retry: false,
@@ -150,6 +160,7 @@ export function ProductActionViewport() {
                 latitude: item.latitude,
                 longitude: item.longitude,
                 city: item.city,
+                duty_summary: item.duty_summary,
               }],
         ),
         clusters: [],
@@ -162,13 +173,17 @@ export function ProductActionViewport() {
   const response = drilledResponse ?? query.data ?? nearbyResponse;
   const searchArea = () => {
     if (!pendingBounds || query.isFetching) return;
+    if (query.error && committedBounds && sameBounds(pendingBounds, committedBounds)) {
+      void query.refetch();
+      return;
+    }
     setCommittedBounds(pendingBounds);
-    setPendingBounds(null);
   };
 
   return <>
     {response && <ActionLayer response={response} timeFilter={time} onDrill={setDrilledResponse} />}
-    {(pendingBounds || query.isFetching) && <div className="absolute top-5 left-1/2 z-20 -translate-x-1/2"><Button type="button" size="sm" onClick={searchArea} disabled={query.isFetching} className="rounded-full border border-white/10 bg-[rgba(20,20,30,0.82)] px-4 text-white shadow-lg backdrop-blur-sm">{query.isFetching ? <Loader2 className="size-4 animate-spin" /> : <Search className="size-4" />}{query.isFetching ? "Αναζήτηση..." : "Αναζήτηση σε αυτή την περιοχή"}</Button></div>}
+    {(pendingBounds || query.isFetching) && <div className="absolute top-5 left-1/2 z-20 -translate-x-1/2"><Button type="button" size="sm" onClick={searchArea} disabled={query.isFetching} className="rounded-full border border-white/10 bg-[rgba(20,20,30,0.82)] px-4 text-white shadow-lg backdrop-blur-sm">{query.isFetching ? <Loader2 className="size-4 animate-spin" /> : <Search className="size-4" />}{query.isFetching ? "Αναζήτηση..." : query.error && committedBounds && sameBounds(pendingBounds!, committedBounds) ? "Δοκιμάστε ξανά" : "Αναζήτηση σε αυτή την περιοχή"}</Button></div>}
+    {query.error && pendingBounds && <div className="absolute top-16 left-1/2 z-20 -translate-x-1/2 rounded-full bg-destructive/90 px-3 py-1 text-xs text-destructive-foreground shadow">Η αναζήτηση απέτυχε.</div>}
     {response?.duty_coverage.status === "partial" && <div className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 rounded-full bg-amber-100 px-3 py-1 text-xs text-amber-800 shadow">Μερική κάλυψη εφημεριών</div>}
   </>;
 }

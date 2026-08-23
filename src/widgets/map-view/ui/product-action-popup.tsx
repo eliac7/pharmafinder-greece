@@ -18,7 +18,7 @@ function toPharmacyHours(detail: ActionPublicDetail): PharmacyHour[] {
   return detail.duty.periods.map((period) => ({
     open_time: period.opens_at,
     close_time: period.closes_at,
-    date: null,
+    date: period.date ?? null,
   }));
 }
 

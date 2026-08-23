@@ -62,7 +62,16 @@ export function useRevealWithChallenge() {
       setChallenge(null);
       return detail;
     } catch (error) {
-      setChallengeError(getChallengeErrorMessage(error));
+      // A fresh 428 after verification means the previous token was consumed
+      // elsewhere; adopt the new request token so the widget can retry
+      // instead of replaying the stale one.
+      const nextRequestToken = getChallengeRequestToken(error);
+      if (nextRequestToken && challenge) {
+        setChallenge({ handle: challenge.handle, requestToken: nextRequestToken });
+        setChallengeError(null);
+      } else {
+        setChallengeError(getChallengeErrorMessage(error));
+      }
       throw error;
     } finally {
       setIsVerifying(false);

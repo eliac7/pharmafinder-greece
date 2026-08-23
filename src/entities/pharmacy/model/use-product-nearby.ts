@@ -5,6 +5,7 @@ import { useQueryState, parseAsInteger, parseAsStringLiteral } from "nuqs";
 
 import {
   DEFAULT_RADIUS,
+  normalizeRadius,
   TIME_OPTIONS,
   queryNearbyAction,
   type DutyTime,
@@ -22,9 +23,11 @@ export function useProductNearbyPharmacies() {
     parseAsInteger.withDefault(DEFAULT_RADIUS),
   );
 
+  const normalizedRadius = normalizeRadius(radius);
+
   return useQuery({
-    queryKey: ["product-nearby-pharmacies", latitude, longitude, time, radius],
-    queryFn: () => queryNearbyAction(latitude!, longitude!, radius as 2 | 5 | 10 | 20, time),
+    queryKey: ["product-nearby-pharmacies", latitude, longitude, time, normalizedRadius],
+    queryFn: () => queryNearbyAction(latitude!, longitude!, normalizedRadius, time),
     enabled: latitude != null && longitude != null,
     staleTime: 60_000,
     retry: false,

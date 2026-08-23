@@ -40,9 +40,11 @@ const detail = {
 
 jest.mock("@/entities/pharmacy", () => ({
   DEFAULT_RADIUS: 2,
+  normalizeRadius: (value: number) => ([2, 5, 10, 20].includes(value) ? value : 2),
   TIME_OPTIONS: ["now", "today", "tomorrow"],
   formatPharmacyHours: () => "08:00 - 20:00",
   getPharmacyStatus: () => ({ status: "open", statusColor: "", minutesUntilClose: null }),
+  getDutySummaryStatus: () => ({ status: "open", statusColor: "", minutesUntilClose: null }),
   revealProductHandle: mockRevealProductHandle,
   useProductNearbyPharmacies: () => mockNearbyQuery(),
   useProductCityPharmacies: () => mockCityQuery(),
@@ -57,6 +59,12 @@ jest.mock("nuqs", () => ({
 
 jest.mock("@/features/favorites", () => ({ FavoriteButton: () => null }));
 jest.mock("@/features/pharmacy-navigation", () => ({ PharmacyNavigationDialog: () => null }));
+jest.mock("@/features/locate-user", () => ({
+  useLocationStore: () => ({ latitude: 37.98, longitude: 23.72 }),
+}));
+jest.mock("@/features/locate-user/model/use-locate-me", () => ({
+  useLocateMe: () => ({ locate: jest.fn(), isLoading: false }),
+}));
 jest.mock("@/shared/model/use-map-store", () => ({
   useMapStore: (selector: (state: unknown) => unknown) =>
     selector({ flyTo: jest.fn(), setProductPopupTarget: mockSetProductPopupTarget }),

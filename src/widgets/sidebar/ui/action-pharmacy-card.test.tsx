@@ -11,6 +11,7 @@ jest.mock("@/entities/pharmacy", () => ({
   completeProductChallenge: mockCompleteProductChallenge,
   formatPharmacyHours: () => "08:00 - 20:00",
   getPharmacyStatus: () => ({ status: "open", statusColor: "", minutesUntilClose: null }),
+  getDutySummaryStatus: () => ({ status: "open", statusColor: "", minutesUntilClose: null }),
 }));
 
 jest.mock("@/features/favorites", () => ({

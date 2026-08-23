@@ -1,4 +1,4 @@
-import { formatPharmacyHours, getPharmacyStatus } from './status';
+import { formatPharmacyHours, getDutySummaryStatus, getPharmacyStatus } from './status';
 
 describe('Pharmacy Status Logic', () => {
   describe('formatPharmacyHours', () => {
@@ -107,6 +107,27 @@ describe('Pharmacy Status Logic', () => {
         const result = getPharmacyStatus(overnightShift, null, null, 'now');
         expect(result.status).toBe('closed');
       });
+    });
+  });
+
+  describe('getDutySummaryStatus', () => {
+    it('preserves period dates when calculating the current status', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2026-01-02T01:00:00+02:00'));
+
+      const result = getDutySummaryStatus({
+        data_status: 'fresh',
+        periods: [
+          { opens_at: '00:00:00', closes_at: '08:00:00', date: '2026-01-03' },
+        ],
+      }, 'now');
+
+      expect(result.status).toBe('closed');
+      jest.useRealTimers();
+    });
+
+    it('fails closed for unconfirmed duty data', () => {
+      expect(getDutySummaryStatus({ data_status: 'unknown', periods: [{ opens_at: '08:00:00', closes_at: '20:00:00' }] }, 'today').status).toBe('closed');
     });
   });
 });

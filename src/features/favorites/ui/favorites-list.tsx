@@ -28,6 +28,9 @@ export function FavoritesList() {
     (id): id is string =>
       typeof id === "string" && /^[A-Za-z0-9_-]{21}[AQgw]$/.test(id),
   );
+  const legacyFavoriteCount = favoriteIds.filter(
+    (id) => typeof id === "number" || (typeof id === "string" && !/^[A-Za-z0-9_-]{21}[AQgw]$/.test(id)),
+  ).length;
   const pharmacyQueries = useQueries({
     queries: publicFavoriteIds.map((id) => ({
       queryKey: ["product-pharmacy", id],
@@ -58,6 +61,24 @@ export function FavoritesList() {
           <p className="text-xs text-muted-foreground">
             Πατήστε το εικονίδιο καρδιάς σε ένα φαρμακείο για να το προσθέσετε
             στα αγαπημένα σας.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (publicFavoriteIds.length === 0 && legacyFavoriteCount > 0) {
+    return (
+      <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-6 text-center">
+        <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+          <Heart className="size-6 text-muted-foreground" />
+        </div>
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-foreground">
+            Τα παλιά αγαπημένα χρειάζονται ενημέρωση
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Οι παλιές αναγνωρίσεις δεν μπορούν να χρησιμοποιηθούν από το ασφαλές API. Αναζητήστε ξανά το φαρμακείο για να το προσθέσετε.
           </p>
         </div>
       </div>
@@ -210,6 +231,12 @@ export function FavoritesList() {
           <RefreshCw className="size-4 text-muted-foreground animate-spin" />
         )}
       </div>
+
+      {legacyFavoriteCount > 0 && (
+        <p className="mb-3 rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
+          {legacyFavoriteCount} παλιό αγαπημένο δεν εμφανίζεται μέχρι να προστεθεί ξανά με τη νέα αναγνώριση.
+        </p>
+      )}
 
       <div className="flex flex-col gap-3 pb-2">
         {pharmacies.map((pharmacy) => (

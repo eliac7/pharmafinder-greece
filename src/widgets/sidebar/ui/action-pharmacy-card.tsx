@@ -10,30 +10,23 @@ import { useRevealWithChallenge } from "@/features/pharmacy-detail/model/use-rev
 import { DetailChallenge } from "@/features/pharmacy-detail/ui/detail-challenge";
 import {
   formatPharmacyHours,
-  getPharmacyStatus,
+  getDutySummaryStatus,
   revealProductHandle,
   type ActionPharmacyListItem,
-  type PharmacyHour,
   type TimeFilter,
 } from "@/entities/pharmacy";
 import { cn } from "@/shared";
 import { useMapStore } from "@/shared/model/use-map-store";
 import { Badge } from "@/shared/ui/badge";
 
-function toPharmacyHours(item: ActionPharmacyListItem): PharmacyHour[] {
-  return item.duty_summary.periods.map((period) => ({
-    open_time: period.opens_at,
-    close_time: period.closes_at,
-    date: null,
-  }));
-}
-
 export function ActionPharmacyCard({
   item,
   timeFilter,
+  onPrimaryAction,
 }: {
   item: ActionPharmacyListItem;
   timeFilter: TimeFilter;
+  onPrimaryAction?: () => void;
 }) {
   const flyTo = useMapStore((state) => state.flyTo);
   const setProductPopupTarget = useMapStore((state) => state.setProductPopupTarget);
@@ -44,14 +37,14 @@ export function ActionPharmacyCard({
     verifyChallenge,
   } = useRevealWithChallenge();
   const [isOpening, setIsOpening] = useState(false);
-  const dataHours = toPharmacyHours(item);
-  const { status, statusColor, minutesUntilClose } = getPharmacyStatus(
-    dataHours,
-    null,
-    null,
-    timeFilter,
-  );
-  const isOpen = status === "open" || status === "scheduled";
+  const dataHours = item.duty_summary.periods.map((period) => ({
+    open_time: period.opens_at,
+    close_time: period.closes_at,
+    date: period.date ?? null,
+  }));
+  const { status, statusColor, minutesUntilClose } = getDutySummaryStatus(item.duty_summary, timeFilter);
+  const hasConfirmedDuty = item.duty_summary.data_status === "fresh" || item.duty_summary.data_status === "partial";
+  const isOpen = hasConfirmedDuty && (status === "open" || status === "scheduled");
   const isClosingSoon = status === "closing-soon";
   const isScheduled = status === "scheduled";
 
@@ -73,6 +66,7 @@ export function ActionPharmacyCard({
 
   const openDetails = async () => {
     if (isOpening) return;
+    onPrimaryAction?.();
     setIsOpening(true);
     try {
       const detail = await reveal(item.handle);
@@ -131,7 +125,9 @@ export function ActionPharmacyCard({
                       statusColor,
                     )}
                   >
-                    {isClosingSoon
+                    {!hasConfirmedDuty
+                      ? "Η κατάσταση δεν έχει επιβεβαιωθεί"
+                      : isClosingSoon
                       ? `Κλείνει σε ${minutesUntilClose}'`
                       : isOpen
                         ? "Ανοιχτό"
