@@ -1,6 +1,6 @@
 "use client";
 
-import { Cross, Heart } from "lucide-react";
+import { Cross, Heart, Loader2 } from "lucide-react";
 import { useFavorites } from "@/features/favorites";
 import { cn } from "@/shared";
 
@@ -9,9 +9,11 @@ type ProductMarkerStatus = "open" | "closing-soon" | "closed" | "scheduled";
 export function ProductActionMarkerContent({
   publicId,
   status,
+  isLoading = false,
 }: {
   publicId?: string | null;
   status: ProductMarkerStatus;
+  isLoading?: boolean;
 }) {
   const { favoriteIds } = useFavorites();
   const isFavorite = Boolean(publicId && favoriteIds.includes(publicId));
@@ -21,6 +23,7 @@ export function ProductActionMarkerContent({
   return (
     <div className="group relative flex cursor-pointer flex-col items-center">
       <div
+        aria-busy={isLoading}
         className={cn(
           "relative flex items-center justify-center rounded-full border-2 p-2.5 transition-transform hover:scale-110",
           isFavorite
@@ -33,15 +36,26 @@ export function ProductActionMarkerContent({
             : isOpen
               ? "bg-primary text-primary-foreground shadow-[0_0_15px_hsl(166_18%_73%/0.6)]"
               : "bg-muted text-muted-foreground shadow-md",
+          isLoading && "opacity-80",
         )}
       >
-        <Cross className="size-6" />
-        {isFavorite && <Heart className="absolute -top-1 -right-1 size-3.5 fill-rose-500 text-rose-500" />}
+        {isLoading ? (
+          <Loader2 className="size-6 animate-spin" aria-hidden="true" />
+        ) : (
+          <Cross className="size-6" />
+        )}
+        {isFavorite && !isLoading && (
+          <Heart className="absolute -top-1 -right-1 size-3.5 fill-rose-500 text-rose-500" />
+        )}
       </div>
       <div
         className={cn(
           "-mt-0.5 h-3 w-1",
-          isClosingSoon ? "bg-amber-500/60" : isOpen ? "bg-primary/60" : "bg-muted/60",
+          isClosingSoon
+            ? "bg-amber-500/60"
+            : isOpen
+              ? "bg-primary/60"
+              : "bg-muted/60",
         )}
       />
     </div>
