@@ -41,7 +41,13 @@ describe('EfimeriesTimePage', () => {
   };
 
   const mockPharmacies = [
-    { id: 1, name: 'Pharmacy A', lat: 37, lng: 23},
+    {
+      public_id: 'jVLkgJjOTbik43IeIBvHcg',
+      canonical_slug: 'pharmacy-a-peiraias',
+      name: 'Pharmacy A',
+      lat: 37,
+      lng: 23,
+    },
   ];
 
   beforeEach(() => {

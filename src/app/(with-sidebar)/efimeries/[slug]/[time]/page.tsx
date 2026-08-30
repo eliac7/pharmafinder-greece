@@ -1,5 +1,6 @@
 import { cityApi } from "@/entities/city";
 import { pharmacyApi, type TimeFilter } from "@/entities/pharmacy";
+import { getPharmacyCanonicalPath } from "@/entities/pharmacy/lib/public-url";
 import {
   buildCanonicalUrl,
   buildSeoDescription,
@@ -113,20 +114,8 @@ export default async function EfimeriesTimePage({ params }: Props) {
       "@type": "ListItem",
       position: index + 1,
       item: {
-        "@type": "Pharmacy",
         name: pharmacy.name,
-        telephone: pharmacy.phone,
-        address: {
-          "@type": "PostalAddress",
-          streetAddress: pharmacy.address,
-          addressLocality: cityRes.data.name,
-          addressCountry: "GR",
-        },
-        geo: {
-          "@type": "GeoCoordinates",
-          latitude: pharmacy.latitude,
-          longitude: pharmacy.longitude,
-        },
+        url: `${process.env.NEXT_PUBLIC_APP_URL}${getPharmacyCanonicalPath(pharmacy)}`,
       },
     })),
   };

@@ -5,23 +5,73 @@ import {
 } from "../model/types";
 import { getAthensDateTimeParts } from "@/shared/lib/formatters";
 
+export interface DutySummaryLike {
+  data_status: "fresh" | "partial" | "stale" | "unknown";
+  periods: Array<{
+    opens_at: string;
+    closes_at: string;
+    date?: string | null;
+  }>;
+}
+
+export function dutyPeriodsToPharmacyHours(
+  periods: DutySummaryLike["periods"],
+): PharmacyHour[] {
+  return periods.map((period) => ({
+    open_time: period.opens_at,
+    close_time: period.closes_at,
+    date: period.date ?? null,
+  }));
+}
+
 /**
  * Format pharmacy hours for display
  * @param hours - Array of operating hour slots
- * @returns Formatted string like "00:00 - 08:00" or null if no hours
+ * @returns Formatted string like "00:00 - 08:00" or null if no hours.
+ * Slots that run past midnight (close 23:59, next opens 00:00) are merged
+ * into a single range annotated with "(επόμενης)".
  */
 export function formatPharmacyHours(hours: PharmacyHour[]): string | null {
   if (!hours || hours.length === 0) return null;
 
-  return hours
-    .flatMap((slot) => {
-      if (!slot.open_time || !slot.close_time) return [];
-      // Remove seconds from time format (HH:MM:SS -> HH:MM)
-      const openTime = slot.open_time.slice(0, 5);
-      const closeTime = slot.close_time.slice(0, 5);
-      return [`${openTime} - ${closeTime}`];
-    })
-    .join(", ");
+  type Part = { text: string; openTime: string; closeTime: string; date: string | null };
+  const parts: Part[] = [];
+
+  for (const slot of hours) {
+    if (!slot.open_time || !slot.close_time) continue;
+    // Remove seconds from time format (HH:MM:SS -> HH:MM)
+    const openTime = slot.open_time.slice(0, 5);
+    const closeTime = slot.close_time.slice(0, 5);
+
+    const previous = parts[parts.length - 1];
+    const continuesOvernight =
+      previous !== undefined &&
+      previous.closeTime === "23:59" &&
+      openTime === "00:00" &&
+      (previous.date == null ||
+        slot.date == null ||
+        isNextDay(previous.date, slot.date));
+
+    if (continuesOvernight) {
+      previous.text = `${previous.openTime} - ${closeTime} (επόμενης)`;
+      previous.closeTime = closeTime;
+      previous.date = slot.date;
+    } else {
+      parts.push({ text: `${openTime} - ${closeTime}`, openTime, closeTime, date: slot.date });
+    }
+  }
+
+  if (parts.length === 0) return null;
+  return parts.map((part) => part.text).join(", ");
+}
+
+function isNextDay(previousDate: string, nextDate: string): boolean {
+  const previous = new Date(`${previousDate}T00:00:00Z`);
+  const next = new Date(`${nextDate}T00:00:00Z`);
+  if (Number.isNaN(previous.getTime()) || Number.isNaN(next.getTime())) {
+    return false;
+  }
+  return next.getTime() - previous.getTime() === 24 * 60 * 60 * 1000;
 }
 
 /**
@@ -44,7 +94,7 @@ export function getPharmacyStatus(
   hours: PharmacyHour[],
   openUntilTomorrow: boolean | null,
   nextDayCloseTime: string | null,
-  timeFilter: TimeFilter = "now"
+  timeFilter: TimeFilter = "now",
 ): PharmacyStatusResult {
   const CLOSED_COLOR = "bg-muted text-muted-foreground border border-border";
   const OPEN_COLOR =
@@ -169,4 +219,24 @@ export function getPharmacyStatus(
     closingTime: null,
     minutesUntilClose: null,
   };
+}
+
+/** Convert a bounded v1 duty summary into the existing status presentation. */
+export function getDutySummaryStatus(
+  summary: DutySummaryLike | null | undefined,
+  timeFilter: TimeFilter = "now",
+): PharmacyStatusResult {
+  if (
+    !summary ||
+    (summary.data_status !== "fresh" && summary.data_status !== "partial")
+  ) {
+    return getPharmacyStatus([], null, null, timeFilter);
+  }
+
+  return getPharmacyStatus(
+    dutyPeriodsToPharmacyHours(summary.periods),
+    null,
+    null,
+    timeFilter,
+  );
 }

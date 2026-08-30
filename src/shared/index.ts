@@ -1,6 +1,5 @@
 // API
 export { fetchAPI } from "./api/base";
-export { searchApi } from "./api/search.api";
 
 // Lib
 export * from "./lib/date";

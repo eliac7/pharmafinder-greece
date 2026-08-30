@@ -6,12 +6,11 @@ import { UserLocationMarker } from "./user-location-marker";
 import { PharmacyMarkers } from "./pharmacy-markers";
 import { MapUpdater } from "./map-updater";
 import { ManualLocationAdjuster } from "./manual-location-adjuster";
-import { MapLoadingPill } from "./map-loading-pill";
 import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
-import { useNearbyPharmacies } from "@/features/find-pharmacies";
 import type MapLibreGL from "maplibre-gl";
-import { useState } from "react";
-import { HomeViewportPharmacies } from "./home-viewport-pharmacies";
+import { useEffect, useState } from "react";
+import { ProductActionViewport } from "./product-action-viewport";
+import { useMapStore } from "@/shared/model/use-map-store";
 
 interface MapWithControlsProps {
   center?: [number, number];
@@ -36,15 +35,24 @@ export function MapWithControls({
   citySlug,
 }: MapWithControlsProps) {
   const [isAdjusting, setIsAdjusting] = useState(false);
-  const { isFetching } = useNearbyPharmacies();
+  const setProductPopupTarget = useMapStore((state) => state.setProductPopupTarget);
+  const setMapActive = useMapStore((state) => state.setMapActive);
   const isHomeMap =
     citySlug === undefined &&
     pharmacies === undefined &&
     timeFilter === undefined;
 
+  useEffect(() => {
+    setMapActive(true);
+    return () => setMapActive(false);
+  }, [setMapActive]);
+
+  useEffect(() => {
+    setProductPopupTarget(null);
+  }, [citySlug, isHomeMap, setProductPopupTarget, timeFilter]);
+
   return (
     <div className="relative w-full h-full">
-      <MapLoadingPill isLoading={!isHomeMap && isFetching} />
       <Map
         center={center}
         zoom={zoom}
@@ -65,12 +73,11 @@ export function MapWithControls({
         <UserLocationMarker />
         {!isHomeMap ? (
           <PharmacyMarkers
-            pharmacies={pharmacies}
             timeFilter={timeFilter}
             citySlug={citySlug}
           />
         ) : (
-          <HomeViewportPharmacies />
+          <ProductActionViewport />
         )}
         <MapControls
           isAdjusting={isAdjusting}

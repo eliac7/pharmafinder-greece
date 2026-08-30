@@ -5,6 +5,12 @@ export const RADIUS_OPTIONS = [2, 5, 10, 20] as const;
 export type RadiusOption = (typeof RADIUS_OPTIONS)[number];
 export const DEFAULT_RADIUS: RadiusOption = 2;
 
+export function normalizeRadius(value: number | null | undefined): RadiusOption {
+  return RADIUS_OPTIONS.includes(value as RadiusOption)
+    ? (value as RadiusOption)
+    : DEFAULT_RADIUS;
+}
+
 export interface ViewportBounds {
   west: number;
   south: number;
@@ -31,7 +37,10 @@ export interface PharmacyHour {
  * Basic pharmacy info (used in search results, nearby pharmacies)
  */
 export interface PharmacyBasic {
-  id: number;
+  /** Transitional only: present when the frontend is deployed before Phase-1 backend cutover. */
+  id?: number;
+  public_id?: string | null;
+  canonical_slug?: string | null;
   name: string;
   address: string;
   city: string;
@@ -47,7 +56,10 @@ export interface PharmacyBasic {
  * Full pharmacy with hours (used in city duty lists)
  */
 export interface Pharmacy {
-  id: number;
+  /** Transitional only: present when the frontend is deployed before Phase-1 backend cutover. */
+  id?: number;
+  public_id?: string | null;
+  canonical_slug?: string | null;
   name: string;
   address: string;
   city: string;
@@ -81,6 +93,7 @@ export interface PharmacyDutyStatus {
 }
 
 export interface PharmacySitemapItem {
-  id: number;
-  updated_at?: string;
+  public_id: string;
+  canonical_slug: string;
+  public_content_updated_at?: string | null;
 }

@@ -13,7 +13,7 @@ let mockRadius: number;
 let mockFlyToTarget: {
   center: [number, number];
   zoom?: number;
-  pharmacyId?: number;
+  pharmacyId?: string;
 } | null;
 
 const mockClearFlyToTarget = jest.fn(() => {
@@ -167,7 +167,7 @@ describe("MapUpdater", () => {
     mockFlyToTarget = {
       center: [22.43, 38.91],
       zoom: 16,
-      pharmacyId: 42,
+      pharmacyId: "jVLkgJjOTbik43IeIBvHcg",
     };
 
     rerender(

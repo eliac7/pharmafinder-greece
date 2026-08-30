@@ -3,13 +3,23 @@
 import { Heart, RefreshCw } from "lucide-react";
 import { useQueries } from "@tanstack/react-query";
 import { useQueryState, parseAsStringLiteral } from "nuqs";
-import { pharmacyApi } from "@/entities/pharmacy/api/pharmacy.api";
 import {
+  actionDetailToPharmacy,
+  completeProductChallenge,
+  getProductDetail,
   PharmacyCard,
+  getPharmacyReference,
+  isPublicPharmacyId,
   TIME_OPTIONS,
   type TimeFilter,
   getPharmacyStatus,
 } from "@/entities/pharmacy";
+import type { Pharmacy } from "@/entities/pharmacy";
+import {
+  getChallengeRequestToken,
+  isChallengeRequired,
+  RevealChallengeBanner,
+} from "@/features/pharmacy-detail";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { Button } from "@/shared/ui/button";
@@ -19,15 +29,18 @@ export function FavoritesList() {
   const { favoriteIds } = useFavoritesStore();
   const [timeFilter] = useQueryState<TimeFilter>(
     "time",
-    parseAsStringLiteral(TIME_OPTIONS).withDefault("now")
+    parseAsStringLiteral(TIME_OPTIONS).withDefault("now"),
   );
 
+  const publicFavoriteIds = favoriteIds.filter(isPublicPharmacyId);
+  const legacyFavoriteCount = favoriteIds.length - publicFavoriteIds.length;
   const pharmacyQueries = useQueries({
-    queries: favoriteIds.map((id) => ({
-      queryKey: ["pharmacy", id],
-      queryFn: () => pharmacyApi.getPharmacyDetails(id),
+    queries: publicFavoriteIds.map((id) => ({
+      queryKey: ["product-pharmacy", id],
+      queryFn: () => getProductDetail(id),
       staleTime: 1000 * 60 * 5,
       refetchInterval: 1000 * 60 * 5,
+      retry: false,
     })),
   });
 
@@ -35,8 +48,21 @@ export function FavoritesList() {
   const isFetching = pharmacyQueries.some((q) => q.isFetching);
   const hasError = pharmacyQueries.some((q) => q.isError);
 
+  const challengeQuery = pharmacyQueries.find((q) =>
+    isChallengeRequired(q.error),
+  );
+  const challengeRequestToken = challengeQuery
+    ? getChallengeRequestToken(challengeQuery.error)
+    : null;
+
   const refetchAll = () => {
     pharmacyQueries.forEach((q) => q.refetch());
+  };
+
+  const handleChallengeVerified = async (providerToken: string) => {
+    if (!challengeRequestToken) return;
+    await completeProductChallenge(challengeRequestToken, providerToken);
+    await Promise.all(pharmacyQueries.map((q) => q.refetch()));
   };
 
   if (favoriteIds.length === 0) {
@@ -58,6 +84,25 @@ export function FavoritesList() {
     );
   }
 
+  if (publicFavoriteIds.length === 0 && legacyFavoriteCount > 0) {
+    return (
+      <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-6 text-center">
+        <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+          <Heart className="size-6 text-muted-foreground" />
+        </div>
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-foreground">
+            Τα παλιά αγαπημένα χρειάζονται ενημέρωση
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Οι παλιές αναγνωρίσεις δεν μπορούν να χρησιμοποιηθούν από το ασφαλές
+            API. Αναζητήστε ξανά το φαρμακείο για να το προσθέσετε.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="flex flex-col gap-3 py-2">
@@ -71,6 +116,15 @@ export function FavoritesList() {
           </div>
         ))}
       </div>
+    );
+  }
+
+  if (hasError && challengeRequestToken) {
+    return (
+      <RevealChallengeBanner
+        challenge={challengeRequestToken}
+        onVerified={handleChallengeVerified}
+      />
     );
   }
 
@@ -94,27 +148,26 @@ export function FavoritesList() {
     );
   }
 
-  const pharmacies = pharmacyQueries.reduce<NonNullable<(typeof pharmacyQueries)[number]["data"]>[]>(
-    (acc, query) => {
-      const pharmacy = query.data;
-      if (!pharmacy) return acc;
+  const pharmacies = pharmacyQueries.reduce<Pharmacy[]>((acc, query) => {
+    const detail = query.data;
+    if (!detail) return acc;
 
-      const statusResult = getPharmacyStatus(
-        pharmacy.data_hours,
-        pharmacy.open_until_tomorrow ?? false,
-        pharmacy.next_day_close_time ?? null,
-        timeFilter
-      );
-      if (statusResult.status !== "closed") {
-        acc.push(pharmacy);
-      }
+    const pharmacy = actionDetailToPharmacy(detail);
 
-      return acc;
-    },
-    []
-  );
+    const statusResult = getPharmacyStatus(
+      pharmacy.data_hours,
+      pharmacy.open_until_tomorrow ?? false,
+      pharmacy.next_day_close_time ?? null,
+      timeFilter,
+    );
+    if (statusResult.status !== "closed") {
+      acc.push(pharmacy);
+    }
 
-  if (favoriteIds.length > 0 && pharmacies.length === 0 && !isLoading) {
+    return acc;
+  }, []);
+
+  if (publicFavoriteIds.length > 0 && pharmacies.length === 0 && !isLoading) {
     return (
       <ScrollArea className="flex-1">
         <div className="flex items-center justify-between py-3 px-1">
@@ -127,8 +180,8 @@ export function FavoritesList() {
                 0 εφημερεύοντα
               </span>
               <span className="text-xs text-muted-foreground">
-                από {favoriteIds.length}{" "}
-                {favoriteIds.length === 1 ? "αγαπημένο" : "αγαπημένα"}
+                από {publicFavoriteIds.length}{" "}
+                {publicFavoriteIds.length === 1 ? "αγαπημένο" : "αγαπημένα"}
               </span>
             </div>
           </div>
@@ -185,10 +238,17 @@ export function FavoritesList() {
         )}
       </div>
 
+      {legacyFavoriteCount > 0 && (
+        <p className="mb-3 rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground">
+          {legacyFavoriteCount} παλιό αγαπημένο δεν εμφανίζεται μέχρι να
+          προστεθεί ξανά με τη νέα αναγνώριση.
+        </p>
+      )}
+
       <div className="flex flex-col gap-3 pb-2">
         {pharmacies.map((pharmacy) => (
           <PharmacyCard
-            key={pharmacy.id}
+            key={getPharmacyReference(pharmacy)}
             pharmacy={pharmacy}
             timeFilter={timeFilter}
           />

@@ -14,7 +14,7 @@ import { Flag } from "lucide-react";
 import { ReportPharmacyForm } from "@/features/pharmacy-detail";
 
 interface ReportDialogProps {
-  pharmacyId: number;
+  pharmacyId: string;
   pharmacyName: string;
 }
 

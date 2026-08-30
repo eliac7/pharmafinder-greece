@@ -18,7 +18,10 @@ export function ManualLocationAdjuster({
   const { setLocation } = useLocationStore();
   const isAdjusting = controlledAdjusting ?? false;
   const onAdjustChangeRef = useRef(onAdjustChange);
-  onAdjustChangeRef.current = onAdjustChange;
+
+  useEffect(() => {
+    onAdjustChangeRef.current = onAdjustChange;
+  });
   const previousInteractions = useRef({
     dragPan: true,
     dragRotate: true,

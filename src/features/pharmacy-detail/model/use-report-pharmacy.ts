@@ -1,15 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { pharmacyApi } from "@/entities/pharmacy/api/pharmacy.api";
+import {
+  reportProduct,
+} from "@/entities/pharmacy";
 
 interface ReportData {
-  report_type: string;
+  report_type: "closed" | "wrong_coords" | "wrong_info" | "other";
   description: string;
   turnstile_token: string;
 }
 
 interface ReportVariables {
-  pharmacyId: number;
+  pharmacyId: string;
   data: ReportData;
 }
 
@@ -18,7 +20,7 @@ export function useReportPharmacy() {
 
   return useMutation({
     mutationFn: ({ pharmacyId, data }: ReportVariables) =>
-      pharmacyApi.reportPharmacy(pharmacyId, data),
+      reportProduct(pharmacyId, data),
     onSuccess: (_data, { pharmacyId }) => {
       queryClient.invalidateQueries({ queryKey: ["pharmacy", pharmacyId] });
     },

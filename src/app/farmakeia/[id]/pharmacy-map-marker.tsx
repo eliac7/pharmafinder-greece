@@ -5,7 +5,7 @@ import { useFavorites } from "@/features/favorites";
 import { cn } from "@/shared";
 
 interface PharmacyMapMarkerContentProps {
-  pharmacyId: number;
+  pharmacyId: string;
   pharmacyName: string;
 }
 

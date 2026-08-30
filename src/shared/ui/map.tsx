@@ -41,7 +41,9 @@ function useMap() {
 
 function useLatestRef<T>(value: T) {
   const ref = useRef(value);
-  ref.current = value;
+  useEffect(() => {
+    ref.current = value;
+  });
   return ref;
 }
 
@@ -55,8 +57,7 @@ function useMapLayerMouseEvent(
   listener: (event: MapLibreGL.MapLayerMouseEvent) => void,
   enabled = true
 ) {
-  const listenerRef = useRef(listener);
-  listenerRef.current = listener;
+  const listenerRef = useLatestRef(listener);
 
   useEffect(() => {
     if (!isLoaded || !map || !enabled) return;
@@ -70,7 +71,7 @@ function useMapLayerMouseEvent(
     return () => {
       map.off(eventName, layerId, stableListener);
     };
-  }, [enabled, eventName, isLoaded, layerId, map]);
+  }, [enabled, eventName, isLoaded, layerId, listenerRef, map]);
 }
 
 /**
@@ -392,50 +393,53 @@ function MapMarker({
     onDrag,
     onDragEnd,
   });
-  const initialMarkerOptionsRef = useRef(markerOptions);
-  const initialDraggableRef = useRef(draggable);
-  const initialCoordinatesRef = useRef<[number, number]>([longitude, latitude]);
 
-  const marker = useMemo(() => {
-    const markerInstance = new MapLibreGL.Marker({
-      ...initialMarkerOptionsRef.current,
-      element: document.createElement("div"),
-      draggable: initialDraggableRef.current,
-    }).setLngLat(initialCoordinatesRef.current);
+  const [marker] = useState(
+    () =>
+      new MapLibreGL.Marker({
+        ...markerOptions,
+        element: document.createElement("div"),
+        draggable,
+      }).setLngLat([longitude, latitude])
+  );
 
+  useEffect(() => {
     const handleClick = (e: MouseEvent) => handlersRef.current.onClick?.(e);
     const handleMouseEnter = (e: MouseEvent) =>
       handlersRef.current.onMouseEnter?.(e);
     const handleMouseLeave = (e: MouseEvent) =>
       handlersRef.current.onMouseLeave?.(e);
 
-    markerInstance.getElement()?.addEventListener("click", handleClick);
-    markerInstance
-      .getElement()
-      ?.addEventListener("mouseenter", handleMouseEnter);
-    markerInstance
-      .getElement()
-      ?.addEventListener("mouseleave", handleMouseLeave);
-
     const handleDragStart = () => {
-      const lngLat = markerInstance.getLngLat();
+      const lngLat = marker.getLngLat();
       handlersRef.current.onDragStart?.({ lng: lngLat.lng, lat: lngLat.lat });
     };
     const handleDrag = () => {
-      const lngLat = markerInstance.getLngLat();
+      const lngLat = marker.getLngLat();
       handlersRef.current.onDrag?.({ lng: lngLat.lng, lat: lngLat.lat });
     };
     const handleDragEnd = () => {
-      const lngLat = markerInstance.getLngLat();
+      const lngLat = marker.getLngLat();
       handlersRef.current.onDragEnd?.({ lng: lngLat.lng, lat: lngLat.lat });
     };
 
-    markerInstance.on("dragstart", handleDragStart);
-    markerInstance.on("drag", handleDrag);
-    markerInstance.on("dragend", handleDragEnd);
+    const element = marker.getElement();
+    element?.addEventListener("click", handleClick);
+    element?.addEventListener("mouseenter", handleMouseEnter);
+    element?.addEventListener("mouseleave", handleMouseLeave);
+    marker.on("dragstart", handleDragStart);
+    marker.on("drag", handleDrag);
+    marker.on("dragend", handleDragEnd);
 
-    return markerInstance;
-  }, [handlersRef]);
+    return () => {
+      element?.removeEventListener("click", handleClick);
+      element?.removeEventListener("mouseenter", handleMouseEnter);
+      element?.removeEventListener("mouseleave", handleMouseLeave);
+      marker.off("dragstart", handleDragStart);
+      marker.off("drag", handleDrag);
+      marker.off("dragend", handleDragEnd);
+    };
+  }, [marker, handlersRef]);
 
   useEffect(() => {
     if (!map) return;
@@ -447,34 +451,46 @@ function MapMarker({
     };
   }, [map, marker]);
 
-  if (
-    marker.getLngLat().lng !== longitude ||
-    marker.getLngLat().lat !== latitude
-  ) {
-    marker.setLngLat([longitude, latitude]);
-  }
-  if (marker.isDraggable() !== draggable) {
-    marker.setDraggable(draggable);
-  }
+  const { offset = [0, 0], rotation, rotationAlignment, pitchAlignment } = markerOptions;
 
-  const currentOffset = marker.getOffset();
-  const newOffset = markerOptions.offset ?? [0, 0];
-  const [newOffsetX, newOffsetY] = Array.isArray(newOffset)
-    ? newOffset
-    : [newOffset.x, newOffset.y];
-  if (currentOffset.x !== newOffsetX || currentOffset.y !== newOffsetY) {
-    marker.setOffset(newOffset);
-  }
+  useEffect(() => {
+    if (
+      marker.getLngLat().lng !== longitude ||
+      marker.getLngLat().lat !== latitude
+    ) {
+      marker.setLngLat([longitude, latitude]);
+    }
+    if (marker.isDraggable() !== draggable) {
+      marker.setDraggable(draggable);
+    }
 
-  if (marker.getRotation() !== markerOptions.rotation) {
-    marker.setRotation(markerOptions.rotation ?? 0);
-  }
-  if (marker.getRotationAlignment() !== markerOptions.rotationAlignment) {
-    marker.setRotationAlignment(markerOptions.rotationAlignment ?? "auto");
-  }
-  if (marker.getPitchAlignment() !== markerOptions.pitchAlignment) {
-    marker.setPitchAlignment(markerOptions.pitchAlignment ?? "auto");
-  }
+    const currentOffset = marker.getOffset();
+    const [newOffsetX, newOffsetY] = Array.isArray(offset)
+      ? offset
+      : [offset.x, offset.y];
+    if (currentOffset.x !== newOffsetX || currentOffset.y !== newOffsetY) {
+      marker.setOffset(offset);
+    }
+
+    if (marker.getRotation() !== rotation) {
+      marker.setRotation(rotation ?? 0);
+    }
+    if (marker.getRotationAlignment() !== rotationAlignment) {
+      marker.setRotationAlignment(rotationAlignment ?? "auto");
+    }
+    if (marker.getPitchAlignment() !== pitchAlignment) {
+      marker.setPitchAlignment(pitchAlignment ?? "auto");
+    }
+  }, [
+    marker,
+    longitude,
+    latitude,
+    draggable,
+    offset,
+    rotation,
+    rotationAlignment,
+    pitchAlignment,
+  ]);
 
   const markerContextValue = useMemo(() => ({ marker, map }), [marker, map]);
 
@@ -529,20 +545,16 @@ function MarkerPopup({
 }: MarkerPopupProps) {
   const { marker, map } = useMarkerContext();
   const container = useMemo(() => document.createElement("div"), []);
-  const initialPopupOptionsRef = useRef(popupOptions);
-  const prevPopupOptions = useRef(popupOptions);
 
-  const popup = useMemo(() => {
-    const popupInstance = new MapLibreGL.Popup({
+  const [popup] = useState(() =>
+    new MapLibreGL.Popup({
       offset: 16,
-      ...initialPopupOptionsRef.current,
+      ...popupOptions,
       closeButton: false,
     })
       .setMaxWidth("none")
-      .setDOMContent(container);
-
-    return popupInstance;
-  }, [container]);
+      .setDOMContent(container)
+  );
 
   useEffect(() => {
     if (!map) return;
@@ -561,18 +573,15 @@ function MarkerPopup({
     }
   }, [forceOpen, map, popup]);
 
-  if (popup.isOpen()) {
-    const prev = prevPopupOptions.current;
+  const { offset, maxWidth } = popupOptions;
 
-    if (prev.offset !== popupOptions.offset) {
-      popup.setOffset(popupOptions.offset ?? 16);
+  useEffect(() => {
+    if (!popup.isOpen()) return;
+    popup.setOffset(offset ?? 16);
+    if (maxWidth) {
+      popup.setMaxWidth(maxWidth);
     }
-    if (prev.maxWidth !== popupOptions.maxWidth && popupOptions.maxWidth) {
-      popup.setMaxWidth(popupOptions.maxWidth ?? "none");
-    }
-
-    prevPopupOptions.current = popupOptions;
-  }
+  }, [popup, offset, maxWidth]);
 
   const handleClose = () => popup.remove();
 
@@ -614,19 +623,15 @@ function MarkerTooltip({
 }: MarkerTooltipProps) {
   const { marker, map } = useMarkerContext();
   const container = useMemo(() => document.createElement("div"), []);
-  const initialTooltipOptionsRef = useRef(popupOptions);
-  const prevTooltipOptions = useRef(popupOptions);
 
-  const tooltip = useMemo(() => {
-    const tooltipInstance = new MapLibreGL.Popup({
+  const [tooltip] = useState(() =>
+    new MapLibreGL.Popup({
       offset: 16,
-      ...initialTooltipOptionsRef.current,
+      ...popupOptions,
       closeOnClick: true,
       closeButton: false,
-    }).setMaxWidth("none");
-
-    return tooltipInstance;
-  }, []);
+    }).setMaxWidth("none")
+  );
 
   useEffect(() => {
     if (!map) return;
@@ -648,18 +653,15 @@ function MarkerTooltip({
     };
   }, [container, map, marker, tooltip]);
 
-  if (tooltip.isOpen()) {
-    const prev = prevTooltipOptions.current;
+  const { offset, maxWidth } = popupOptions;
 
-    if (prev.offset !== popupOptions.offset) {
-      tooltip.setOffset(popupOptions.offset ?? 16);
+  useEffect(() => {
+    if (!tooltip.isOpen()) return;
+    tooltip.setOffset(offset ?? 16);
+    if (maxWidth) {
+      tooltip.setMaxWidth(maxWidth);
     }
-    if (prev.maxWidth !== popupOptions.maxWidth && popupOptions.maxWidth) {
-      tooltip.setMaxWidth(popupOptions.maxWidth ?? "none");
-    }
-
-    prevTooltipOptions.current = popupOptions;
-  }
+  }, [tooltip, offset, maxWidth]);
 
   return createPortal(
     <div
@@ -944,22 +946,17 @@ function MapPopup({
 }: MapPopupProps) {
   const { map } = useMap();
   const onCloseRef = useLatestRef(onClose);
-  const initialPopupOptionsRef = useRef(popupOptions);
-  const initialCoordinatesRef = useRef<[number, number]>([longitude, latitude]);
-  const popupOptionsRef = useRef(popupOptions);
   const container = useMemo(() => document.createElement("div"), []);
 
-  const popup = useMemo(() => {
-    const popupInstance = new MapLibreGL.Popup({
+  const [popup] = useState(() =>
+    new MapLibreGL.Popup({
       offset: 16,
-      ...initialPopupOptionsRef.current,
+      ...popupOptions,
       closeButton: false,
     })
       .setMaxWidth("none")
-      .setLngLat(initialCoordinatesRef.current);
-
-    return popupInstance;
-  }, []);
+      .setLngLat([longitude, latitude])
+  );
 
   useEffect(() => {
     if (!map) return;
@@ -978,24 +975,21 @@ function MapPopup({
     };
   }, [container, map, onCloseRef, popup]);
 
-  if (popup.isOpen()) {
-    const prev = popupOptionsRef.current;
+  const { offset, maxWidth } = popupOptions;
 
-    if (
-      popup.getLngLat().lng !== longitude ||
-      popup.getLngLat().lat !== latitude
-    ) {
+  useEffect(() => {
+    if (!popup.isOpen()) return;
+
+    const lngLat = popup.getLngLat();
+    if (lngLat.lng !== longitude || lngLat.lat !== latitude) {
       popup.setLngLat([longitude, latitude]);
     }
 
-    if (prev.offset !== popupOptions.offset) {
-      popup.setOffset(popupOptions.offset ?? 16);
+    popup.setOffset(offset ?? 16);
+    if (maxWidth) {
+      popup.setMaxWidth(maxWidth);
     }
-    if (prev.maxWidth !== popupOptions.maxWidth && popupOptions.maxWidth) {
-      popup.setMaxWidth(popupOptions.maxWidth ?? "none");
-    }
-    popupOptionsRef.current = popupOptions;
-  }
+  }, [popup, longitude, latitude, offset, maxWidth]);
 
   const handleClose = () => {
     popup.remove();
@@ -1193,8 +1187,8 @@ function MapClusterLayer<
   const clusterLayerId = `clusters-${id}`;
   const clusterCountLayerId = `cluster-count-${id}`;
   const unclusteredLayerId = `unclustered-point-${id}`;
-  const onPointClickRef = useRef(onPointClick);
-  const onClusterClickRef = useRef(onClusterClick);
+  const onPointClickRef = useLatestRef(onPointClick);
+  const onClusterClickRef = useLatestRef(onClusterClick);
   const initialClusterConfigRef = useRef({
     data,
     clusterMaxZoom,
@@ -1203,8 +1197,6 @@ function MapClusterLayer<
     clusterThresholds,
     pointColor,
   });
-  onPointClickRef.current = onPointClick;
-  onClusterClickRef.current = onClusterClick;
 
   const stylePropsRef = useRef({
     clusterColors,
@@ -1470,7 +1462,7 @@ function MapHybridClusterLayer<
   const sourceId = `hybrid-cluster-source-${id}`;
   const clusterLayerId = `hybrid-clusters-${id}`;
   const clusterCountLayerId = `hybrid-cluster-count-${id}`;
-  const onClusterClickRef = useRef(onClusterClick);
+  const onClusterClickRef = useLatestRef(onClusterClick);
   const initialClusterConfigRef = useRef({
     data,
     clusterMaxZoom,
@@ -1479,7 +1471,6 @@ function MapHybridClusterLayer<
     clusterThresholds,
     clusterTextColor,
   });
-  onClusterClickRef.current = onClusterClick;
 
   const [unclusteredFeatures, setUnclusteredFeatures] = useState<
     GeoJSON.Feature<GeoJSON.Point, P>[]

@@ -6,6 +6,7 @@ const config: Config = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@marsidev/react-turnstile$': '<rootDir>/src/test/mocks/react-turnstile.tsx',
   },
   transform: {
     '^.+\.(ts|tsx)$': ['ts-jest', {

@@ -1,4 +1,5 @@
 import { pharmacyApi, getPharmacyStatus } from "@/entities/pharmacy";
+import { ApiError } from "@/shared/api/base";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import {
@@ -19,7 +20,13 @@ interface Props {
 
 export default async function Image({ params }: Props) {
   const { id } = await params;
-  const pharmacy = await pharmacyApi.getPharmacyDetails(Number(id));
+  let pharmacy;
+  try {
+    pharmacy = await pharmacyApi.getPharmacyDetails(id);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 410) return null;
+    throw error;
+  }
 
   if (!pharmacy || Object.keys(pharmacy).length === 0) {
     return null;

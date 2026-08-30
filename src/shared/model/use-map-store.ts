@@ -1,25 +1,38 @@
 import { create } from "zustand";
+import type { ActionPublicDetail } from "@/entities/pharmacy";
 
 interface FlyToTarget {
   center: [number, number];
   zoom?: number;
-  pharmacyId?: number;
+  pharmacyId?: string;
+}
+
+interface ProductPopupTarget {
+  detail: ActionPublicDetail;
+  center: [number, number];
+  timeFilter?: "now" | "today" | "tomorrow";
 }
 
 interface MapStore {
   flyToTarget: FlyToTarget | null;
-  popupTargetId: number | null;
-  selectedPharmacyId: number | null;
-  flyTo: (center: [number, number], zoom?: number, pharmacyId?: number) => void;
+  popupTargetId: string | null;
+  selectedPharmacyId: string | null;
+  productPopupTarget: ProductPopupTarget | null;
+  mapActive: boolean;
+  flyTo: (center: [number, number], zoom?: number, pharmacyId?: string) => void;
   clearFlyToTarget: () => void;
-  setPopupTargetId: (id: number | null) => void;
-  setSelectedPharmacyId: (id: number | null) => void;
+  setPopupTargetId: (id: string | null) => void;
+  setSelectedPharmacyId: (id: string | null) => void;
+  setProductPopupTarget: (target: ProductPopupTarget | null) => void;
+  setMapActive: (active: boolean) => void;
 }
 
 export const useMapStore = create<MapStore>((set) => ({
   flyToTarget: null,
   popupTargetId: null,
   selectedPharmacyId: null,
+  productPopupTarget: null,
+  mapActive: false,
   flyTo: (center, zoom, pharmacyId) =>
     set({ 
       flyToTarget: { center, zoom, pharmacyId },
@@ -28,4 +41,6 @@ export const useMapStore = create<MapStore>((set) => ({
   clearFlyToTarget: () => set({ flyToTarget: null }),
   setPopupTargetId: (id) => set({ popupTargetId: id }),
   setSelectedPharmacyId: (id) => set({ selectedPharmacyId: id }),
+  setProductPopupTarget: (target) => set({ productPopupTarget: target }),
+  setMapActive: (active) => set({ mapActive: active }),
 }));

@@ -8,6 +8,56 @@ const ENCRYPTION_SALT = process.env.ENCRYPTION_SALT || "";
 
 const IS_SERVER = typeof window === "undefined";
 
+export interface ApiProblem {
+  type?: string;
+  title?: string;
+  status?: number;
+  code?: string;
+  endpoint?: string;
+  limit?: number;
+  result_count_lower_bound?: number;
+  remediation?: { kind: string; suggested_radius_km?: number };
+  challenge?: { type?: string; request_token?: string | null };
+}
+
+export function parseApiProblem(payload: unknown): ApiProblem | undefined {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return undefined;
+  }
+  return payload as ApiProblem;
+}
+
+export class ApiError extends Error {
+  readonly status: number;
+  readonly problem?: ApiProblem;
+
+  constructor(status: number, statusText: string, problem?: ApiProblem) {
+    super(`API Error: ${status} ${statusText}`);
+    this.name = "ApiError";
+    this.status = status;
+    this.problem = problem;
+  }
+}
+
+export function getResultSetTooLargeProblem(
+  error: unknown,
+  endpoint?: "viewport" | "nearby"
+) {
+  if (
+    !(error instanceof ApiError) ||
+    error.status !== 422 ||
+    error.problem?.code !== "RESULT_SET_TOO_LARGE" ||
+    (endpoint && error.problem.endpoint !== endpoint)
+  ) {
+    return undefined;
+  }
+  return error.problem;
+}
+
+export function isResultSetTooLarge(error: unknown, endpoint?: "viewport" | "nearby") {
+  return getResultSetTooLargeProblem(error, endpoint) !== undefined;
+}
+
 export async function fetchAPI<T>(
   endpoint: string,
   options?: RequestInit
@@ -32,7 +82,14 @@ export async function fetchAPI<T>(
 
   if (!res.ok) {
     if (res.status === 404) return [] as unknown as T;
-    throw new Error(`API Error: ${res.status} ${res.statusText}`);
+    let problem: ApiProblem | undefined;
+    try {
+      const errorText = await res.text();
+        problem = errorText ? parseApiProblem(JSON.parse(errorText)) : undefined;
+    } catch {
+      problem = undefined;
+    }
+    throw new ApiError(res.status, res.statusText, problem);
   }
 
   const text = await res.text();

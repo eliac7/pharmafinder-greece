@@ -6,13 +6,25 @@ import { Turnstile } from "@marsidev/react-turnstile";
 import { useTheme } from "next-themes";
 import { Loader2, Send, CheckCircle } from "lucide-react";
 import { Button } from "@/shared/ui/button";
-import { Input } from "@/shared/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/shared/ui/dropdown-menu";
 
 import { cn } from "@/shared";
 import { useReportPharmacy } from "../model/use-report-pharmacy";
 
+const REPORT_TYPES = [
+  ["closed", "Το φαρμακείο είναι κλειστό"],
+  ["wrong_coords", "Λάθος τοποθεσία"],
+  ["wrong_info", "Λάθος πληροφορίες"],
+  ["other", "Άλλο"],
+] as const;
+
 interface ReportPharmacyFormProps {
-  pharmacyId: number;
+  pharmacyId: string;
   onSuccess?: () => void;
 }
 
@@ -21,7 +33,9 @@ export function ReportPharmacyForm({
   onSuccess,
 }: ReportPharmacyFormProps) {
   const { resolvedTheme } = useTheme();
-  const [reportType, setReportType] = useState("");
+  const [reportType, setReportType] = useState<
+    "" | "closed" | "wrong_coords" | "wrong_info" | "other"
+  >("");
   const [description, setDescription] = useState("");
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -31,7 +45,7 @@ export function ReportPharmacyForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!turnstileToken) return;
+    if (!turnstileToken || !reportType) return;
 
     mutate(
       {
@@ -79,19 +93,34 @@ export function ReportPharmacyForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <Input
-          aria-label="Τύπος προβλήματος"
-          placeholder="Τύπος προβλήματος (π.χ. Λάθος ωράριο)"
-          value={reportType}
-          onChange={(e) => setReportType(e.target.value)}
-          required
-          className="h-11 rounded-xl"
-        />
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            type="button"
+            aria-label="Τύπος προβλήματος"
+            className="flex h-11 w-full items-center justify-between rounded-xl border border-input bg-transparent px-3 text-left text-sm text-foreground outline-none transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {REPORT_TYPES.find(([value]) => value === reportType)?.[1] ??
+              "Επιλέξτε τύπο προβλήματος"}
+            <span aria-hidden="true" className="text-muted-foreground">⌄</span>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-72">
+            {REPORT_TYPES.map(([value, label]) => (
+              <DropdownMenuItem
+                key={value}
+                onSelect={() => setReportType(value)}
+                className="text-popover-foreground focus:bg-accent focus:text-accent-foreground"
+              >
+                {label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
         <textarea
           aria-label="Περιγραφή προβλήματος"
           placeholder="Περιγραφή (προαιρετικό)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          maxLength={500}
           className={cn(
             "flex min-h-[80px] w-full rounded-xl border border-input bg-transparent px-3 py-2 text-sm",
             "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",

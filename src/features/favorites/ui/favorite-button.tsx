@@ -6,7 +6,7 @@ import { Button } from "@/shared/ui/button";
 import { useFavorites } from "../model/use-favorites-store";
 
 interface FavoriteButtonProps {
-  pharmacyId: number;
+  pharmacyId: string;
   className?: string;
   size?: "sm" | "default";
 }
