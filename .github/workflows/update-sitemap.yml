@@ -20,17 +20,18 @@ jobs:
 
     steps:
       - name: Checkout frontend
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Checkout backend scripts
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
-          repository: eliac7/vrisko-pharmacy-api
+          repository: ${{ secrets.BACKEND_REPOSITORY }}
           ref: master
           path: backend
+          token: ${{ secrets.BACKEND_REPO_READ_TOKEN }}
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.13"
 

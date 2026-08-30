@@ -13,6 +13,9 @@ deploys the updated artifacts.
 
 The workflow requires these repository secrets:
 
+- `BACKEND_REPOSITORY` (private backend repository in `OWNER/REPOSITORY` form)
+- `BACKEND_REPO_READ_TOKEN` (fine-grained token with read-only Contents access
+  to that private backend repository)
 - `SITEMAP_PGHOST`
 - `SITEMAP_PGPORT`
 - `SITEMAP_PGDATABASE`
