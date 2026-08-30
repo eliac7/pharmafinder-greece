@@ -1,0 +1,101 @@
+name: Update sitemap artifacts
+
+on:
+  workflow_dispatch:
+  schedule:
+    # GitHub cron is UTC. These runs are after the 00:00/12:00 Europe/Athens
+    # scraper windows in both standard time and daylight-saving time.
+    - cron: "30 23,11 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-sitemap-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout frontend
+        uses: actions/checkout@v4
+
+      - name: Checkout backend scripts
+        uses: actions/checkout@v4
+        with:
+          repository: eliac7/vrisko-pharmacy-api
+          ref: master
+          path: backend
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install sitemap dependencies
+        run: python -m pip install --disable-pip-version-check sqlalchemy psycopg2-binary python-dotenv pytz
+
+      - name: Generate sitemap artifacts
+        working-directory: backend
+        env:
+          PGHOST: ${{ secrets.SITEMAP_PGHOST }}
+          PGPORT: ${{ secrets.SITEMAP_PGPORT }}
+          PGDATABASE: ${{ secrets.SITEMAP_PGDATABASE }}
+          PGUSER: ${{ secrets.SITEMAP_PGUSER }}
+          PGPASSWORD: ${{ secrets.SITEMAP_PGPASSWORD }}
+        run: |
+          python scripts/generate_sitemap_artifacts.py \
+            --output-dir ../public/sitemaps \
+            --base-url https://www.pharmafinder.app
+
+      - name: Validate generated XML
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree
+
+          sitemap_dir = Path("public/sitemaps")
+          index_path = sitemap_dir / "sitemap-index.xml"
+          required = [
+              index_path,
+              sitemap_dir / "sitemap-static.xml",
+              sitemap_dir / "sitemap-cities.xml",
+          ]
+          missing = [str(path) for path in required if not path.is_file()]
+          if missing:
+              raise SystemExit(f"Missing sitemap artifacts: {', '.join(missing)}")
+
+          namespace = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+          index = ElementTree.parse(index_path).getroot()
+          references = [
+              item.text
+              for item in index.findall("sm:sitemap/sm:loc", namespace)
+              if item.text
+          ]
+          if not references:
+              raise SystemExit("Sitemap index contains no references")
+
+          for path in sitemap_dir.glob("*.xml"):
+              ElementTree.parse(path)
+
+          pharmacy_files = list(sitemap_dir.glob("sitemap-pharmacies-*.xml"))
+          if not pharmacy_files:
+              raise SystemExit("No pharmacy sitemap chunks were generated")
+
+          print(f"Validated {len(references)} sitemap references and {len(pharmacy_files)} pharmacy chunks")
+          PY
+
+      - name: Commit changed sitemap artifacts
+        run: |
+          git add -A public/sitemaps
+          if git diff --cached --quiet -- public/sitemaps; then
+            echo "Sitemap artifacts are already up to date."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: refresh sitemap artifacts"
+          git push
