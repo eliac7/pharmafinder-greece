@@ -1,11 +1,11 @@
 "use client";
 
-import { Cross, Clock, Sparkles } from "lucide-react";
+import { Cross, Clock } from "lucide-react";
 import { FavoriteButton } from "@/features/favorites";
 import { PharmacyNavigationDialog } from "@/features/pharmacy-navigation";
 import { cn } from "@/shared";
 import { useMapStore } from "@/shared/model/use-map-store";
-import { Badge } from "@/shared/ui/badge";
+import { FrequentDutyBadge } from "@/entities/pharmacy/ui/frequent-duty-badge";
 import {
   getPharmacyStatus,
   getPharmacyReference,
@@ -103,15 +103,7 @@ export function PharmacyCard({
                 )}
               </div>
 
-              {pharmacy.is_frequent_duty && (
-                <Badge
-                  variant="secondary"
-                  className="w-fit gap-1 px-1.5 py-0 text-[10px] font-semibold bg-amber-500/15 text-amber-600 border-amber-500/30 shrink-0"
-                >
-                  <Sparkles className="size-2.5" />
-                  Συχνά
-                </Badge>
-              )}
+              {pharmacy.is_frequent_duty && <FrequentDutyBadge />}
             </div>
 
             {typeof pharmacy.distance_km === "number" &&

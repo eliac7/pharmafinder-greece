@@ -26,7 +26,7 @@ import {
   ReportDialog,
   SharePharmacyDialog,
 } from "@/features/pharmacy-detail";
-import { Badge } from "@/shared/ui/badge";
+import { FrequentDutyBadge } from "@/entities/pharmacy/ui/frequent-duty-badge";
 import { Button } from "@/shared/ui/button";
 import { Map, MapMarker, MarkerContent } from "@/shared/ui/map";
 import { BackButton } from "./back-button";
@@ -117,12 +117,7 @@ export function ProductPharmacyPage({ requestedPath }: { requestedPath: string }
 
         <main className="mx-auto w-full max-w-2xl space-y-8 px-6 pb-32 pt-2 md:pb-10">
           <div className="space-y-4">
-            {pharmacy.is_frequent_duty && (
-              <Badge variant="secondary" className="gap-1.5 bg-amber-100 text-amber-700 hover:bg-amber-100/80 dark:bg-amber-900/30 dark:text-amber-400 dark:hover:bg-amber-900/40">
-                <span aria-hidden="true">★</span>
-                ΣΥΧΝΑ ΕΦΗΜΕΡΕΥΟΝ
-              </Badge>
-            )}
+            {pharmacy.is_frequent_duty && <FrequentDutyBadge variant="full" />}
 
             <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-4xl">{pharmacy.name}</h1>
 

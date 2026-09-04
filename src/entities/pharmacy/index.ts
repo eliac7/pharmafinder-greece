@@ -50,6 +50,7 @@ export { actionDetailToPharmacy } from "./lib/action-detail-mapper";
 
 // UI
 export { PharmacyCard } from "./ui/pharmacy-card";
+export { FrequentDutyBadge } from "./ui/frequent-duty-badge";
 
 // Lib
 export { getPharmacyStatus, formatPharmacyHours, getDutySummaryStatus, dutyPeriodsToPharmacyHours } from "./lib/status";

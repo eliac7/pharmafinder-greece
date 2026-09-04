@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, Cross, Sparkles } from "lucide-react";
+import { Clock, Cross } from "lucide-react";
 import { toast } from "sonner";
 
 import { FavoriteButton } from "@/features/favorites";
@@ -18,7 +18,7 @@ import {
 } from "@/entities/pharmacy";
 import { cn } from "@/shared";
 import { useMapStore } from "@/shared/model/use-map-store";
-import { Badge } from "@/shared/ui/badge";
+import { FrequentDutyBadge } from "@/entities/pharmacy/ui/frequent-duty-badge";
 
 export function ActionPharmacyCard({
   item,
@@ -132,15 +132,7 @@ export function ActionPharmacyCard({
                   </span>
                 )}
               </div>
-              {item.is_frequent_duty && (
-                <Badge
-                  variant="secondary"
-                  className="w-fit shrink-0 gap-1 border-amber-500/30 bg-amber-500/15 px-1.5 py-0 text-[10px] font-semibold text-amber-600"
-                >
-                  <Sparkles className="size-2.5" />
-                  Συχνά
-                </Badge>
-              )}
+              {item.is_frequent_duty && <FrequentDutyBadge />}
             </div>
             {typeof item.distance_km === "number" && item.distance_km > 0 && (
               <span className="ml-auto shrink-0 whitespace-nowrap text-xs font-medium text-muted-foreground">
