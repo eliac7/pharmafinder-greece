@@ -214,10 +214,14 @@ function Sidebar({
       <Drawer
         open={true}
         dismissible={false}
+        modal={false}
+        direction="bottom"
         snapPoints={SNAP_POINTS}
         activeSnapPoint={activeSnap}
         setActiveSnapPoint={setSnapPoint}
-        modal={false}
+        snapToSequentialPoint
+        fadeFromIndex={1}
+        repositionInputs={false}
       >
         <DrawerContent
           data-sidebar="sidebar"

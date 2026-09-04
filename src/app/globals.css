@@ -119,6 +119,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html,
+  body {
+    overscroll-behavior-y: none;
+    overscroll-behavior-x: none;
+  }
   body {
     @apply bg-background text-foreground;
   }
@@ -142,4 +147,13 @@
   [role="button"]:not([disabled]) {
     cursor: pointer;
   }
+}
+
+[data-slot="drawer-content"] {
+  overscroll-behavior: contain;
+}
+
+[data-slot="sidebar-content"] {
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
 }
