@@ -19,7 +19,7 @@ export function RevealChallengeBanner({
 
   const containerClass =
     variant === "overlay"
-      ? "absolute left-1/2 top-5 z-30 w-[min(22rem,calc(100%-2rem))] -translate-x-1/2 rounded-xl border bg-background/95 p-4 text-center shadow-xl backdrop-blur"
+      ? "absolute left-1/2 z-30 w-[min(22rem,calc(100%-2rem))] -translate-x-1/2 rounded-xl border bg-background/95 p-4 text-center shadow-xl backdrop-blur top-[calc(env(safe-area-inset-top,0px)+1.25rem)]"
       : "mt-2 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 text-center";
 
   return (

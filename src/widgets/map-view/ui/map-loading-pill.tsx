@@ -17,7 +17,7 @@ export function MapLoadingPill({
   return (
     <div
       className={cn(
-        "absolute top-5 left-1/2 -translate-x-1/2 z-20",
+        "absolute left-1/2 -translate-x-1/2 z-20 top-[calc(env(safe-area-inset-top,0px)+1.25rem)]",
         "flex items-center gap-2 px-4 py-2 rounded-full",
         "bg-[rgba(20,20,30,0.7)] backdrop-blur-sm",
         "border border-white/10",

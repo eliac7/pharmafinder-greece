@@ -318,7 +318,7 @@ export function ProductActionViewport() {
         />
       )}
       {(pendingBounds || query.isFetching) && (
-        <div className="absolute top-5 left-1/2 z-20 -translate-x-1/2">
+        <div className="absolute left-1/2 z-20 -translate-x-1/2 top-[calc(env(safe-area-inset-top,0px)+1.25rem)]">
           <Button
             type="button"
             size="sm"
@@ -342,7 +342,7 @@ export function ProductActionViewport() {
         </div>
       )}
       {query.error && pendingBounds && (
-        <div className="absolute top-16 left-1/2 z-20 -translate-x-1/2 rounded-full bg-destructive/90 px-3 py-1 text-xs text-destructive-foreground shadow">
+        <div className="absolute left-1/2 z-20 -translate-x-1/2 rounded-full bg-destructive/90 px-3 py-1 text-xs text-destructive-foreground shadow top-[calc(env(safe-area-inset-top,0px)+4rem)]">
           Η αναζήτηση απέτυχε.
         </div>
       )}

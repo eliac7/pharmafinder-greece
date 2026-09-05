@@ -42,7 +42,7 @@ export function MapPageLayout({
             pharmacies={pharmacies}
             timeFilter={timeFilter}
           />
-          <div className="absolute top-4 left-4 z-10 md:hidden">
+          <div className="absolute left-4 z-10 md:hidden top-[calc(env(safe-area-inset-top,0px)+1rem)]">
             <SidebarTrigger />
           </div>
         </main>
