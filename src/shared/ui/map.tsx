@@ -1,7 +1,8 @@
 "use client";
 
 import { AlertTriangle, Cross, Loader2, Locate, Maximize, Minus, X } from "lucide-react";
-import MapLibreGL, { type MarkerOptions, type PopupOptions } from "maplibre-gl";
+import * as MapLibreGL from "maplibre-gl";
+import type { MarkerOptions, PopupOptions } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useTheme } from "next-themes";
 import {
@@ -266,9 +267,8 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     const loadHandler = () => dispatch({ type: "load" });
 
     // Handle WebGL context creation errors (e.g., Brave with shields up)
-    const errorHandler = (e: ErrorEvent) => {
-      if (e.error?.type === "webglcontextcreationerror" ||
-        e.error?.message?.includes("WebGL")) {
+    const errorHandler = (e: MapLibreGL.ErrorEvent) => {
+      if (e.error?.message?.includes("WebGL")) {
         console.error("WebGL context creation failed:", e.error);
         dispatch({ type: "error" });
       }

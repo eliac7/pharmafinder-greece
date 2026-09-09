@@ -7,7 +7,7 @@ import { PharmacyMarkers } from "./pharmacy-markers";
 import { MapUpdater } from "./map-updater";
 import { ManualLocationAdjuster } from "./manual-location-adjuster";
 import { type Pharmacy, type TimeFilter } from "@/entities/pharmacy";
-import type MapLibreGL from "maplibre-gl";
+import type * as MapLibreGL from "maplibre-gl";
 import { useEffect, useState } from "react";
 import { ProductActionViewport } from "./product-action-viewport";
 import { useMapStore } from "@/shared/model/use-map-store";

@@ -5,7 +5,7 @@ import { Loader2, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { toast } from "sonner";
-import type MapLibreGL from "maplibre-gl";
+import type * as MapLibreGL from "maplibre-gl";
 
 import {
   drillMapAction,

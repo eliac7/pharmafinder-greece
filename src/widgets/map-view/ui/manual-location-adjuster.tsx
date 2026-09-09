@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { MapMouseEvent } from "maplibre-gl";
 import { useMap } from "@/shared/ui/map";
 import { useLocationStore } from "@/features/locate-user";
 import { toast } from "sonner";
@@ -69,7 +70,7 @@ export function ManualLocationAdjuster({
       container.style.cursor = "";
     }
 
-    const handleClick = (e: maplibregl.MapMouseEvent) => {
+    const handleClick = (e: MapMouseEvent) => {
       if (!isAdjusting) return;
 
       const { lng, lat } = e.lngLat;
