@@ -24,6 +24,8 @@ import { createPortal } from "react-dom";
 import { cn } from "@/shared/lib/hooks/utils";
 import React from "react";
 
+MapLibreGL.setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
+
 type MapContextValue = {
   map: MapLibreGL.Map | null;
   isLoaded: boolean;
@@ -256,7 +258,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
       return;
     }
 
-    const styleDataHandler = () => {
+    const styleLoadHandler = () => {
       clearStyleTimeout();
       // Delay to ensure style is fully processed before allowing layer operations
       // This is a workaround to avoid race conditions with the style loading
@@ -275,14 +277,14 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     };
 
     map.on("load", loadHandler);
-    map.on("styledata", styleDataHandler);
+    map.on("style.load", styleLoadHandler);
     map.on("error", errorHandler);
     dispatch({ type: "ready", mapInstance: map });
 
     return () => {
       clearStyleTimeout();
       map.off("load", loadHandler);
-      map.off("styledata", styleDataHandler);
+      map.off("style.load", styleLoadHandler);
       map.off("error", errorHandler);
       map.remove();
       dispatch({ type: "reset" });

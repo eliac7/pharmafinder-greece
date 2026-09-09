@@ -20,7 +20,7 @@
         "clsx": "^2.1.1",
         "cmdk": "^1.1.1",
         "lucide-react": "^0.564.0",
-        "maplibre-gl": "^6.4.1",
+        "maplibre-gl": "6.4.1",
         "next": "16.2.11",
         "next-themes": "^0.4.6",
         "nuqs": "^2.8.8",
@@ -1190,7 +1190,7 @@
 
     "makeerror": ["makeerror@1.0.12", "", { "dependencies": { "tmpl": "1.0.5" } }, "sha512-JmqCvUhmt43madlpFzG4BQzG2Z3m6tvQDNKdClZnO3VbIudJYmxsT0FNJMeiB2+JTSlTQTSbU8QdesVmwJcmLg=="],
 
-    "maplibre-gl": ["maplibre-gl@6.8.0", "", { "dependencies": { "@mapbox/point-geometry": "^1.1.0", "@mapbox/tiny-sdf": "^2.2.0", "@mapbox/unitbezier": "^1.0.0", "@mapbox/vector-tile": "^3.0.0", "@maplibre/geojson-vt": "^6.1.1", "@maplibre/maplibre-gl-style-spec": "^26.4.1", "@maplibre/mlt": "^1.2.1", "@maplibre/vt-pbf": "^4.3.2", "@types/geojson": "^7946.0.16", "earcut": "^3.2.3", "gl-matrix": "^3.4.4", "kdbush": "^4.1.0", "murmurhash-js": "^1.0.0", "pbf": "^5.1.2", "potpack": "^2.1.0", "quickselect": "^3.0.0", "tinyqueue": "^3.0.0" } }, "sha512-+ZkjKTodsVLY0ewQThvXRxXQsclcsSgOm5LlnrBM3G8AloMJKt6Haw8mY4xrOl8T0WMqH6DTYjktZ9zGQXZd4w=="],
+    "maplibre-gl": ["maplibre-gl@6.4.1", "", { "dependencies": { "@mapbox/point-geometry": "^1.1.0", "@mapbox/tiny-sdf": "^2.2.0", "@mapbox/unitbezier": "^1.0.0", "@mapbox/vector-tile": "^3.0.0", "@maplibre/geojson-vt": "^6.1.1", "@maplibre/maplibre-gl-style-spec": "^26.2.1", "@maplibre/mlt": "^1.1.12", "@maplibre/vt-pbf": "^4.3.2", "@types/geojson": "^7946.0.16", "earcut": "^3.2.3", "gl-matrix": "^3.4.4", "kdbush": "^4.1.0", "murmurhash-js": "^1.0.0", "pbf": "^5.1.2", "potpack": "^2.1.0", "quickselect": "^3.0.0", "tinyqueue": "^3.0.0" } }, "sha512-KzxQKtfBu/pSz1C+yW1hNS9eyj2h2lC7ufdAi6/SEt177n3oAfDfmUmslRfJdXY7ReAFBcnvwsqmiyoDhtA9GQ=="],
 
     "math-intrinsics": ["math-intrinsics@1.1.0", "", {}, "sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g=="],
 

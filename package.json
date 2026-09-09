@@ -36,7 +36,9 @@
   },
   "scripts": {
     "dev": "next dev",
+    "predev": "node ./scripts/copy-maplibre-worker.mjs",
     "build": "next build",
+    "prebuild": "node ./scripts/copy-maplibre-worker.mjs",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -63,7 +65,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "lucide-react": "^0.564.0",
-    "maplibre-gl": "^6.4.1",
+    "maplibre-gl": "6.4.1",
     "next": "16.2.11",
     "next-themes": "^0.4.6",
     "nuqs": "^2.8.8",
