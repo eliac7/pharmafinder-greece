@@ -101,7 +101,7 @@ export function generateOgImage({
                 marginBottom: "20px",
               }}
             >
-              <img src={logoBase64} width="48" height="48" alt="Logo" />
+              <img src={logoBase64} width={48} height={48} alt="Logo" />
               <div
                 style={{
                   fontSize: "32px",
