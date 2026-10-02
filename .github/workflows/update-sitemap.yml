@@ -36,7 +36,7 @@ jobs:
           python-version: "3.13"
 
       - name: Install sitemap dependencies
-        run: python -m pip install --disable-pip-version-check sqlalchemy psycopg2-binary python-dotenv pytz
+        run: python -m pip install --disable-pip-version-check sqlalchemy "psycopg[binary]" python-dotenv pytz
 
       - name: Generate sitemap artifacts
         working-directory: backend
