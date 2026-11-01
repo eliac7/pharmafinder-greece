@@ -2,6 +2,11 @@ name: Update sitemap artifacts
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Generate and validate without changing or pushing sitemap files
+        type: boolean
+        default: true
   schedule:
     # GitHub cron is UTC. These runs are after the 00:00/12:00 Europe/Athens
     # scraper windows in both standard time and daylight-saving time.
@@ -36,22 +41,25 @@ jobs:
           python-version: "3.13"
 
       - name: Install sitemap dependencies
-        run: python -m pip install --disable-pip-version-check sqlalchemy "psycopg[binary]" python-dotenv pytz
+        run: python -m pip install --disable-pip-version-check cryptography
 
       - name: Generate sitemap artifacts
         working-directory: backend
         env:
-          PGHOST: ${{ secrets.SITEMAP_PGHOST }}
-          PGPORT: ${{ secrets.SITEMAP_PGPORT }}
-          PGDATABASE: ${{ secrets.SITEMAP_PGDATABASE }}
-          PGUSER: ${{ secrets.SITEMAP_PGUSER }}
-          PGPASSWORD: ${{ secrets.SITEMAP_PGPASSWORD }}
+          API_BASE_URL: https://api.pharmafinder.app
+          API_SECRET_KEY: ${{ secrets.SITEMAP_API_SECRET_KEY }}
+          ENCRYPTION_SECRET: ${{ secrets.SITEMAP_ENCRYPTION_SECRET }}
+          ENCRYPTION_SALT: ${{ secrets.SITEMAP_ENCRYPTION_SALT }}
+          DRY_RUN: ${{ inputs.dry_run || false }}
         run: |
+          args=()
+          if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); fi
           python scripts/generate_sitemap_artifacts.py \
             --output-dir ../public/sitemaps \
-            --base-url https://www.pharmafinder.app
+            --base-url https://www.pharmafinder.app "${args[@]}"
 
       - name: Validate generated XML
+        if: ${{ !inputs.dry_run }}
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -89,6 +97,7 @@ jobs:
           PY
 
       - name: Commit changed sitemap artifacts
+        if: ${{ !inputs.dry_run }}
         run: |
           git add -A public/sitemaps
           if git diff --cached --quiet -- public/sitemaps; then
