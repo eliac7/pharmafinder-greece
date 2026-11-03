@@ -38,7 +38,7 @@ export function FrequentDutyBadge({
           <Badge
             variant="secondary"
             className={cn(
-              "w-fit shrink-0 gap-1 border-amber-500/30 bg-amber-500/15 text-amber-600",
+              "w-fit shrink-0 gap-1 border-blue-600/20 bg-blue-500/10 text-blue-700 dark:border-blue-400/25 dark:bg-blue-400/10 dark:text-blue-300",
               variant === "compact"
                 ? "px-1.5 py-0 text-[10px] font-semibold"
                 : "gap-1.5 px-2.5 py-1 text-xs font-semibold",
